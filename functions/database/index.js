@@ -1,3 +1,6 @@
-import { createConversationForUser } from "./conversationData.js";
+import {
+  getCurrentConversation,
+  addMessageToCurrentConversation,
+} from "./conversationData.js";
 
-export { createConversationForUser };
+export { getCurrentConversation, addMessageToCurrentConversation };
