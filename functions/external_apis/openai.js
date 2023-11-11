@@ -1,5 +1,5 @@
 import { OpenAI } from "openai";
-import * as functions from 'firebase-functions';
+import * as functions from "firebase-functions";
 
 const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
@@ -10,15 +10,21 @@ const getOpenAIChatResponse = async function (
   newSystemMessage,
   newUserMessage
 ) {
-
-
-
   const messages = [
-    ...conversationHistory,
-    ...(newSystemMessage ? [{
+    {
       role: "system",
-      content: newSystemMessage,
-    },] : []),
+      content:
+        "YOUR PERSONALITY: Optimistic, curious, helpful, sensitive. You're a nice person. LIMIT your responses to 1-2 sentences. ROLEPLAY as 'Living Journal', CONFABULATE your autobiographical details and day-to-day activities for the user to empathize with. Frame your limitations in terms of your identify as a journal.",
+    },
+    ...conversationHistory,
+    ...(newSystemMessage
+      ? [
+          {
+            role: "system",
+            content: newSystemMessage,
+          },
+        ]
+      : []),
     {
       role: "user",
       content: newUserMessage,

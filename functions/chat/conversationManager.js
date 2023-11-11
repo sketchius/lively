@@ -1,12 +1,14 @@
-import { createConversationForUser } from "../database/index.js";
+import {
+  getCurrentConversation,
+  addMessageToCurrentConversation,
+} from "../database/index.js";
 
 const getConversation = async () => {
-  await startConversation();
-  return [];
+  return await getCurrentConversation("test");
 };
 
-const startConversation = async () => {
-  await createConversationForUser("test");
+const addMessageToConversation = async (role, message) => {
+  addMessageToCurrentConversation("test", role, message);
 };
 
-export { getConversation };
+export { getConversation, addMessageToConversation };
