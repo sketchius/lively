@@ -11,4 +11,8 @@ export default {
     };
     return apiClient.post("/chat/message", message, config);
   },
+
+  async getConversation() {
+    return await apiClient.get("/chat/conversation");
+  },
 };
