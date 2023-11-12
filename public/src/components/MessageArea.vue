@@ -28,5 +28,6 @@ export default {
   flex-grow: 1; /* Takes up the remaining space */
   overflow-y: auto; /* Adds a scrollbar if content overflows */
   width: 100%;
+  margin: 0 auto;
 }
 </style>
