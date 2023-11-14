@@ -16,7 +16,7 @@ const getOpenAIChatResponse = async function (
   const messages = [
     {
       role: "system",
-      content: masterSystemMessage
+      content: masterSystemMessage,
     },
     ...conversationHistory,
     ...(newSystemMessage
@@ -33,12 +33,14 @@ const getOpenAIChatResponse = async function (
     },
   ];
 
+  console.log("messages");
+
   try {
     const openAIResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
       messages: messages,
       functions,
-      function_call: functionCall
+      function_call: functionCall,
     });
     return openAIResponse.choices[0].message;
   } catch (error) {
@@ -49,16 +51,15 @@ const getOpenAIChatResponse = async function (
 
 async function createEmbedding(data) {
   try {
-    const response = await openai.createEmbedding({
+    const response = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: data, 
+      input: data,
     });
-    return response.data; 
+    return response.data[0].embedding;
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
-
 
 export { getOpenAIChatResponse, createEmbedding };
