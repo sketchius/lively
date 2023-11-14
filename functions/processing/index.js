@@ -1,1 +1,3 @@
-export { summarizeConversation, summarizeInformation, calcAverageWordCount } from "./summarizer.js";
+export { executeObservations } from "./observationManager.js";
+
+export { summarizeConversation, calcAverageWordCount } from "./summarizer.js";
