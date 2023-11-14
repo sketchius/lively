@@ -1,3 +1,3 @@
-export { getOpenAIChatResponse  } from "./openai.js";
-export { upsertEmbeddingsToPinecone } from './pinecone.js';
 
+export { getOpenAIChatResponse, createEmbedding } from "./openai.js";
+export { upsertEmbeddingToPinecone, searchSimilarEmbeddings, deleteAllVectors } from "./pinecone.js";
