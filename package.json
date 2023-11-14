@@ -16,7 +16,9 @@
   "author": "Bryce Huhtala",
   "license": "ISC",
   "dependencies": {
+    "@pinecone-database/pinecone": "^1.1.2",
     "dotenv": "^16.3.1",
+    "keyword-extractor": "^0.0.28",
     "openai": "^4.17.4"
   }
 }

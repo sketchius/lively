@@ -6,15 +6,17 @@ const openai = new OpenAI({
 });
 
 const getOpenAIChatResponse = async function (
+  masterSystemMessage,
   conversationHistory,
   newSystemMessage,
-  newUserMessage
+  newUserMessage,
+  functions,
+  functionCall
 ) {
   const messages = [
     {
       role: "system",
-      content:
-        "YOUR PERSONALITY: Optimistic, curious, helpful, sensitive. You're a nice person. LIMIT your responses to 1-2 sentences. ROLEPLAY as 'Living Journal', CONFABULATE your autobiographical details and day-to-day activities for the user to empathize with. Frame your limitations in terms of your identify as a journal.",
+      content: masterSystemMessage
     },
     ...conversationHistory,
     ...(newSystemMessage
@@ -33,14 +35,30 @@ const getOpenAIChatResponse = async function (
 
   try {
     const openAIResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-1106",
       messages: messages,
+      functions,
+      function_call: functionCall
     });
-    return openAIResponse.choices[0].message.content;
+    return openAIResponse.choices[0].message;
   } catch (error) {
     console.log("Error in API Call: ", error);
     return null;
   }
 };
 
-export { getOpenAIChatResponse };
+async function createEmbedding(data) {
+  try {
+    const response = await openai.createEmbedding({
+      model: "text-embedding-ada-002",
+      input: data, 
+    });
+    return response.data; 
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
+export { getOpenAIChatResponse, createEmbedding };
