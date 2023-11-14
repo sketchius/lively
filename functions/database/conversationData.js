@@ -1,3 +1,4 @@
+import { createUID } from '../utils/index.js';
 import { db } from "./firebaseInit.js";
 import admin from "./firebaseInit.js";
 
@@ -17,6 +18,7 @@ async function createConversationForUser(userId, initialMessage) {
   const conversationRef = userRef.collection("conversations").doc();
   await conversationRef.set({
     startedAt: admin.firestore.FieldValue.serverTimestamp(),
+    referenceId: createUID()
   });
 
   // Update the current conversation pointer in the user document
@@ -31,6 +33,18 @@ async function createConversationForUser(userId, initialMessage) {
   );
 
   return conversationRef.id;
+}
+
+async function getCurrentConversationId(userId) {
+  const userRef = db.collection("users").doc(userId);
+  let userDoc = await userRef.get();
+
+  if (!userDoc.exists) {
+    console.log(`No user found with UID: ${userId}`);
+    return undefined; // Return an empty array if the user doesn't exist
+  }
+
+  return userDoc.data().currentConversation;
 }
 
 async function getCurrentConversation(userId) {
@@ -70,6 +84,47 @@ async function getCurrentConversation(userId) {
   });
 
   console.log("Test");
+
+  return messages; // Return the list of messages
+}
+
+async function getConversationById(userId, conversationId) {
+  const userRef = db.collection("users").doc(userId);
+  let userDoc = await userRef.get();
+
+  if (!userDoc.exists) {
+    console.log(`No user found with UID: ${userId}`);
+    return []; // Return an empty array if the user doesn't exist
+  }
+
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
+  let conversationDoc = await conversationRef.get();
+
+  if (!conversationDoc.exists) {
+    console.log(
+      `No conversation found with ID: ${conversationId} for user ${userId}`
+    );
+    return []; // Return an empty array if the conversation doesn't exist
+  }
+
+  const messagesRef = conversationRef.collection("messages");
+  const messagesSnapshot = await messagesRef.orderBy("createdAt").get();
+
+  if (messagesSnapshot.empty) {
+    console.log(
+      `No messages found in conversation ${conversationId} for user ${userId}`
+    );
+    return []; // Return an empty array if there are no messages
+  }
+
+  let messages = [];
+  messagesSnapshot.forEach((doc) => {
+    const message = doc.data();
+    delete message.createdAt; // Remove the 'createdAt' field from each message object
+    messages.push(message);
+  });
 
   return messages; // Return the list of messages
 }
@@ -129,4 +184,65 @@ async function addMessageToCurrentConversation(userId, role, content) {
   return true; // Return true to indicate success
 }
 
-export { addMessageToCurrentConversation, getCurrentConversation };
+async function setConversationProperty(
+  userId,
+  conversationId,
+  propertyName,
+  value
+) {
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
+
+  try {
+    await conversationRef.update({ [propertyName]: value });
+    console.log(
+      `Field ${propertyName} updated for conversation ${conversationId} of user ${userId}`
+    );
+  } catch (error) {
+    console.error(
+      `Error updating field ${propertyName} for conversation ${conversationId} of user ${userId}:`,
+      error
+    );
+  }
+}
+
+async function getConversationProperty(userId, conversationId, propertyName) {
+  if (!conversationId) return undefined;
+
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
+
+  try {
+    const doc = await conversationRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      const propertyValue = data[propertyName];
+      console.log(
+        `Retrieved property ${propertyName} from conversation ${conversationId} of user ${userId}: ${propertyValue}`
+      );
+      return propertyValue;
+    } else {
+      console.log(`No such conversation ${conversationId} for user ${userId}`);
+      return null; // or throw an error, depending on your error handling strategy
+    }
+  } catch (error) {
+    console.error(
+      `Error retrieving field ${propertyName} for conversation ${conversationId} of user ${userId}:`,
+      error
+    );
+    throw error; // or return null, depending on your error handling strategy
+  }
+}
+
+export {
+  addMessageToCurrentConversation,
+  getCurrentConversation,
+  getCurrentConversationId,
+  getConversationById,
+  setConversationProperty,
+  getConversationProperty,
+};
