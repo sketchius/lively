@@ -3,11 +3,9 @@ import {
   addMessageToCurrentConversation,
   getCurrentConversationId,
   setConversationProperty,
+  setCurrentConversation,
 } from "../database/index.js";
-import {
-  summarizeConversation,
-  summarizeInformation,
-} from "../processing/summarizer.js";
+import { executeObservations } from '../processing/index.js';
 
 const getConversation = async () => {
   return await getCurrentConversation("test");
@@ -19,9 +17,14 @@ const addMessageToConversation = async (role, message) => {
 
 const closeConversation = async () => {
   const currentConversationId = await getCurrentConversationId("test");
-  summarizeConversation("test", currentConversationId);
-  const autobioInformation = await summarizeAutobioInformation("test", currentConversationId);
-  
+  // summarizeConversation("test", currentConversationId);
+  executeObservations("test",currentConversationId);
+  setCurrentConversation("test",null);
 };
 
-export { getConversation, addMessageToConversation, closeConversation };
+const clearConversation = async () => {
+  setCurrentConversation("test",null);
+};
+
+
+export { getConversation, addMessageToConversation, closeConversation, clearConversation };
