@@ -1,6 +1,10 @@
-import {
+export {
   getCurrentConversation,
+  getCurrentConversationId,
   addMessageToCurrentConversation,
+  getConversationById,
+  setConversationProperty,
+  getConversationProperty,
 } from "./conversationData.js";
 
-export { getCurrentConversation, addMessageToCurrentConversation };
+export { createObservationForUser } from './memoryData.js';
