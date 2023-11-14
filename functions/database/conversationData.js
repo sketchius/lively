@@ -88,6 +88,11 @@ async function getCurrentConversation(userId) {
   return messages; // Return the list of messages
 }
 
+async function setCurrentConversation(userId, id) {
+  const userRef = db.collection("users").doc(userId);
+  await userRef.update({ currentConversation: id });
+}
+
 async function getConversationById(userId, conversationId) {
   const userRef = db.collection("users").doc(userId);
   let userDoc = await userRef.get();
@@ -245,4 +250,5 @@ export {
   getConversationById,
   setConversationProperty,
   getConversationProperty,
+  setCurrentConversation
 };

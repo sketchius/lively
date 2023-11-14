@@ -1,10 +1,12 @@
 export {
   getCurrentConversation,
+  setCurrentConversation,
   getCurrentConversationId,
   addMessageToCurrentConversation,
   getConversationById,
   setConversationProperty,
   getConversationProperty,
+  
 } from "./conversationData.js";
 
-export { createObservationForUser } from './memoryData.js';
+export { createObservationForUser, getObservationForUser } from "./observationData.js";
