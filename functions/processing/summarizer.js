@@ -32,27 +32,6 @@ const summarizeConversation = async (userId, conversationId) => {
   );
 };
 
-const summarizeAutobioInformation = async (userId, conversationId) => {
-  const messages = await getConversationById(userId, conversationId);
-  const promptMessage =
-    "CONVERSATION: " +
-    messages
-      .map((message) => {
-        return `${message.role}:  ${message.content}`;
-      })
-      .join("\n\n");
-  const systemMessage = `EXTRACT all AUTOBIOGRAPHICAL INFORMATION conveyed by the User in this conversation. Do NOT include questions and commentary from the Assitant."`;
-
-  const response = await getOpenAIChatResponse(
-    systemMessage,
-    [],
-    "",
-    promptMessage
-  );
-
-  await setConversationProperty(userId, conversationId, response.content);
-};
-
 const summarizeConversation2 = async (userId, conversationId) => {
   const messages = await getConversationById(userId, conversationId);
   const userMessages = messages
@@ -140,4 +119,4 @@ const calcAverageWordCount = async (userId, conversationId) => {
   );
 };
 
-export { summarizeConversation, summarizeAutobioInformation, calcAverageWordCount };
+export { summarizeConversation, calcAverageWordCount };
