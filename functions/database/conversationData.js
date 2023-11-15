@@ -18,7 +18,7 @@ async function createConversationForUser(userId, initialMessage) {
   const conversationRef = userRef.collection("conversations").doc();
   await conversationRef.set({
     startedAt: admin.firestore.FieldValue.serverTimestamp(),
-    referenceId: createUID()
+    observationId: createUID()
   });
 
   // Update the current conversation pointer in the user document
