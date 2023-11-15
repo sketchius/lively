@@ -20,7 +20,6 @@ async function upsertEmbeddingToPinecone(embedding, id) {
 
   try {
     const response = await index.upsert([upsertData]);
-    console.log("Upsert response:", response);
   } catch (error) {
     console.error("Error upserting embedding:", error);
   }
