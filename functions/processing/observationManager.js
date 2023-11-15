@@ -1,3 +1,4 @@
+import { extractObservations, mergeObservations } from '../agents/observationAgent.js';
 import {
   createObservationForUser,
   setConversationProperty,
@@ -17,48 +18,7 @@ import {
 
 const generateObservations = async (userId, conversationId) => {
   const messages = await getConversationById(userId, conversationId);
-  const promptMessage = `EXTRACT all AUTOBIOGRAPHICAL INFORMATION conveyed by the User in this conversation. Do NOT include questions and commentary from the Assitant.
-  
-  CONVERSATION: ${messages
-    .map((message) => `${message.role}:  ${message.content}`)
-    .join("\n\n")}`;
-  const systemMessage = `You are an AI that specializes in analyzing conversations and creating autobiographical observations from them.
-
-  Your output should be in the form of bullet points.
-  Use explicit repetition for clarity--refer to the User in each bullet point.`;
-
-  console.log(systemMessage + "\n" + promptMessage);
-
-  let response;
-  let attempt = 0;
-
-  do {
-    response = await getOpenAIChatResponse(
-      systemMessage,
-      [],
-      "",
-      promptMessage
-    );
-    attempt++;
-  } while (
-    (response.content.startsWith("I'm sorry") ||
-      response.content.startsWith("Sorry")) &&
-    attempt < 3
-  );
-
-  const observations = removeStartingSubstring(
-    response.content,
-    "AUTOBIOGRAPHICAL INFORMATION"
-  );
-
-  await setConversationProperty(
-    userId,
-    conversationId,
-    "observations",
-    observations
-  );
-
-  return observations;
+  return await extractObservations(messages);
 };
 
 const executeObservations = async (userId, conversationId) => {
@@ -88,15 +48,10 @@ const createNewObservation = async (userId, observation, conversationId) => {
 
 const appendToObservation = async (userId, observationId, newObservation) => {
   const modifiedObservation =
-    (await getObservationForUser(userId, observationId)) + " " + newObservation;
+    (await mergeObservations(userId, observationId)) + " " + newObservation;
   const embedding = await createEmbedding(modifiedObservation);
   upsertEmbeddingToPinecone(embedding, observationId);
   updateObservationForUser(userId, observationId, modifiedObservation);
-  console.log("## Merging Observation ##");
-  console.log("# Old Observation:");
-  console.log(await getObservationForUser(userId, observationId));
-  console.log("# New Observation:");
-  console.log(newObservation);
 };
 
 const matchObservation = async (userId, searchString) => {
