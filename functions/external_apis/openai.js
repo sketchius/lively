@@ -10,8 +10,7 @@ const getOpenAIChatResponse = async function (
   conversationHistory,
   newSystemMessage,
   newUserMessage,
-  functions,
-  functionCall
+  options
 ) {
   const messages = [
     {
@@ -35,13 +34,23 @@ const getOpenAIChatResponse = async function (
 
   console.log("messages");
 
+  const requestOptions = {
+    model: "gpt-3.5-turbo-1106",
+    messages: messages
+  };
+
+  if (options?.logit_bias) {
+    requestOptions.logit_bias = options.logit_bias;
+  }
+  if (options?.functions) {
+    requestOptions.functions = options.functions;
+  }
+  if (options?.functionCall) {
+    requestOptions.functionCall = options.functionCall;
+  }
+
   try {
-    const openAIResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
-      messages: messages,
-      functions,
-      function_call: functionCall,
-    });
+    const openAIResponse = await openai.chat.completions.create(requestOptions);
     return openAIResponse.choices[0].message;
   } catch (error) {
     console.log("Error in API Call: ", error);
