@@ -1,12 +1,18 @@
+
+
+
 const extractObservations = async (messages) => {
+  const logit_bias = {414: -80, 5751: -80, 584: -80, 1226: -80, 9837: 100, 60: 100} // Discourage 'Our', 'our', 'We', 'we'; encourage '[', ']'
+
   const systemMessage = `You are an AI that specializes in analyzing conversations and creating autobiographical observations from them.
 
-    Your output should be in the form of bullet points.
-    Use explicit repetition for clarity--refer to the User in each bullet point.`;
+    - Your output should be in the form of bullet points.
+    - OBSERVATION FORMAT: \`<"I" or "My"> <statement>\`.
+    - Output the OBSERVATIONS as a JSON array of strings`;
 
-  const promptMessage = `EXTRACT all AUTOBIOGRAPHICAL INFORMATION conveyed by the User in this conversation. Do NOT include questions and commentary from the Assitant.
+  const promptMessage = `EXTRACT all AUTOBIOGRAPHICAL INFORMATION shared by the User in this conversation. Do NOT include questions and commentary from the Assitant. OBSERVATION FORMAT: \`<"I" or "My"> <statement>\`
   
-  CONVERSATION: ${messages
+  CONVERSATION: \n${messages
     .map((message) => `${message.role}:  ${message.content}`)
     .join("\n\n")}`;
 
@@ -18,7 +24,8 @@ const extractObservations = async (messages) => {
       systemMessage,
       [],
       "",
-      promptMessage
+      promptMessage,
+      {logit_bias}
     );
     attempt++;
   } while (
