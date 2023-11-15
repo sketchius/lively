@@ -61,7 +61,7 @@ const matchObservation = async (userId, searchString) => {
     1
   );
 
-  if (matches && matches.length == 1 && matches[0].score >= 0.8) {
+  if (matches && matches.length == 1 && matches[0].score >= 0.82) {
     return matches[0].id;
   }
 
