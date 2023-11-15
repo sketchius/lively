@@ -9,4 +9,4 @@ export {
   
 } from "./conversationData.js";
 
-export { createObservationForUser, getObservationForUser } from "./observationData.js";
+export { createObservationForUser, getObservationForUser, updateObservationForUser } from "./observationData.js";
