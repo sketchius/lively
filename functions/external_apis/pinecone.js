@@ -26,7 +26,7 @@ async function upsertEmbeddingToPinecone(embedding, id) {
   }
 }
 
-async function searchSimilarEmbeddings(embedding, topK) {
+async function semanticSimilaritySearch(embedding, topK) {
   const pinecone = new Pinecone({
     apiKey: functions.config().pinecone.api_key,
     environment: "gcp-starter",
@@ -40,7 +40,6 @@ async function searchSimilarEmbeddings(embedding, topK) {
       topK,
       includeValues: false,
     });
-    console.log("Search results:", searchResults);
     return searchResults.matches;
   } catch (error) {
     console.error("Error searching for similar embeddings:", error);
@@ -75,4 +74,8 @@ async function deleteAllVectors() {
   }
 }
 
-export { upsertEmbeddingToPinecone, searchSimilarEmbeddings, deleteAllVectors };
+export {
+  upsertEmbeddingToPinecone,
+  semanticSimilaritySearch,
+  deleteAllVectors,
+};
