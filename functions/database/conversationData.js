@@ -243,6 +243,45 @@ async function getConversationProperty(userId, conversationId, propertyName) {
   }
 }
 
+
+async function getAllKeywordsForConversation(userId, conversationId) {
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef.collection("conversations").doc(conversationId);
+  const keywordsRef = conversationRef.collection("keywords");
+  const snapshot = await keywordsRef.get();
+
+  if (snapshot.empty) {
+    console.log(`No keywords found for conversation ${conversationId} of user ${userId}`);
+    return [];
+  }
+
+  let keywords = [];
+  snapshot.forEach(doc => {
+    keywords.push(doc.data());
+  });
+
+  return keywords;
+}
+
+async function addKeywordToConversation(userId, conversationId, keyword) {
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef.collection("conversations").doc(conversationId);
+  const keywordsRef = conversationRef.collection("keywords");
+
+  const snapshot = await keywordsRef.where('keyword', '==', keyword).get();
+  
+  if (!snapshot.empty) {
+    console.log(`Keyword "${keyword}" already exists for conversation ${conversationId} of user ${userId}`);
+    return false; // Indicate keyword already exists
+  }
+
+  await keywordsRef.add({ keyword });
+  console.log(`Keyword "${keyword}" added to conversation ${conversationId} of user ${userId}`);
+  return true; // Indicate successful addition
+}
+
+
+
 export {
   addMessageToCurrentConversation,
   getCurrentConversation,
@@ -250,5 +289,7 @@ export {
   getConversationById,
   setConversationProperty,
   getConversationProperty,
-  setCurrentConversation
+  setCurrentConversation,
+  getAllKeywordsForConversation,
+  addKeywordToConversation
 };

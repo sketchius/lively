@@ -6,6 +6,8 @@ export {
   getConversationById,
   setConversationProperty,
   getConversationProperty,
+  getAllKeywordsForConversation,
+  addKeywordToConversation
   
 } from "./conversationData.js";
 
