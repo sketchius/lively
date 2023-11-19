@@ -1,8 +1,8 @@
-import { createUID } from '../utils/index.js';
+import { createUID } from "../utils/index.js";
 import { db } from "./firebaseInit.js";
 import admin from "./firebaseInit.js";
 
-async function createConversationForUser(userId, initialMessage) {
+async function createConversationForUser(userId) {
   const userRef = db.collection("users").doc(userId);
   let userDoc = await userRef.get();
 
@@ -18,15 +18,11 @@ async function createConversationForUser(userId, initialMessage) {
   const conversationRef = userRef.collection("conversations").doc();
   await conversationRef.set({
     startedAt: admin.firestore.FieldValue.serverTimestamp(),
-    observationId: createUID()
+    observationId: createUID(),
   });
 
   // Update the current conversation pointer in the user document
   await userRef.update({ currentConversation: conversationRef.id });
-
-  const messagesRef = conversationRef.collection("messages");
-  initialMessage.createdAt = admin.firestore.FieldValue.serverTimestamp();
-  await messagesRef.add(initialMessage);
 
   console.log(
     `Conversation created for user ${userId} with ID: ${conversationRef.id}`
@@ -47,7 +43,7 @@ async function getCurrentConversationId(userId) {
   return userDoc.data().currentConversation;
 }
 
-async function getCurrentConversation(userId) {
+async function getCurrentConversation(userId, includeIsContext) {
   const userRef = db.collection("users").doc(userId);
   let userDoc = await userRef.get();
 
@@ -80,7 +76,10 @@ async function getCurrentConversation(userId) {
   messagesSnapshot.forEach((doc) => {
     const message = doc.data();
     delete message.createdAt; // Remove the 'createdAt' field from each message object
-    messages.push(message);
+    if (!message.isContext || includeIsContext) {
+      delete message.isContext;
+      messages.push(message);
+    }
   });
 
   console.log("Test");
@@ -93,7 +92,7 @@ async function setCurrentConversation(userId, id) {
   await userRef.update({ currentConversation: id });
 }
 
-async function getConversationById(userId, conversationId) {
+async function getConversationById(userId, conversationId, includeIsContext) {
   const userRef = db.collection("users").doc(userId);
   let userDoc = await userRef.get();
 
@@ -125,16 +124,30 @@ async function getConversationById(userId, conversationId) {
   }
 
   let messages = [];
+  console.log(`messagesSnapshot\n${JSON.stringify(messagesSnapshot)}`);
   messagesSnapshot.forEach((doc) => {
     const message = doc.data();
     delete message.createdAt; // Remove the 'createdAt' field from each message object
-    messages.push(message);
+    if (!message.isContext || includeIsContext) {
+      delete message.isContext;
+     messages.push(message);
+
+    }
   });
+
+
+  console.log(`messages\n${JSON.stringify(messages)}`);
 
   return messages; // Return the list of messages
 }
 
-async function addMessageToCurrentConversation(userId, role, content) {
+async function addMessageToCurrentConversation(
+  userId,
+  role,
+  content,
+  flags,
+  datetime
+) {
   const userRef = db.collection("users").doc(userId);
   let userDoc = await userRef.get();
 
@@ -164,10 +177,7 @@ async function addMessageToCurrentConversation(userId, role, content) {
 
   if (!currentConversationId) {
     // Create a new conversation if there's no active conversation or if it doesn't exist
-    currentConversationId = await createConversationForUser(userId, {
-      content: content,
-      role: role,
-    });
+    currentConversationId = await createConversationForUser(userId);
     await userRef.update({ currentConversation: currentConversationId }); // Update the user's current conversation
     return true;
   }
@@ -180,7 +190,8 @@ async function addMessageToCurrentConversation(userId, role, content) {
   await messagesRef.add({
     content: content,
     role: role,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    isContext: flags?.isContext,
+    createdAt: datetime || admin.firestore.FieldValue.serverTimestamp(),
   });
 
   console.log(
@@ -243,46 +254,107 @@ async function getConversationProperty(userId, conversationId, propertyName) {
   }
 }
 
-
 async function getAllKeywordsForConversation(userId, conversationId) {
   const userRef = db.collection("users").doc(userId);
-  const conversationRef = userRef.collection("conversations").doc(conversationId);
-  const keywordsRef = conversationRef.collection("keywords");
-  const snapshot = await keywordsRef.get();
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
+  const conversationDoc = await conversationRef.get();
 
-  if (snapshot.empty) {
-    console.log(`No keywords found for conversation ${conversationId} of user ${userId}`);
+  if (!conversationDoc.exists) {
+    console.log(
+      `No conversation found for ID ${conversationId} of user ${userId}`
+    );
     return [];
   }
 
-  let keywords = [];
-  snapshot.forEach(doc => {
-    keywords.push(doc.data());
-  });
-
-  return keywords;
+  const conversationData = conversationDoc.data();
+  return conversationData.keywords || [];
 }
 
 async function addKeywordToConversation(userId, conversationId, keyword) {
   const userRef = db.collection("users").doc(userId);
-  const conversationRef = userRef.collection("conversations").doc(conversationId);
-  const keywordsRef = conversationRef.collection("keywords");
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
 
-  const snapshot = await keywordsRef.where('keyword', '==', keyword).get();
-  
-  if (!snapshot.empty) {
-    console.log(`Keyword "${keyword}" already exists for conversation ${conversationId} of user ${userId}`);
+  const conversationDoc = await conversationRef.get();
+
+  if (!conversationDoc.exists) {
+    console.log(
+      `No conversation found for ID ${conversationId} of user ${userId}`
+    );
+    return false;
+  }
+
+  const conversationData = conversationDoc.data();
+  const keywords = conversationData.keywords || [];
+
+  if (keywords.includes(keyword)) {
+    console.log(
+      `Keyword "${keyword}" already exists for conversation ${conversationId} of user ${userId}`
+    );
     return false; // Indicate keyword already exists
   }
 
-  await keywordsRef.add({ keyword });
-  console.log(`Keyword "${keyword}" added to conversation ${conversationId} of user ${userId}`);
+  await conversationRef.update({
+    keywords: admin.firestore.FieldValue.arrayUnion(keyword),
+  });
+
+  console.log(
+    `Keyword "${keyword}" added to conversation ${conversationId} of user ${userId}`
+  );
   return true; // Indicate successful addition
 }
 
+async function isObservationReferenceInConversation(
+  userId,
+  conversationId,
+  observationId
+) {
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef
+    .collection("conversations")
+    .doc(conversationId);
+  const conversationDoc = await conversationRef.get();
+
+  if (!conversationDoc.exists) {
+    console.log(
+      `Conversation ${conversationId} for user ${userId} does not exist`
+    );
+    return false;
+  }
+
+  const conversationData = conversationDoc.data();
+  return (
+    conversationData.readObservations &&
+    conversationData.readObservations.includes(observationId)
+  );
+}
+
+async function addObservationReferenceToConversation(
+  userId,
+  conversationId,
+  observationId
+) {
+  const userRef = db.collection("users").doc(userId);
+  const conversationRef = userRef.collection("conversations").doc(conversationId);
+
+  const conversationSnapshot = await conversationRef.get();
+  if (conversationSnapshot.exists && conversationSnapshot.data().readObservations) {
+    await conversationRef.update({
+      readObservations: admin.firestore.FieldValue.arrayUnion(observationId),
+    });
+  } else {
+    await conversationRef.set({
+      readObservations: [observationId],
+    }, { merge: true });
+  }
+}
 
 
 export {
+  createConversationForUser,
   addMessageToCurrentConversation,
   getCurrentConversation,
   getCurrentConversationId,
@@ -291,5 +363,7 @@ export {
   getConversationProperty,
   setCurrentConversation,
   getAllKeywordsForConversation,
-  addKeywordToConversation
+  addKeywordToConversation,
+  isObservationReferenceInConversation,
+  addObservationReferenceToConversation,
 };

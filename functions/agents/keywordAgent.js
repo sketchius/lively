@@ -1,5 +1,12 @@
+import { getOpenAIChatResponse } from "../external_apis/index.js";
+
 const extractKeywords = async (text) => {
-  const logit_bias = { 9837: 100, 60: 100 }; // Discourage 'Our', 'our', 'We', 'we'; encourage '[', ']'
+  const logit_bias = {
+    /*9837: 60, 60: 60*/
+  }; // Discourage 'Our', 'our', 'We', 'we'; encourage '[', ']'
+
+  console.log("#################################");
+  console.log("TEXT = " + text);
 
   const systemMessage = `# ROLE
   You are an AI that specializes in reading text and extracting keywords from the text.
@@ -20,28 +27,57 @@ const extractKeywords = async (text) => {
     
     ${text}`;
 
+  const messages = [
+    {
+      role: "system",
+      content: systemMessage,
+    },
+    {
+      role: "user",
+      content: promptMessage,
+    },
+  ];
+
   let response, keywords;
   let attempt = 0;
   const maxAttempts = 3;
 
   do {
     try {
-      response = await getOpenAIChatResponse(
-        systemMessage,
-        [],
-        "",
-        promptMessage,
-        { logit_bias }
-      );
-      keywords = JSON.parse(response);
+      response = await getOpenAIChatResponse(messages, { logit_bias });
+      console.log("KEYWORD RESPONSE:");
+      console.log(response);
+      keywords = parseAndExtractArray(response.content);
       break;
     } catch (error) {
       attempt++;
       if (attempt >= maxAttempts) {
-        throw new Error("Failed to parse JSON after multiple attempts");
+        throw new Error("Failed to parse JSON after multiple attempts" + error);
       }
     }
   } while (true);
-  
+
   return keywords;
 };
+
+function parseAndExtractArray(jsonString) {
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonString);
+  } catch (error) {
+    throw new Error("Invalid JSON string");
+  }
+
+  if (typeof parsed === "object" && !Array.isArray(parsed)) {
+    const values = Object.values(parsed);
+    if (values.length === 1 && Array.isArray(values[0])) {
+      return values[0];
+    }
+  } else if (Array.isArray(parsed)) {
+    return parsed;
+  }
+
+  throw new Error("JSON does not contain a single array");
+}
+
+export { extractKeywords };

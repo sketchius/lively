@@ -2,13 +2,15 @@ import * as functions from "firebase-functions";
 
 import { Pinecone } from "@pinecone-database/pinecone";
 
-async function upsertEmbeddingToPinecone(embedding, id) {
-  const pinecone = new Pinecone({
-    apiKey: functions.config().pinecone.api_key,
-    environment: "gcp-starter",
-  });
+const pinecone = new Pinecone({
+  apiKey: functions.config().pinecone.api_key,
+  environment: "gcp-starter",
+});
 
-  const index = pinecone.index("agent-memory");
+const index = pinecone.index("agent-memory");
+
+
+async function upsertEmbeddingToPinecone(embedding, id) {
 
   const upsertData = {
     id: id,
@@ -26,12 +28,7 @@ async function upsertEmbeddingToPinecone(embedding, id) {
 }
 
 async function semanticSimilaritySearch(embedding, topK) {
-  const pinecone = new Pinecone({
-    apiKey: functions.config().pinecone.api_key,
-    environment: "gcp-starter",
-  });
 
-  const index = pinecone.index("agent-memory");
 
   try {
     const searchResults = await index.query({
@@ -39,6 +36,8 @@ async function semanticSimilaritySearch(embedding, topK) {
       topK,
       includeValues: false,
     });
+    console.log("Search results:");
+    console.log(searchResults);
     return searchResults.matches;
   } catch (error) {
     console.error("Error searching for similar embeddings:", error);
@@ -46,12 +45,6 @@ async function semanticSimilaritySearch(embedding, topK) {
 }
 
 async function deleteAllVectors() {
-  const pinecone = new Pinecone({
-    apiKey: functions.config().pinecone.api_key,
-    environment: "gcp-starter",
-  });
-
-  const index = pinecone.index("agent-memory");
 
   const vector = [];
   for (let i = 0; i < 1536; i++) {
@@ -73,8 +66,22 @@ async function deleteAllVectors() {
   }
 }
 
+
+async function getVectorCount() {
+  try {
+    const stats = await index.describeIndexStats();
+    const namespaceStats = stats.namespaces[""] || {}; // Accessing stats for namespace ""
+    const vectorCount = namespaceStats.vectorCount || 0;
+    return vectorCount;
+  } catch (error) {
+    console.error("Error getting index stats:", error);
+    return 0;
+  }
+}
+
 export {
   upsertEmbeddingToPinecone,
   semanticSimilaritySearch,
   deleteAllVectors,
+  getVectorCount
 };

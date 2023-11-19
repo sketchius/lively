@@ -1,4 +1,7 @@
+export { deleteCollection } from './userData.js';
+
 export {
+  createConversationForUser,
   getCurrentConversation,
   setCurrentConversation,
   getCurrentConversationId,
@@ -7,8 +10,15 @@ export {
   setConversationProperty,
   getConversationProperty,
   getAllKeywordsForConversation,
-  addKeywordToConversation
-  
+  addKeywordToConversation,
+  isObservationReferenceInConversation,
+  addObservationReferenceToConversation
 } from "./conversationData.js";
 
-export { createObservationForUser, getObservationForUser, updateObservationForUser } from "./observationData.js";
+export {   createRecordForUser,
+  addObservationToRecord,
+  getRecordForUser,
+  updateObservationInRecord,
+  getAllObservationsInRecord} from "./recordData.js";
+
+

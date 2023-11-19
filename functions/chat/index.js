@@ -5,10 +5,9 @@ import { handleMessage } from "./messageHandler.js";
 const chatApp = express();
 chatApp.use(express.json());
 
-import cors from 'cors';
-import { getConversation } from './conversationManager.js';
+import cors from "cors";
+import { getConversation } from "./conversationManager.js";
 chatApp.use(cors({ origin: true }));
-
 
 // Endpoint to send a message to the chatbot
 chatApp.post("/message", async (req, res) => {
@@ -17,7 +16,7 @@ chatApp.post("/message", async (req, res) => {
 });
 
 chatApp.get("/conversation", async (req, res) => {
-  const response = await getConversation();
+  const response = await getConversation(true);
   res.json(response);
 });
 

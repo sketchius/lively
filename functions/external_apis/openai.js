@@ -5,38 +5,10 @@ const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function (
-  masterSystemMessage,
-  conversationHistory,
-  newSystemMessage,
-  newUserMessage,
-  options
-) {
-  const messages = [
-    {
-      role: "system",
-      content: masterSystemMessage,
-    },
-    ...conversationHistory,
-    ...(newSystemMessage
-      ? [
-          {
-            role: "system",
-            content: newSystemMessage,
-          },
-        ]
-      : []),
-    {
-      role: "user",
-      content: newUserMessage,
-    },
-  ];
-
-  console.log("messages");
-
+const getOpenAIChatResponse = async function (messages, options) {
   const requestOptions = {
     model: "gpt-3.5-turbo-1106",
-    messages: messages
+    messages,
   };
 
   if (options?.logit_bias) {
@@ -49,12 +21,25 @@ const getOpenAIChatResponse = async function (
     requestOptions.functionCall = options.functionCall;
   }
 
-  try {
-    const openAIResponse = await openai.chat.completions.create(requestOptions);
-    return openAIResponse.choices[0].message;
-  } catch (error) {
-    console.log("Error in API Call: ", error);
-    return null;
+  const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms));
+
+  console.log("OPEN AI CALL:");
+  console.log(`Messages: `);
+  console.log(messages);
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const openAIResponse = await Promise.race([
+        openai.chat.completions.create(requestOptions),
+        timeout(10000) // 10 seconds timeout
+      ]);
+      console.log("OPEN AI RESPONSE:");
+      console.log(openAIResponse.choices[0].message);
+      return openAIResponse.choices[0].message;
+    } catch (error) {
+      console.log(`Attempt ${attempt}: `, error.message);
+      if (attempt === 3) throw new Error("Failed to get response after 3 attempts");
+    }
   }
 };
 

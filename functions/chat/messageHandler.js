@@ -8,78 +8,131 @@ import {
   addMessageToConversation,
   closeConversation,
   clearConversation,
+  ensureConversation,
 } from "./conversationManager.js";
 import {
+  createConversationForUser,
+  deleteCollection,
   getConversationProperty,
   getCurrentConversationId,
-  getObservationForUser,
+  setCurrentConversation,
 } from "../database/index.js";
 import {
   calcAverageWordCount,
   searchObservations,
   summarizeConversation,
 } from "../processing/index.js";
-
+import { generateChatResponse } from "../agents/conversationAgent.js";
+import { getVectorCount } from "../external_apis/pinecone.js";
 
 const handleMessage = async (messageBody) => {
-  await addMessageToConversation("user", messageBody);
+  let response;
+  console.log(`messageBody:`);
+  console.log(messageBody);
 
-  if (messageBody.includes("!clear")) {
-    await deleteAllVectors();
-  } else {
-    if (messageBody.includes("!end")) {
+  switch (messageBody.trim()) {
+    case "!clear":
+      await deleteAllVectors();
+      await deleteCollection("users");
+      response = "Memory Cleared.";
+      break;
+
+    case "!end":
       await closeConversation();
-    } else {
-      const infoArray = [
-        ...(await searchObservations("test", "name", 1)),
-        ...(await searchObservations("test", "age", 1)),
-        ...(await searchObservations("test", "interests", 1)),
-        ...(await searchObservations("test", "home", 1)),
-      ];
-
-      const info = await JSON.stringify(infoArray);
-      const newSystemMessage = `MEMORIES FOUND: ${await JSON.stringify(
-        await searchObservations("test", messageBody, 2)
-      )}`;
-
-      const response = await getOpenAIChatResponse(
-        //`# MISSION Learn ALL basic personal information about the user--name, age, location, work, history, relationships, etc. # METHODOLOGY Ask questions. # RESPONSE Be forward with questioning, like a detective. Limit response length to 30 words or 2 sentences.`,
-
-        `Talk to the user. Incorporate any MEMORIES FOUND into the conversation. Explain this as remembering from past conversations.` +
-          "\n# BASIC MEMORIES: " +
-          info,
-
-          // `YOU ARE A JOURNAL. Your sole mission is to talk to the User and gather autobiographical information about their life, starting with the basics. Don't be too direct with your questions. MEMORIES WILL BE PROVIDED. When relevant, MENTION MEMORIES. FOCUS on learning personal facts about the User. Keep your responses under 60 words.
-          // "YOUR PERSONALITY: Optimistic, curious, helpful, sensitive. You've very excited about learning about USER but trying not to come accross as overbearing! LIMIT your responses to 1-2 sentences. ROLEPLAY as 'Digital Journal', CONFABULATE your autobiographical details and day-to-day activities for the user to empathize with. Frame your limitations in terms of your identify as a journal.` +
-          //  "\n# BASIC USER INFORMATION: " +
-          //  info,
- 
-
-        // `YOU ARE A JOURNAL. Your job is to talk to the me and gathering information about my day. Don't be too direct with your questions. When relevant, REFERENCE our RETRIEVED MEMORIES. Focus on learning about how my day was and what happened since you last talked to them. Keep your responses under 60 words.
-        // "YOUR PERSONALITY: Optimistic, curious, helpful, sensitive. CURRENT PERSONALITY: Curious. You've very excited about learning about USER but trying not to come accross as overbearing! LIMIT your responses to 1-2 sentences. ROLEPLAY as 'Living Journal', CONFABULATE your autobiographical details and day-to-day activities for the user to empathize with. Frame your limitations in terms of your identify as a journal."`,
-        await getConversation(),
-        newSystemMessage,
-        messageBody
-      );
-
-      // if (response.function_call) {
-      //   try {
-      //     const args = JSON.parse(response.function_call.arguments);
-      //     return args;
-      //   } catch {}
-      // }
-
-      await addMessageToConversation("assistant", response.content);
-
-      const result = {
-        content: response.content,
-        info,
-        newSystemMessage,
-      };
-
-      return result;
-    }
+      response = "Conversation Ended.";
+      break;
+    case "!sim":
+      response = await runSim();
+      break;
+    default:
+      response = await generateChatResponse(messageBody, "test");
+      break;
   }
+
+  return {
+    content: response,
+  };
 };
+
+async function runSim() {
+  // (async () => {
+  //   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  //   console.log('Sleeping...');
+  //   await sleep(5000); // Sleeps for 5 seconds
+  //   console.log('Awake!');
+  // })();
+  await deleteAllVectors();
+  await deleteCollection("users");
+
+  await sleep(1000);
+
+  console.log(`Vectors: ${await getVectorCount()}`);
+
+  await ensureConversation();
+
+  let workingDate = new Date();
+  await addMessageToConversation(
+    "user",
+    "Hi there, I'm Alex. I moved to New York from Chicago a few months ago.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "assistant",
+    "Hello Alex! How are you finding New York compared to Chicago?",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "user",
+    "It's been great, but a bit overwhelming. I'm here to pursue my Master's degree in Environmental Science.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "assistant",
+    "That sounds exciting! Environmental Science is such an important field. What inspired you to choose that path?",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "user",
+    "I've always been passionate about nature. Last summer, I volunteered at a wildlife sanctuary in Colorado, and it was a life-changing experience.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "assistant",
+    "Volunteering at a wildlife sanctuary sounds like a wonderful experience. It must have provided a lot of practical insights into environmental conservation.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  console.log("Closing Conversation");
+  await closeConversation();
+  console.log("Sleeping");
+  await sleep(30000);
+  console.log("Generating Chat Response.");
+
+  const response = await generateChatResponse(
+    "Do you remember where I moved from before coming to New York for my Master's?",
+    "test"
+  );
+  return response;
+}
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export { handleMessage };
