@@ -1,9 +1,7 @@
 import {
-  addKeywordsToConversation,
   addMessageToConversation,
   attemptToAddObservationReference,
   ensureConversation,
-  filterConversationKeywords,
   getConversation,
 } from "../chat/conversationManager.js";
 import { getOpenAIChatResponse } from "../external_apis/index.js";
@@ -16,14 +14,6 @@ const generateChatResponse = async (userMessage, userId) => {
 
   const userMessateDateTime = new Date();
 
-  // const keywords = await filterConversationKeywords(
-  //   await extractKeywords(userMessage)
-  // );
-  // addKeywordsToConversation(keywords);
-
-  // const observationPromises = [];
-
-  // observationPromises.push(searchObservations(userId, userMessage, 5));
   const observations = [];
 
   const observationResults = await searchObservations(userId, userMessage, 1);

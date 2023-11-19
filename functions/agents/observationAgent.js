@@ -78,7 +78,6 @@ const mergeObservations = async (observation1, observation2) => {
     Your output should as short as possible.
     Your output should retain all unique information from both sources.
     Your output should reorganize the information in a way that makes sense.`;
-  // If there are any contractions, simply output "CONTRADICTION"`;
 
   const promptMessage = `MERGE the AUTOBIOGRAPHICAL INFORMATION in these TWO SOURCES:
 

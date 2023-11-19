@@ -2,7 +2,6 @@ import {
   getCurrentConversation,
   addMessageToCurrentConversation,
   getCurrentConversationId,
-  setConversationProperty,
   setCurrentConversation,
   getAllKeywordsForConversation,
   isObservationReferenceInConversation,
@@ -32,7 +31,6 @@ const addMessageToConversation = async (role, message, flags, datetime) => {
 
 const closeConversation = async () => {
   const currentConversationId = await getCurrentConversationId("test");
-  // summarizeConversation("test", currentConversationId);
   await executeObservations("test", currentConversationId);
   await setCurrentConversation("test", null);
 };

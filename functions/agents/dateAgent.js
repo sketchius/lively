@@ -11,7 +11,6 @@ const convertDatesFromRelativeToAbsolute = async (text) => {
   INPUT: "It'll be a couple months.", OUTPUT: "It'll be around January.";
   INPUT: "I haven't seen him in a couple years.", OUTPUT: "I haven't seen him since around 2021.";
   INPUT: "Joe was there last Christmas.", OUTPUT: "Joe was there Christmas 2022."`;
-  // If there are any contractions, simply output "CONTRADICTION"`;
 
   const promptMessage = `# COMMAND: Output text with any RELATIVE dates replaced with ABSOLUTE dates.
   # TEXT:

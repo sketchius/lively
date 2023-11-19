@@ -1,6 +1,5 @@
 import express from "express";
 import { handleMessage } from "./messageHandler.js";
-// import { getChatHistory } from './chatHistory.js';
 
 const chatApp = express();
 chatApp.use(express.json());
@@ -19,11 +18,5 @@ chatApp.get("/conversation", async (req, res) => {
   const response = await getConversation(true);
   res.json(response);
 });
-
-// Endpoint to retrieve a user's chat history
-// app.get('/chat/history', async (req, res) => {
-//   const history = await getChatHistory(req.query.userId);
-//   res.json(history);
-// });
 
 export { chatApp };

@@ -1,12 +1,6 @@
 import { getOpenAIChatResponse } from "../external_apis/index.js";
 
 const extractKeywords = async (text) => {
-  const logit_bias = {
-    /*9837: 60, 60: 60*/
-  }; // Discourage 'Our', 'our', 'We', 'we'; encourage '[', ']'
-
-  console.log("#################################");
-  console.log("TEXT = " + text);
 
   const systemMessage = `# ROLE
   You are an AI that specializes in reading text and extracting keywords from the text.
@@ -45,8 +39,7 @@ const extractKeywords = async (text) => {
   do {
     try {
       response = await getOpenAIChatResponse(messages, { logit_bias });
-      console.log("KEYWORD RESPONSE:");
-      console.log(response);
+
       keywords = parseAndExtractArray(response.content);
       break;
     } catch (error) {

@@ -1,27 +1,14 @@
 import {
-  createEmbedding,
   deleteAllVectors,
-  getOpenAIChatResponse,
 } from "../external_apis/index.js";
 import {
-  getConversation,
   addMessageToConversation,
   closeConversation,
-  clearConversation,
   ensureConversation,
 } from "./conversationManager.js";
 import {
-  createConversationForUser,
   deleteCollection,
-  getConversationProperty,
-  getCurrentConversationId,
-  setCurrentConversation,
 } from "../database/index.js";
-import {
-  calcAverageWordCount,
-  searchObservations,
-  summarizeConversation,
-} from "../processing/index.js";
 import { generateChatResponse } from "../agents/conversationAgent.js";
 import { getVectorCount } from "../external_apis/pinecone.js";
 
@@ -55,12 +42,7 @@ const handleMessage = async (messageBody) => {
 };
 
 async function runSim() {
-  // (async () => {
-  //   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-  //   console.log('Sleeping...');
-  //   await sleep(5000); // Sleeps for 5 seconds
-  //   console.log('Awake!');
-  // })();
+
   await deleteAllVectors();
   await deleteCollection("users");
 

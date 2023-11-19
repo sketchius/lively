@@ -1,7 +1,6 @@
 import { convertDatesFromRelativeToAbsolute } from "../agents/dateAgent.js";
 import {
   extractObservations,
-  mergeObservations,
 } from "../agents/observationAgent.js";
 import {
   getConversationById,
@@ -14,9 +13,8 @@ import {
   createEmbedding,
   upsertEmbeddingToPinecone,
 } from "../external_apis/index.js";
-import { createUID, removeStartingSubstring } from "../utils/index.js";
+import { createUID } from "../utils/index.js";
 import {
-  getOpenAIChatResponse,
   semanticSimilaritySearch,
 } from "../external_apis/index.js";
 
