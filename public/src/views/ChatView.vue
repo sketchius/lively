@@ -41,9 +41,9 @@ export default {
         // Assume sendMessageToServer is a method that sends the message to the server and waits for a response
 
         const response = await chatService.sendMessage(newMessage);
-
+        const parsedResponse = JSON.parse(response.data);
         // Add server (or ChatGPT) response to the conversation
-        this.messages.push({ role: "assistant", content: response.data });
+        this.messages.push({ role: "assistant", content: parsedResponse.content });
       } catch (error) {
         // Handle any errors, e.g., display an error message
         console.error("Error sending message:", error);

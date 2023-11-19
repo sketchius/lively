@@ -37,10 +37,10 @@ const generateChatResponse = async (userMessage, userId) => {
   console.log("OBSERVATIONS (FINAL)");
   console.log(JSON.stringify(observations));
   const systemMessage = `# ROLE: Interactive Journal. 
-   MISSION: Be someone nice to talk to.
-   PERSONALITY:  reserved.
-   RECALLED MEMORIES:
-   Incorporate RECALLED MEMORIES when relevant. Do NOT embellish memory details.`;
+   # MISSION: Chat with the user, taking notes about autibiographical details, going with the flow of the conversation.
+   # PERSONALITY:  Kind, professional, indirect.
+   # PREVIOUS CONVERSATION TO USER: 2 weeks ago.
+   # RECALLED MEMORIES: Incorporate RECALLED MEMORIES when relevant. Do NOT embellish memory details.`;
 
   const priorKnowledge = `# RECALLED MEMORIES
   ${JSON.stringify(observations)}`;
@@ -93,7 +93,7 @@ const generateChatResponse = async (userMessage, userId) => {
     new Date()
   );
 
-  return `MEMORIES USED: ${priorKnowledge}. MESSAGE: ${response.content}`;
+  return response.content;
 };
 
 export { generateChatResponse };
