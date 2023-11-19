@@ -1,5 +1,6 @@
 <template>
   <div class="chat-view">
+    <h1>Journal Chat - 11/19/23</h1>
     <MessageArea :messages="messages" />
     <ChatInput @sendMessage="handleSendMessage" />
   </div>
@@ -53,14 +54,25 @@ export default {
 </script>
 
 <style scoped>
+h1 {
+  color: #4c41af;
+  font-size: 1.4rem;
+  font-weight: 100;
+  align-self: flex-start;
+  margin-left: 3.5rem;
+}
+
 .chat-view {
   padding: 10em;
+  padding-top: 0;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 60ch;
   max-width: 60ch;
   margin: 0 auto;
-  height: 100vh; /* Use full viewport height */
+  height: 90vh; /* Use full viewport height */
 }
 
 .chat-input {

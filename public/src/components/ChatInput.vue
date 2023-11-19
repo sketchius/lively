@@ -7,7 +7,7 @@
       placeholder="Type a message..."
       ref="textarea"
     ></textarea>
-    <button @click="send">Send</button>
+    <img @click="send" src="../assets/images/icons/login.png" />
   </div>
 </template>
 
@@ -29,9 +29,16 @@ export default {
     },
     adjustHeight() {
       const textarea = this.$refs.textarea;
-      textarea.style.height = "auto"; // Temporarily collapse the textarea to reset scrollHeight
+      textarea.style.height = "1rem"; // Temporarily collapse the textarea to reset scrollHeight
       textarea.style.height = textarea.scrollHeight + "px"; // Set height based on content
+
+      // Scroll the textarea to the top as it grows
+      textarea.scrollTop = 0;
     },
+  },
+  mounted() {
+    // Call adjustHeight() when the component is mounted (loaded)
+    this.adjustHeight();
   },
 };
 </script>
@@ -42,21 +49,36 @@ export default {
   width: 100%; /* Set the maximum width */
   margin: 0 auto; /* Center the chat input */
   height: 2em;
+  margin-top: 1rem;
   justify-content: stretch;
+  height: fit-content;
+  border: 1px solid #ccc; /* You can change the border color */
+  border-radius: 10px; /* Adjust the radius for the desired roundness */
 }
 
 .chat-input textarea {
   padding: 10px;
-  padding-bottom: 0;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
   flex-grow: 1;
   margin-right: 10px;
-  resize: none;
   overflow: hidden;
   box-sizing: border-box;
-  min-height: 38px;
+  min-height: 0.5rem;
+  appearance: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  resize: none; /* Prevent textarea from being resized by the user */
+  border: none;
 }
 
-.chat-input button {
-  height: 38px;
+.chat-input img {
+  width: 1.5rem;
+  margin-right: 1rem;
+  align-self: center;
+  height: fit-content;
 }
 </style>

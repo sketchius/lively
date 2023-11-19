@@ -30,5 +30,22 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5ff;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #d0cde4; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bcb6ec; 
 }
 </style>
