@@ -12,6 +12,26 @@ export default {
   components: {
     ChatView,
   },
+  mounted() {
+    this.preloadImages();
+  },
+
+  methods: {
+    preloadImages() {
+      const imagesToPreload = [
+        "@/assets/images/profile/profile6.png",
+        "@/assets/images/profile/generic.png",
+      ];
+
+      imagesToPreload.forEach((imageSrc) => {
+        const img = new Image();
+        img.src = this.requireAsset(imageSrc);
+      });
+    },
+    requireAsset(path) {
+      return require(`${path}`);
+    },
+  },
 };
 </script>
 
@@ -40,12 +60,12 @@ body {
 ::-webkit-scrollbar-track {
   background: #f5f5ff;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-  background: #d0cde4; 
+  background: #d0cde4;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #bcb6ec; 
+  background: #bcb6ec;
 }
 </style>
