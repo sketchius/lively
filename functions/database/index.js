@@ -1,4 +1,4 @@
-export { deleteCollection } from './userData.js';
+export { deleteCollection } from "./userData.js";
 
 export {
   createConversationForUser,
@@ -12,13 +12,15 @@ export {
   getAllKeywordsForConversation,
   addKeywordToConversation,
   isObservationReferenceInConversation,
-  addObservationReferenceToConversation
+  addObservationReferenceToConversation,
 } from "./conversationData.js";
 
-export {   createRecordForUser,
+export {
+  createRecordForUser,
   addObservationToRecord,
   getRecordForUser,
   updateObservationInRecord,
-  getAllObservationsInRecord} from "./recordData.js";
+  getAllObservationsInRecord,
+} from "./recordData.js";
 
-
+export { firestore as firestore } from "./firestore.js";
