@@ -10,13 +10,14 @@ const pinecone = new Pinecone({
 const index = pinecone.index("agent-memory");
 
 
-async function upsertEmbeddingToPinecone(embedding, id) {
+async function upsertEmbeddingToPinecone(embedding, path, id) {
 
   const upsertData = {
     id: id,
     values: embedding,
     metadata: {
       upsertedAt: new Date().toISOString(),
+      path
     },
   };
 
@@ -35,9 +36,8 @@ async function semanticSimilaritySearch(embedding, topK) {
       vector: embedding,
       topK,
       includeValues: false,
+      includeMetadata: true
     });
-    console.log("Search results:");
-    console.log(searchResults);
     return searchResults.matches;
   } catch (error) {
     console.error("Error searching for similar embeddings:", error);
@@ -59,7 +59,6 @@ async function deleteAllVectors() {
     });
     const idsToDelete = searchResults.matches.map((match) => match.id);
     const response = await index.deleteMany(idsToDelete);
-    console.log("Search results:", searchResults);
     return searchResults.matches;
   } catch (error) {
     console.error("Error searching for similar embeddings:", error);
