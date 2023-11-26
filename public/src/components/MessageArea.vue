@@ -1,5 +1,5 @@
 <template>
-  <div class="message-area">
+  <div class="message-area" ref="messageArea">
     <ChatMessage
       v-for="(message, index) in decoratedMessages"
       :key="index"
@@ -29,9 +29,13 @@ export default {
   },
   methods: {
     getProfilePicture(role) {
-      const userImagePath = "path/to/user/image.jpg";
-      const assistantImagePath = require("@/assets/images/profile/journal6.png");
+      const userImagePath = "../assets/images/profile/generic.png";
+      const assistantImagePath = require("../assets/images/profile/journal6.png");
       return role === "user" ? userImagePath : assistantImagePath;
+    },
+    scrollToBottom() {
+      const container = this.$refs.messageArea;
+      container.scrollTop = container.scrollHeight;
     },
   },
 };
@@ -41,7 +45,7 @@ export default {
 .message-area {
   background-color: none;
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
   width: 100%;
   margin: 0 auto;
 }

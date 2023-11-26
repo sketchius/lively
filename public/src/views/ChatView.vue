@@ -1,7 +1,7 @@
 <template>
   <div class="chat-view">
     <h1>Journal Chat - 11/19/23</h1>
-    <MessageArea :messages="messages" />
+    <MessageArea ref="messageAreaRef" :messages="messages" />
     <ChatInput @sendMessage="handleSendMessage" />
   </div>
 </template>
@@ -28,6 +28,11 @@ export default {
       if (response.data && response.data.length) {
         this.messages = response.data;
       }
+      this.$nextTick(() => {
+          if (this.$refs.messageAreaRef) {
+            this.$refs.messageAreaRef.scrollToBottom();
+          }
+        });
     } catch (error) {
       console.error("Error loading conversation:", error);
     }
@@ -35,6 +40,12 @@ export default {
   methods: {
     async handleSendMessage(newMessage) {
       // Add user message to the conversation
+      
+      this.$nextTick(() => {
+          if (this.$refs.messageAreaRef) {
+            this.$refs.messageAreaRef.scrollToBottom();
+          }
+        });
       this.messages.push({ role: "user", content: newMessage });
 
       try {
@@ -43,7 +54,15 @@ export default {
         const response = await chatService.sendMessage(newMessage);
         const parsedResponse = JSON.parse(response.data);
         // Add server (or ChatGPT) response to the conversation
-        this.messages.push({ role: "assistant", content: parsedResponse.content });
+        this.messages.push({
+          role: "assistant",
+          content: parsedResponse.content,
+        });
+        this.$nextTick(() => {
+          if (this.$refs.messageAreaRef) {
+            this.$refs.messageAreaRef.scrollToBottom();
+          }
+        });
       } catch (error) {
         // Handle any errors, e.g., display an error message
         console.error("Error sending message:", error);
@@ -55,7 +74,7 @@ export default {
 
 <style scoped>
 h1 {
-  color: #4c41af;
+  color: #4a5d92;
   font-size: 1.4rem;
   font-weight: 100;
   align-self: flex-start;
