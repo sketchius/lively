@@ -29,10 +29,10 @@ export default {
         this.messages = response.data;
       }
       this.$nextTick(() => {
-          if (this.$refs.messageAreaRef) {
-            this.$refs.messageAreaRef.scrollToBottom();
-          }
-        });
+        if (this.$refs.messageAreaRef) {
+          this.$refs.messageAreaRef.scrollToBottom();
+        }
+      });
     } catch (error) {
       console.error("Error loading conversation:", error);
     }
@@ -40,13 +40,13 @@ export default {
   methods: {
     async handleSendMessage(newMessage) {
       // Add user message to the conversation
-      
-      this.$nextTick(() => {
-          if (this.$refs.messageAreaRef) {
-            this.$refs.messageAreaRef.scrollToBottom();
-          }
-        });
       this.messages.push({ role: "user", content: newMessage });
+
+      this.$nextTick(() => {
+        if (this.$refs.messageAreaRef) {
+          this.$refs.messageAreaRef.scrollToBottom();
+        }
+      });
 
       try {
         // Assume sendMessageToServer is a method that sends the message to the server and waits for a response
