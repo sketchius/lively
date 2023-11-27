@@ -22,10 +22,6 @@ const getConversation = async (includeIsContext) => {
 };
 
 const addMessageToConversation = async (role, message, flags, datetime) => {
-  console.log(`Role: ${role}`);
-  console.log(`message: ${message}`);
-  console.log(`flags: ${flags}`);
-  console.log(`datetime: ${datetime}`);
   addMessageToCurrentConversation("test", role, message, flags, datetime);
 };
 
