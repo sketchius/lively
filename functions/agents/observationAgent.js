@@ -1,6 +1,25 @@
 import { getOpenAIChatResponse } from "../external_apis/index.js";
 
+export const categoryNames = [
+  "Profile",
+  "Physical",
+  "Mental",
+  "Residence",
+  "Professional",
+  "Family",
+  "Financial",
+  "Activities",
+  "Views",
+  "Events",
+  "Goals",
+  "Challenges",
+  "Culture",
+];
+
+
 export const observationAgent = {
+  getCategories() { return categoryNames},
+
   async extract(conversation) {
     const logit_bias = {
       414: -20,
@@ -20,8 +39,10 @@ export const observationAgent = {
      - EACH observation should contain ONLY ONE SINGLE fact.
    - GROUP observations by SUBJECT (unique individual). Include OUTPUT for every subject mentioned.
     - Perspective: ALWAYS USE 3rd person perspective from the subject.
-   - For subjects who are not User, the FIRST observation MUST include How the User knows them (if stated in conversation)! (i.e. "Bob is User's friend", "Cynthia is User's mother.", "Jack's relationship to User is unkown.")
-    - For subjects who are not User, include a specifier for how the user knows them (i.e. "User's friend Joe", "User's aunt Lisa")
+    - Identify subjects other than User with relation to user (i.e. "User's friend Joe", "User's aunt Lisa")
+   - Include observation about relationship to User for non-user subjects.
+    - Do not include duplicate observations.
+    - User should only include observations primarily about User, not other people.
    - Include relative and absolute dates.
     - Output the data as a JSON array of objects with schema:
   \t[
@@ -33,13 +54,19 @@ export const observationAgent = {
   \t\t}
   \t]`;
 
-    const promptMessage = `#COMMAND: EXTRACT all AUTOBIOGRAPHICAL INFORMATION shared by the User in this conversation. ORGANIZE it by SUBJECT (each unique individual mentioned). Do NOT include references to, questions by, or commentary from the Assitant. OBSERVATION FORMAT: Singular statements in 3rd person perspective.
-    CONVERSATION: \n${conversation
+    const promptMessage = `#COMMAND: EXTRACT all AUTOBIOGRAPHICAL INFORMATION shared by the User in this conversation. ORGANIZE it by the PRIMARY SUBJECT of the FACT. Do not include observations about OTHER SUBJECTS in USER observations. Include observation about relationship to User for non-user subjects. Do NOT include references to, questions by, or commentary from the Assitant. OBSERVATION FORMAT: Singular statements in 3rd person perspective. CONVERSATION: \n${conversation
       .map(
         (conversationMessage) =>
           `${conversationMessage.role}:  ${conversationMessage.content}`
       )
       .join("\n\n")}`;
+
+    console.log(`${conversation
+      .map(
+        (conversationMessage) =>
+          `${conversationMessage.role}:  ${conversationMessage.content}`
+      )
+      .join("\n\n")}`);
 
     let errorMessage;
 
@@ -87,7 +114,7 @@ export const observationAgent = {
         attempt++;
         if (attempt >= maxAttempts) {
           throw new Error(
-            "Failed to parse JSON after multiple attempts" + error
+            "Failed to parse JSON after multiple attempts. Error: " + error
           );
         }
         console.log("Error: " + error);
@@ -96,76 +123,6 @@ export const observationAgent = {
     } while (true);
 
     return subjects;
-  },
-
-  async split(content, categoryId) {
-    const logit_bias = {
-      9837: 10,
-      60: 10,
-    }; // Encourage '[', ']' tokens
-
-    if (!content) return [];
-
-    const systemMessage = `# ROLE You are an agent that takes as input a paragraph containing statements about a person. separator.
-
-    #OUTPUT
-    ALWAYS ONLY output a JSON array of <string> independent statements. Do NOT include commentary, explanation, or apology.
-    
-    #REQUIREMENTS
-    ${
-      categoryId == 2
-        ? `* ALWAYS include a statment that summarizes how the User knows this person"`
-        : ``
-    }
-    * Statements should be ATOMIC, ALWAYS contain only a single assertion of fact. DO not include compound statements.
-    * Refer to the User as User.`;
-
-    const promptMessage = `#COMMAND Separate this statement about a person into individual independent statements. I am not the user.
-
-    # INPUT\n${content}`;
-
-    let errorMessage;
-
-    const messages = [
-      {
-        role: "system",
-        content: systemMessage,
-      },
-      {
-        role: "user",
-        content: promptMessage,
-      },
-    ];
-
-    if (errorMessage) {
-      messages.push({ role: "user", content: errorMessage });
-    }
-
-    let response, observations;
-    let attempt = 0;
-    const maxAttempts = 3;
-
-    do {
-      try {
-        response = await getOpenAIChatResponse(messages, { logit_bias });
-        observations = JSON.parse(response.content);
-        if (!Array.isArray(observations)) {
-          throw new Error("Invalid format. Output must be a JSON array.");
-        }
-        break;
-      } catch (error) {
-        attempt++;
-        if (attempt >= maxAttempts) {
-          throw new Error(
-            "Failed to parse JSON after multiple attempts" + error
-          );
-        }
-        console.log("Error: " + error);
-        errorMessage = "Error: " + error;
-      }
-    } while (true);
-
-    return observations;
   },
 
   async categorize(observation) {
@@ -191,7 +148,6 @@ export const observationAgent = {
     11\tGoals, Tasks, and Aspirations
     12\tChallenges, Regrets, and Struggles
     13\tCultural Details, Citizenship, Nationality, Ethnicity, Languages
-    14\tOther / Misc
 
 
       
@@ -249,25 +205,10 @@ export const observationAgent = {
       }
     } while (true);
 
-    const categoryNames = [
-      "Profile",
-      "Physical",
-      "Mental",
-      "Residence",
-      "Professional",
-      "Family",
-      "Financial",
-      "Activities",
-      "Views",
-      "Events",
-      "Goals",
-      "Challenges",
-      "Culture",
-      "Misc",
-    ];
+
 
     return {
-      name: categoryNames[id - 1] || null,
+      name: categoryNames[id - 1].toLowerCase() || null,
       id: id,
     };
   },
@@ -371,5 +312,81 @@ export const observationAgent = {
     } while (true);
 
     return result;
+  },
+
+  getCategories() { return categoryNames},
+
+  async matchPerson(people, observations) {
+
+    const systemMessage = `# ROLE
+    Your job is match the description of NEW PERSON to one of the descriptions of EXISTING PERSONS.
+    
+    # OUTPUT REQUIREMENTS
+    - Consider all of the details and whether there is a clear match.
+    - If there is a clear match, output the ID of the matching EXISTING PERSON.
+    - If there is no clear match, output -1.
+    - Output ONLY integers.`;
+
+    const promptMessage = `#COMMAND: Match the NEW PERSON with one of the EXITING PERSONS (or -1 if none match).
+    #NEW PERSON: \n${observations.join('\n')}
+    #EXISTING PERSONS:
+    ID\tDescription\n
+    ${people.map((person, index) => `${index + 1}\t${person.content}`).join('\n')}`;
+
+    let errorMessage;
+
+    const messages = [
+      {
+        role: "system",
+        content: systemMessage,
+      },
+      {
+        role: "user",
+        content: promptMessage,
+      },
+    ];
+
+    if (errorMessage) {
+      messages.push({ role: "user", content: errorMessage });
+    }
+
+    let response, subjects;
+    let attempt = 0;
+    const maxAttempts = 3;
+    let matchId;
+
+    do {
+      try {
+        response = await getOpenAIChatResponse(messages);
+        if (!/^-?\d+$/.test(response.content)) {
+          throw new Error(
+            `Invalid format. Output must be an integer. Received <${response.content}>`
+          );
+        }
+        matchId = parseInt(response.content);
+
+        if (matchId == 0 || matchId > people.length || matchId < -1) {
+          throw new Error(
+            `Index out of bounds. The given statement ID (${matchId}) was not an option.`
+          );
+        }
+
+        break;
+      } catch (error) {
+        attempt++;
+        if (attempt >= maxAttempts) {
+          throw new Error(
+            "Failed to parse JSON after multiple attempts. Error: " + error
+          );
+        }
+        console.log("Error: " + error);
+        errorMessage = "Error: " + error;
+      }
+    } while (true);
+
+    if (matchId != -1) {
+      return people[matchId-1].id;
+    }
+    return matchId;
   },
 };
