@@ -23,7 +23,7 @@ const handleMessage = async (messageBody) => {
       response = "Conversation Ended.";
       break;
     case "!sim":
-      response = await runSim();
+      response = await runSim2();
       break;
     default:
       response = await generateChatResponse(messageBody, "test");
@@ -269,6 +269,60 @@ async function runSim() {
   //   "test"
   // );
   // return response;
+  return "Done.";
+}
+
+async function runSim2() {
+  await deleteAllVectors();
+  await deleteCollection("users");
+
+  await sleep(1000);
+
+  await ensureConversation();
+
+  let workingDate = new Date();
+  await addMessageToConversation(
+    "user",
+    "Hi, how are you today?",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "assistant",
+    "Hello! I'm an AI, so I don't experience emotions, but I'm here and ready to chat with you. How can I assist you today?",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "user",
+    "I just wanted to talk about my party yesterday.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+ 
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "assistant",
+    "Of course! I'd be happy to hear about your party. Could you tell me a little bit about it?",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  workingDate.setSeconds(workingDate.getSeconds() + 1);
+  await addMessageToConversation(
+    "user",
+    "Good. My friend Joe and my cousin Jeff both came. Joe is a farmer that lives in Idaho and Jeff is a firefighter from Alaska.",
+    { isContext: false },
+    new Date(workingDate)
+  );
+
+  await closeConversation();
+
   return "Done.";
 }
 
