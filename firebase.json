@@ -2,7 +2,7 @@
   "functions": [
     {
       "source": "functions",
-      "codebase": "lively-journal",
+      "codebase": "lively-ai",
       "ignore": [
         "node_modules",
         ".git",

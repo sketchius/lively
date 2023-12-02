@@ -1,18 +1,15 @@
 {
-  "name": "lively-journal",
+  "name": "lively",
   "version": "1.0.0",
-  "description": "a web application that uses memory empowered AI to act astic journal and chatbot.",
+  "description": "a web application that uses AI to simulate a life coach.",
   "main": "\u0016functions/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "lively-journal"
+    "url": "lively"
   },
-  "keywords": [
-    "journal"
-  ],
   "author": "Bryce Huhtala",
   "license": "ISC",
   "dependencies": {

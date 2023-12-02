@@ -1,6 +1,6 @@
 <template>
   <div class="chat-view">
-    <h1>Journal Chat - 11/19/23</h1>
+    <h1>Chat</h1>
     <MessageArea ref="messageAreaRef" :messages="messages" />
     <ChatInput @sendMessage="handleSendMessage" />
   </div>
