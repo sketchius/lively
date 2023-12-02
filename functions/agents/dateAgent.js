@@ -109,3 +109,23 @@ ${text}`;
 };
 
 export { convertDatesFromRelativeToAbsolute, detectTemporalReferences };
+
+
+// Event extractor prompt:
+
+// # ROLE: Event extraction agent.
+// # INPUT: A CONVERSATION between User and Assistant.
+// # ATTENTION: Focus attention on events referenced in the conversation by the User. Events can be past or future. Only include EVENTs that the User would be likely to include on a Calendar.
+
+// # OUTPUT: 
+// -eventDesc: ALWAYS Write what happened in 3rd person from User's perspective. Refer to the User as "User".
+// -JSON in this format
+// [
+// \t{
+// \t\t"eventTime" : (required) When this event happened/will happen (rough date range ok),
+// \t\t"eventLocation" : (optional) Where the event happened/will happen,
+// \t\t"peopleInvolved" : (optional) People involved in the event,
+// \t\t"eventName" : (required) A 1-3 word summary of the event,
+// \t\t"eventDes" : (required) A description of what happened/will happen
+// \t}
+// ]
