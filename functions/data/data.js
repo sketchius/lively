@@ -1,4 +1,4 @@
-import { firestore } from "./firestore.js";
+import { firestore } from "../firebase/firestore.js";
 
 export const goalData = {
   async createGoal(userId, goalData) {
