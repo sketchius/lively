@@ -1,11 +1,12 @@
-import { firestore } from "../firebase/firestore.js";
+import { firestore } from "../firestore/firestore.js";
+import { createUID } from "../utils/uid.js";
 
 export const goalData = {
   async createGoal(userId, goalData) {
-    const path = `users/${userId}/goals`;
-    const newGoalRef = firestore.getPathRef(path).doc();
-    await newGoalRef.set(goalData);
-    return newGoalRef.id;
+    const uid = createUID();
+    const path = `users/${userId}/goals/${uid}`;
+    await firestore.create(path, goalData);
+    return uid;
   },
 
   async getGoal(userId, goalId) {
@@ -26,7 +27,7 @@ export const goalData = {
   async deleteGoal(userId, goalId) {
     const path = `users/${userId}/goals/${goalId}`;
     await firestore.delete(path);
-  }
+  },
 };
 
 export const objectiveData = {
@@ -58,7 +59,6 @@ export const objectiveData = {
   },
 };
 
-
 export const taskData = {
   async createTask(userId, objectiveId, taskData) {
     const path = `users/${userId}/objectives/${objectiveId}/tasks`;
@@ -85,5 +85,5 @@ export const taskData = {
   async deleteTask(userId, objectiveId, taskId) {
     const path = `users/${userId}/objectives/${objectiveId}/tasks/${taskId}`;
     await firestore.delete(path);
-  }
+  },
 };
