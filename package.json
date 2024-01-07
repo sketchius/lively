@@ -16,6 +16,7 @@
     "@pinecone-database/pinecone": "^1.1.2",
     "dotenv": "^16.3.1",
     "keyword-extractor": "^0.0.28",
-    "openai": "^4.17.4"
+    "openai": "^4.17.4",
+    "vue-router": "^4.2.5"
   }
 }
