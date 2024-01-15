@@ -10,9 +10,9 @@ export const firestore = {
   async read(path) {
     const ref = this.getPathRef(path);
     if (ref.id && ref.path) {
-  } else if (ref.doc) {
-  } else {
-  }
+    } else if (ref.doc) {
+    } else {
+    }
     if (!ref) throw new Error("Invalid path for read operation");
     const docSnap = await ref.get();
 
@@ -23,7 +23,7 @@ export const firestore = {
   async list(path) {
     const ref = db.collection(path);
     const querySnapshot = await ref.get();
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
   },
 
   async update(path, data) {
