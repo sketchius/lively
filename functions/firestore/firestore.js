@@ -8,23 +8,13 @@ export const firestore = {
   },
 
   async read(path) {
-    console.log("Reading " + path + "...");
     const ref = this.getPathRef(path);
     if (ref.id && ref.path) {
-      console.log('It is a document reference');
-      console.log(ref.path);
   } else if (ref.doc) {
-      console.log('It is a collection reference');
   } else {
-      console.log('Unknown reference type');
   }
     if (!ref) throw new Error("Invalid path for read operation");
     const docSnap = await ref.get();
-
-    console.log("docSnap:");
-    console.log(docSnap);
-    console.log("typeof docSnap.exists"); // Should log 'function'
-    console.log(typeof docSnap.exists); // Should log 'function'
 
     if (!docSnap.exists) throw new Error("Document not found");
     return docSnap.data();
