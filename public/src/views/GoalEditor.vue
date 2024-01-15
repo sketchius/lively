@@ -24,15 +24,11 @@
     </div>
     <div class="input-wrapper">
       <label for="objective-map">Objective List</label>
-      <div 
-        class="objective-map">
-      <div
-        v-for="objective in goal.objectives"
-        :key="objective.id"
-      >
-        <span>{{ objective.data.title }}</span>
+      <div class="objective-map">
+        <div v-for="objective in goal.objectives" :key="objective.id">
+          <span>{{ objective.data.title }}</span>
+        </div>
       </div>
-    </div>
     </div>
     <div class="buttons">
       <button class="button" @click="addObjective">New Objective</button>
@@ -83,11 +79,26 @@ export default {
     };
 
     const save = async () => {
-      await dataService.createGoal(goal.value);
-      router.back();
+      switch (operation) {
+        case "create":
+          await dataService.createGoal(goal.value);
+          router.back();
+          break;
+        case "edit":
+          await dataService.updateGoal(goal.value.id, goal.value);
+          router.back();
+          break;
+      }
     };
 
-    return { goal, operation, addObjective, editObjective, deleteObjective, save };
+    return {
+      goal,
+      operation,
+      addObjective,
+      editObjective,
+      deleteObjective,
+      save,
+    };
   },
 };
 </script>
