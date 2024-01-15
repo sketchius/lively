@@ -19,32 +19,50 @@
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, watch } from "vue";
+<script>
+import { computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-const store = useStore();
-const objectives = computed(() => store.state.objectives);
-const objectiveListNeedsRefresh = computed(() => store.state.objectiveListNeedsRefresh);
+export default {
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    const objectives = computed(() => store.state.objectives);
+    const objectiveListNeedsRefresh = computed(
+      () => store.state.objectiveListNeedsRefresh
+    );
 
-onMounted(() => {
-  store.dispatch("fetchObjectives");
-});
+    onMounted(() => {
+      store.dispatch("fetchObjectives");
+    });
 
-watch(objectiveListNeedsRefresh, (newValue) => {
-  if (newValue) {
-    store.dispatch("fetchObjectives");
-  }
-});
+    watch(objectiveListNeedsRefresh, (newValue) => {
+      if (newValue) {
+        store.dispatch("fetchObjectives");
+      }
+    });
 
-const deleteObjective = async (objectiveId) => {
-  await store.dispatch("deleteObjective", objectiveId);
-};
+    const deleteObjective = async (objectiveId) => {
+      await store.dispatch("deleteObjective", objectiveId);
+    };
 
-const editObjective = (objective) => {
-  store.dispatch("editObjective", objective);
+    const editObjective = (objective) => {
+      store.commit("setCurrentOperation", "edit");
+      store.commit("updateEditorObjective",objective);
+      router.push("/objectives/editor");
+    };
+
+    const createObjective = () => {
+      store.commit("setCurrentOperation", "create");
+      router.push("/objectives/editor");
+    };
+
+    return { objectives, deleteObjective, editObjective, createObjective };
+  },
 };
 </script>
+
 
 <style scoped>
 .list-heading {

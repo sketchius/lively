@@ -2,9 +2,7 @@
   <div class="goal-list">
     <div class="list-heading">
       <h2>Goals</h2>
-      <router-link to="/goals/editor"
-        ><button class="button icon">+</button></router-link
-      >
+      ><button class="button icon" @click="createGoal()">+</button>
     </div>
     <div v-for="goal in goals" :key="goal.id" class="goal-item">
       <div class="title">
@@ -19,30 +17,47 @@
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, watch } from "vue";
+<script>
+import { computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-const store = useStore();
-const goals = computed(() => store.state.goals);
-const goalListNeedsRefresh = computed(() => store.state.goalListNeedsRefresh);
+export default {
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    const goals = computed(() => store.state.goals);
+    const goalListNeedsRefresh = computed(
+      () => store.state.goalListNeedsRefresh
+    );
 
-onMounted(() => {
-  store.dispatch("fetchGoals");
-});
+    onMounted(() => {
+      store.dispatch("fetchGoals");
+    });
 
-watch(goalListNeedsRefresh, (newValue) => {
-  if (newValue) {
-    store.dispatch("fetchGoals");
-  }
-});
+    watch(goalListNeedsRefresh, (newValue) => {
+      if (newValue) {
+        store.dispatch("fetchGoals");
+      }
+    });
 
-const deleteGoal = async (goalId) => {
-  await store.dispatch("deleteGoal", goalId);
-};
+    const deleteGoal = async (goalId) => {
+      await store.dispatch("deleteGoal", goalId);
+    };
 
-const editGoal = (goal) => {
-  store.dispatch("editGoal", goal);
+    const editGoal = (goal) => {
+      store.commit("setCurrentOperation", "edit");
+      store.commit("updateEditorGoal",goal);
+      router.push("/goals/editor");
+    };
+
+    const createGoal = () => {
+      store.commit("setCurrentOperation", "create");
+      router.push("/goals/editor");
+    };
+
+    return { goals, deleteGoal, editGoal, createGoal };
+  },
 };
 </script>
 

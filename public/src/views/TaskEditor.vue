@@ -1,6 +1,6 @@
 <template>
   <div class="task-form-container">
-    <h2>New Task</h2>
+    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="task.title" placeholder="Title" />

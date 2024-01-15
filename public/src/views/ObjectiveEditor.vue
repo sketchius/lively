@@ -1,6 +1,6 @@
 <template>
   <div class="objective-form-container">
-    <h2>New Objective</h2>
+    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input

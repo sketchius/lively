@@ -24,6 +24,7 @@ export default createStore({
         timeFrame: "",
         requiresWrite: true,
       },
+      currentOperation: "none",
       lastAction: "none",
       goals: [],
       currentRightPanelComponent: "CreateGoal",
@@ -45,6 +46,9 @@ export default createStore({
     },
     setTasks(state, tasks) {
       state.tasks = tasks;
+    },
+    setCurrentOperation(state, operation) {
+      state.currentOperation = operation;
     },
     setLastAction(state, lastAction) {
       state.lastAction = lastAction;

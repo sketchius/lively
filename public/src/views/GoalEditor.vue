@@ -1,6 +1,6 @@
 <template>
   <div class="goal-form-container">
-    <h2>New Goal</h2>
+    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="goal.title" placeholder="Title" />
@@ -57,6 +57,7 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
+    const operation = store.state.currentOperation;
     const lastAction = store.state.lastAction;
 
     if (lastAction === "createObjective") {
@@ -86,7 +87,7 @@ export default {
       router.back();
     };
 
-    return { goal, addObjective, editObjective, deleteObjective, save };
+    return { goal, operation, addObjective, editObjective, deleteObjective, save };
   },
 };
 </script>

@@ -19,30 +19,47 @@
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, watch } from "vue";
+<script>
+import { computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-const store = useStore();
-const tasks = computed(() => store.state.tasks);
-const taskListNeedsRefresh = computed(() => store.state.taskListNeedsRefresh);
+export default {
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    const tasks = computed(() => store.state.tasks);
+    const taskListNeedsRefresh = computed(
+      () => store.state.taskListNeedsRefresh
+    );
 
-onMounted(() => {
-  store.dispatch("fetchTasks");
-});
+    onMounted(() => {
+      store.dispatch("fetchTasks");
+    });
 
-watch(taskListNeedsRefresh, (newValue) => {
-  if (newValue) {
-    store.dispatch("fetchTasks");
-  }
-});
+    watch(taskListNeedsRefresh, (newValue) => {
+      if (newValue) {
+        store.dispatch("fetchTasks");
+      }
+    });
 
-const deleteTask = async (taskId) => {
-  await store.dispatch("deleteTask", taskId);
-};
+    const deleteTask = async (taskId) => {
+      await store.dispatch("deleteTask", taskId);
+    };
 
-const editTask = (task) => {
-  store.dispatch("editTask", task);
+    const editTask = (task) => {
+      store.commit("setCurrentOperation", "edit");
+      store.commit("updateEditorTask",task);
+      router.push("/tasks/editor");
+    };
+
+    const createTask = () => {
+      store.commit("setCurrentOperation", "create");
+      router.push("/tasks/editor");
+    };
+
+    return { tasks, deleteTask, editTask, createTask };
+  },
 };
 </script>
 
