@@ -94,7 +94,7 @@ dataApp.put("/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId();
     const data = req.body;
-
+    
     for (let i = 0; i < data.objectives.length; i++) {
       const objective = data.objectives[i];
 
@@ -118,8 +118,8 @@ dataApp.put("/goals/:goalId", async (req, res) => {
       delete objective.modified;
     }
 
-    await goalData.updateGoal(userId, goalId, data);
-    res.json({ goalId });
+    await goalData.updateGoal(userId, req.params.goalId, data);
+    res.status(200).send("Goal updated.");
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
