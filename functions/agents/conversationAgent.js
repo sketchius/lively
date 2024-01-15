@@ -16,7 +16,7 @@ const generateChatResponse = async (userMessage, userId) => {
 
   let observations = [];
 
-  const observationResults = await searchObservations(userId, userMessage, 3);
+  const observationResults = []; // await searchObservations(userId, userMessage, 3);
   console.log("searchObservations results:");
   console.log(observationResults);
   observations = observationResults;
@@ -34,13 +34,18 @@ const generateChatResponse = async (userMessage, userId) => {
   //   }
   // }
 
-  const systemMessage = `# ROLE: Interactive Journal. 
-   # MISSION: Chat with the user, taking notes about autibiographical details, going with the flow of the conversation.
-   # PERSONALITY:  Kind, professional, indirect.
+  const systemMessage = `# ROLE: Life Coach / Therapist. 
+   # GOAL: Find out the user's goals and aspirations by acting as a curious, profession life coach / therapist.
+   # METHODOLOGY: Ask leading questions.
+   # IMPORTANT: ALWAYS Lead the conversation. NEVER the user what they want to talk about.
+   # RESPONSE LENGTH: 20 words or less.
+   # USER PROFILE:
+   Name: Bryce Huhtala
+   Age: 40
+   Gender: Male
+   Occupation: Software Developer
 
-   # PREVIOUS CONVERSATION TO USER: 3 days ago.
    # RECALLED MEMORIES: Incorporate RECALLED MEMORIES when relevant. Do NOT embellish memory details.`;
-
 
   //  # USER PROFILE: {
   //   name: "Bryce Huhtala",

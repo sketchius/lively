@@ -5,6 +5,7 @@ export const goalData = {
   async createGoal(userId, goalData) {
     const uid = createUID();
     const path = `users/${userId}/goals/${uid}`;
+    console.log(goalData);
     await firestore.create(path, goalData);
     return uid;
   },
@@ -28,14 +29,41 @@ export const goalData = {
     const path = `users/${userId}/goals/${goalId}`;
     await firestore.delete(path);
   },
+
+  async createPlan(userId, goalData) {
+    const uid = createUID();
+    const path = `users/${userId}/goals/${goalId}/plans/${uid}`;
+    await firestore.create(path, goalData);
+    return uid;
+  },
+
+  async getPlan(userId, goalId, planId) {
+    const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
+    return await firestore.read(path);
+  },
+
+  async listPlans(userId, goalId) {
+    const path = `users/${userId}/goals/${goalId}/plans`;
+    return await firestore.list(path);
+  },
+
+  async updatePlan(userId, goalId, planId, planData) {
+    const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
+    await firestore.update(path, planData);
+  },
+
+  async deletePlan(userId, goalId, planId) {
+    const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
+    await firestore.delete(path);
+  },
 };
 
 export const objectiveData = {
   async createObjective(userId, objectiveData) {
-    const path = `users/${userId}/objectives`;
-    const newObjectiveRef = firestore.getPathRef(path).doc();
-    await newObjectiveRef.set(objectiveData);
-    return newObjectiveRef.id;
+    const uid = createUID();
+    const path = `users/${userId}/objectives/${uid}`;
+    await firestore.create(path, objectiveData);
+    return uid;
   },
 
   async getObjective(userId, objectiveId) {
@@ -57,33 +85,60 @@ export const objectiveData = {
     const path = `users/${userId}/objectives/${objectiveId}`;
     await firestore.delete(path);
   },
-};
 
-export const taskData = {
-  async createTask(userId, objectiveId, taskData) {
-    const path = `users/${userId}/objectives/${objectiveId}/tasks`;
-    const newTaskRef = firestore.getPathRef(path).doc();
-    await newTaskRef.set(taskData);
-    return newTaskRef.id;
+  async createPlan(userId, objectiveData) {
+    const uid = createUID();
+    const path = `users/${userId}/objectives/${objectiveId}/plans/${uid}`;
+    await firestore.create(path, objectiveData);
+    return uid;
   },
 
-  async getTask(userId, objectiveId, taskId) {
-    const path = `users/${userId}/objectives/${objectiveId}/tasks/${taskId}`;
+  async getPlan(userId, objectiveId, planId) {
+    const path = `users/${userId}/objectives/${objectiveId}/plans/${planId}`;
     return await firestore.read(path);
   },
 
-  async listTasks(userId, objectiveId) {
-    const path = `users/${userId}/objectives/${objectiveId}/tasks`;
+  async listPlans(userId, objectiveId) {
+    const path = `users/${userId}/objectives/${objectiveId}/plans`;
     return await firestore.list(path);
   },
 
-  async updateTask(userId, objectiveId, taskId, taskData) {
-    const path = `users/${userId}/objectives/${objectiveId}/tasks/${taskId}`;
+  async updatePlan(userId, objectiveId, planId, planData) {
+    const path = `users/${userId}/objectives/${objectiveId}/plans/${planId}`;
+    await firestore.update(path, planData);
+  },
+
+  async deletePlan(userId, objectiveId, planId) {
+    const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
+    await firestore.delete(path);
+  },
+};
+
+export const taskData = {
+  async createTask(userId, taskData) {
+    const uid = createUID();
+    const path = `users/${userId}/tasks/${uid}`;
+    await firestore.create(path, taskData);
+    return uid;
+  },
+
+  async getTask(userId, taskId) {
+    const path = `users/${userId}/tasks/${taskId}`;
+    return await firestore.read(path);
+  },
+
+  async listTasks(userId) {
+    const path = `users/${userId}/tasks`;
+    return await firestore.list(path);
+  },
+
+  async updateTask(userId, taskId, taskData) {
+    const path = `users/${userId}/tasks/${taskId}`;
     await firestore.update(path, taskData);
   },
 
-  async deleteTask(userId, objectiveId, taskId) {
-    const path = `users/${userId}/objectives/${objectiveId}/tasks/${taskId}`;
+  async deleteObjective(userId, taskId) {
+    const path = `users/${userId}/tasks/${taskId}`;
     await firestore.delete(path);
   },
 };

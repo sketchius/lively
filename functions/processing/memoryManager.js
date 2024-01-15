@@ -10,7 +10,7 @@ import {
   addObservationToRecord,
   getAllObservationsInRecord,
   firestore,
-} from "../database/index.js";
+} from "../firestore/index.js";
 import {
   createEmbedding,
   upsertEmbeddingToPinecone,
@@ -154,13 +154,12 @@ const executeObservations = async (userId, conversationId) => {
             updatedAt: new Date(),
             content: observation,
           };
-          firestore.create(`users/test/people/${personUID}/${category.name}/${uid}`, data);
-          const embedding = await createEmbedding(observation);
-          upsertEmbeddingToPinecone(
-            embedding,
-            `users/test/people`,
-            personUID
+          firestore.create(
+            `users/test/people/${personUID}/${category.name}/${uid}`,
+            data
           );
+          const embedding = await createEmbedding(observation);
+          upsertEmbeddingToPinecone(embedding, `users/test/people`, personUID);
 
           newObservations.push(observation);
         } else {
@@ -194,8 +193,6 @@ const executeObservations = async (userId, conversationId) => {
     }
   }
 };
-
-
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

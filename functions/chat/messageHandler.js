@@ -4,7 +4,7 @@ import {
   closeConversation,
   ensureConversation,
 } from "./conversationManager.js";
-import { deleteCollection } from "../database/index.js";
+import { deleteCollection } from "../firestore/index.js";
 import { generateChatResponse } from "../agents/conversationAgent.js";
 import { getVectorCount } from "../external_apis/pinecone.js";
 

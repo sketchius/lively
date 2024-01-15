@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:3000'; // Replace with your actual API URL
+const API_URL = "http://127.0.0.1:5001/lively-ai/us-central1/data"; 
 
 export default {
   // Goals
@@ -19,6 +19,21 @@ export default {
   deleteGoal(goalId) {
     return axios.delete(`${API_URL}/goals/${goalId}`);
   },
+  createGoalPlan(goalId, planData) {
+    return axios.post(`${API_URL}/goals/${goalId}/plans`, planData);
+  },
+  getGoalPlan(goalId, planId) {
+    return axios.get(`${API_URL}/goals/${goalId}/plans/${planId}`);
+  },
+  listGoalPlans(goalId) {
+    return axios.get(`${API_URL}/goals/${goalId}/plans`);
+  },
+  updateGoalPlan(goalId, planId, planData) {
+    return axios.put(`${API_URL}/goals/${goalId}/plans/${planId}`, planData);
+  },
+  deleteGoalPlan(goalId, planId) {
+    return axios.delete(`${API_URL}/goals/${goalId}/plans/${planId}`);
+  },
 
   // Objectives
   createObjective(objectiveData) {
@@ -36,21 +51,36 @@ export default {
   deleteObjective(objectiveId) {
     return axios.delete(`${API_URL}/objectives/${objectiveId}`);
   },
+  createObjectivePlan(objectiveId, planData) {
+    return axios.post(`${API_URL}/objectives/${objectiveId}/plans`, planData);
+  },
+  getObjectivePlan(objectiveId, planId) {
+    return axios.get(`${API_URL}/objectives/${objectiveId}/plans/${planId}`);
+  },
+  listObjectivePlans(objectiveId) {
+    return axios.get(`${API_URL}/objectives/${objectiveId}/plans`);
+  },
+  updateObjectivePlan(objectiveId, planId, planData) {
+    return axios.put(`${API_URL}/objectives/${objectiveId}/plans/${planId}`, planData);
+  },
+  deleteObjectivePlan(objectiveId, planId) {
+    return axios.delete(`${API_URL}/objectives/${objectiveId}/plans/${planId}`);
+  },
 
   // Tasks
-  createTask(objectiveId, taskData) {
-    return axios.post(`${API_URL}/objectives/${objectiveId}/tasks`, taskData);
+  createTask(taskData) {
+    return axios.post(`${API_URL}/tasks`, taskData);
   },
-  getTask(objectiveId, taskId) {
-    return axios.get(`${API_URL}/objectives/${objectiveId}/tasks/${taskId}`);
+  getTask(taskId) {
+    return axios.get(`${API_URL}/tasks/${taskId}`);
   },
-  listTasks(objectiveId) {
-    return axios.get(`${API_URL}/objectives/${objectiveId}/tasks`);
+  listTasks() {
+    return axios.get(`${API_URL}/tasks`);
   },
-  updateTask(objectiveId, taskId, taskData) {
-    return axios.put(`${API_URL}/objectives/${objectiveId}/tasks/${taskId}`, taskData);
+  updateTask(taskId, taskData) {
+    return axios.put(`${API_URL}/tasks/${taskId}`, taskData);
   },
-  deleteTask(objectiveId, taskId) {
-    return axios.delete(`${API_URL}/objectives/${objectiveId}/tasks/${taskId}`);
+  deleteTask(taskId) {
+    return axios.delete(`${API_URL}/tasks/${taskId}`);
   }
 };

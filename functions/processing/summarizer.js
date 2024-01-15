@@ -4,7 +4,7 @@ import {
   getConversationById,
   getConversationProperty,
   setConversationProperty,
-} from "../database/index.js";
+} from "../firestore/index.js";
 
 const summarizeConversation = async (userId, conversationId) => {
   const messages = await getConversationById(userId, conversationId);

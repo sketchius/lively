@@ -8,7 +8,7 @@ import {
   addObservationReferenceToConversation,
   createConversationForUser,
   addKeywordToConversation,
-} from "../database/index.js";
+} from "../firestore/index.js";
 import { executeObservations } from "../processing/index.js";
 
 const ensureConversation = async () => {
