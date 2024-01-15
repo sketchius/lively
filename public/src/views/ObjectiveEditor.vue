@@ -31,7 +31,7 @@
       <label for="task-map">Task List</label>
       <div class="task-map">
         <div v-for="task in objective.tasks" :key="task.id">
-          <span>{{ task.title }}</span>
+          <span>{{ task.data.title }}</span>
         </div>
       </div>
       <div class="buttons">

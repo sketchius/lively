@@ -30,7 +30,7 @@
         v-for="objective in goal.objectives"
         :key="objective.id"
       >
-        <span>{{ objective.title }}</span>
+        <span>{{ objective.data.title }}</span>
       </div>
     </div>
     </div>

@@ -13,6 +13,20 @@
         </button>
       </div>
       <p>{{ goal.description }}</p>
+      <div
+        v-for="objective in goal.objectives"
+        :key="objective.id"
+        class="objective-item"
+      >
+        <h4>{{ objective.data.title }}</h4>
+        <div
+          v-for="task in objective.data.tasks"
+          :key="task.id"
+          class="task-item"
+        >
+          <h5>{{ task.data.title }}</h5>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -33,7 +47,7 @@ export default {
 
     onMounted(() => {
       store.dispatch("fetchGoals");
-    });
+          });
 
     watch(goalListNeedsRefresh, (newValue) => {
       if (newValue) {
