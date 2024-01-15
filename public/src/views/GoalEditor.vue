@@ -66,7 +66,7 @@ export default {
 
     const updateNewGoal = () => {
       store.commit("updateEditorGoal", goal.value);
-      // Logic for saving
+      store.commit("markEditorGoalModified");
     };
 
     const addObjective = () => {

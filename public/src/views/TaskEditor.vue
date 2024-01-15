@@ -44,6 +44,7 @@ export default {
 
     const updateEditorTask = () => {
       store.commit("updateEditorTask", task.value);
+      store.commit("markEditorObjectiveModified");
     };
 
     const save = () => {

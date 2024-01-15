@@ -9,20 +9,20 @@ export default createStore({
         details: "",
         timeFrame: "",
         objectives: [],
-        requiresWrite: true,
+        modified: false,
       },
       currentEditorObjective: {
         title: "",
         details: "",
         timeFrame: "",
         tasks: [],
-        requiresWrite: true,
+        modified: false,
       },
       currentEditorTask: {
         title: "",
         details: "",
         timeFrame: "",
-        requiresWrite: true,
+        modified: false,
       },
       currentOperation: "none",
       lastAction: "none",
@@ -76,6 +76,18 @@ export default createStore({
     },
     updateEditorTask(state, taskData) {
       state.currentEditorTask = taskData;
+    },
+    markEditorGoalModified(state) {
+      if (state.currentEditorGoal)
+        state.currentEditorGoal.modified = true;
+    },
+    markEditorObjectiveModified(state) {
+      if (state.currentEditorObjective)
+        state.currentEditorObjective.modified = true;
+    },
+    markEditorTaskModified(state) {
+      if (state.currentEditorTask)
+        state.currentEditorTask.modified = true;
     },
     addEditorObjectiveToEditorGoal(state) {
       state.currentEditorGoal.objectives.push({

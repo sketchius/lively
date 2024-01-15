@@ -66,7 +66,7 @@ export default {
 
     const updateNewObjective = () => {
       store.commit("updateEditorObjective", objective.value);
-      // Logic for saving
+      store.commit("markEditorObjectiveModified");
     };
 
     const addTask = () => {
