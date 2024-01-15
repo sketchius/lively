@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 // Import your view components
 import Home from "../views/HomeView.vue";
-import Tasks from "../views/TasksView.vue";
+import Tasks from "../views/TaskView.vue";
 import Goals from "../views/GoalView.vue";
 import Objectives from "../views/ObjectiveView.vue";
 import Habits from "../views/HabitsView.vue";

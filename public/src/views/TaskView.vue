@@ -1,20 +1,20 @@
 <template>
-  <div class="objective-list">
+  <div class="task-list">
     <div class="list-heading">
-      <h2>Objectives</h2>
-      <router-link to="/objectives/editor"
+      <h2>Tasks</h2>
+      <router-link to="/tasks/editor"
         ><button class="button icon">+</button></router-link
       >
     </div>
-    <div v-for="objective in objectives" :key="objective.id" class="objective-item">
+    <div v-for="task in tasks" :key="task.id" class="task-item">
       <div class="title">
-        <h3>{{ objective.title }}</h3>
-        <button class="icon-button" @click="editObjective(objective)">E</button>
-        <button class="icon-button delete" @click="deleteObjective(objective.id)">
+        <h3>{{ task.title }}</h3>
+        <button class="icon-button" @click="editTask(task)">E</button>
+        <button class="icon-button delete" @click="deleteTask(task.id)">
           D
         </button>
       </div>
-      <p>{{ objective.description }}</p>
+      <p>{{ task.description }}</p>
     </div>
   </div>
 </template>
@@ -24,25 +24,25 @@ import { computed, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-const objectives = computed(() => store.state.objectives);
-const objectiveListNeedsRefresh = computed(() => store.state.objectiveListNeedsRefresh);
+const tasks = computed(() => store.state.tasks);
+const taskListNeedsRefresh = computed(() => store.state.taskListNeedsRefresh);
 
 onMounted(() => {
-  store.dispatch("fetchObjectives");
+  store.dispatch("fetchTasks");
 });
 
-watch(objectiveListNeedsRefresh, (newValue) => {
+watch(taskListNeedsRefresh, (newValue) => {
   if (newValue) {
-    store.dispatch("fetchObjectives");
+    store.dispatch("fetchTasks");
   }
 });
 
-const deleteObjective = async (objectiveId) => {
-  await store.dispatch("deleteObjective", objectiveId);
+const deleteTask = async (taskId) => {
+  await store.dispatch("deleteTask", taskId);
 };
 
-const editObjective = (objective) => {
-  store.dispatch("editObjective", objective);
+const editTask = (task) => {
+  store.dispatch("editTask", task);
 };
 </script>
 
@@ -52,21 +52,21 @@ const editObjective = (objective) => {
   justify-content: space-between;
 }
 
-.objective-list {
+.task-list {
   width: 80%;
   display: flex;
   flex-direction: column;
   min-height: 80%;
 }
 
-.objective-item {
+.task-item {
   margin-bottom: 20px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.objective-item p {
+.task-item p {
   margin: 0;
 }
 
