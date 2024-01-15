@@ -24,6 +24,7 @@ dataApp.post("/goals", async (req, res) => {
         const task = objective.data.tasks[j];
         task.id = await taskData.createTask(userId, task.data);
         delete task.data;
+        delete task.modified;
       }
 
       objective.id = await objectiveData.createObjective(
@@ -31,6 +32,7 @@ dataApp.post("/goals", async (req, res) => {
         objective.data
       );
       delete objective.data;
+      delete objective.modified;
     }
 
     const goalId = await goalData.createGoal(userId, data);
@@ -55,8 +57,35 @@ dataApp.get("/goals", async (req, res) => {
   try {
     const userId = getUserId();
     const goals = await goalData.listGoals(userId);
+
+    for (let i = 0; i < goals.length; i++) {
+      const goal = goals[i];
+
+      console.log(goal);
+
+      if (goal.objectives) {
+        for (let j = 0; j < goal.objectives.length; j++) {
+          const objective = goal.objectives[j];
+
+          objective.data = await objectiveData.getObjective(
+            userId,
+            objective.id
+          );
+
+          if (objective.data.tasks) {
+            for (let k = 0; k < objective.data.tasks.length; k++) {
+              const task = objective.data.tasks[j];
+
+              task.data = await taskData.getTask(userId, task.id);
+            }
+          }
+        }
+      }
+    }
+
     res.json(goals);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error.message);
   }
 });
@@ -64,9 +93,35 @@ dataApp.get("/goals", async (req, res) => {
 dataApp.put("/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId();
-    await goalData.updateGoal(userId, req.params.goalId, req.body);
-    res.send("Goal updated successfully");
+    const data = req.body;
+
+    for (let i = 0; i < data.objectives.length; i++) {
+      const objective = data.objectives[i];
+
+      for (let j = 0; j < objective.data.tasks.length; j++) {
+        const task = objective.data.tasks[j];
+        if (task.id && task.modified) {
+          await taskData.updateTask(userId, task.id, task.data);
+        }
+        delete task.data;
+        delete task.modified;
+      }
+
+      if (objective.id && objective.modified) {
+        await objectiveData.updateObjective(
+          userId,
+          objective.id,
+          objective.data
+        );
+      }
+      delete objective.data;
+      delete objective.modified;
+    }
+
+    await goalData.updateGoal(userId, goalId, data);
+    res.json({ goalId });
   } catch (error) {
+    console.log(error);
     res.status(500).send(error.message);
   }
 });
