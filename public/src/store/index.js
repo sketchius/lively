@@ -185,6 +185,17 @@ export default createStore({
       commit("setEditingGoal", goal);
       commit("setCurrentRightPanelComponent", "EditGoal");
     },
+
+    async deleteObjective({ dispatch }, objectiveId) {
+      try {
+        await dataService.deleteObjective(objectiveId);
+        dispatch("fetchObjectives");
+      } catch (error) {
+        console.error("Error deleting objective:", error);
+      }
+    },
+
+
     changeRightPanelComponent({ commit }, component) {
       commit("setCurrentRightPanelComponent", component);
     },

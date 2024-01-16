@@ -2,7 +2,7 @@
   <div class="objective-form-container">
     <h2>
       {{
-        currentCommand == "createObjective" ? "New Objective" : "Edit Objective"
+        globalCommand == "createObjective" ? "New Objective" : "Edit Objective"
       }}
     </h2>
     <div class="input-wrapper">
@@ -63,7 +63,7 @@ export default {
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
 
-    const currentCommand = store.state.currentCommand;
+    const globalCommand = store.state.globalCommand;
     const localCommand = store.state.localCommand;
 
     const updateNewObjective = () => {
@@ -104,7 +104,7 @@ export default {
     }
 
     const save = async () => {
-      switch (currentCommand) {
+      switch (globalCommand) {
         case "createObjective":
           await dataService.createObjective(objective.value);
           break;
@@ -129,7 +129,7 @@ export default {
 
     return {
       objective,
-      currentCommand,
+      globalCommand: globalCommand,
       addTask,
       editTask,
       deleteTask,

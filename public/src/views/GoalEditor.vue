@@ -80,11 +80,22 @@ export default {
     };
 
     const editObjective = () => {
-      store.commit("setLocalCommand");
+      store.commit("setLocalCommand", "updateObjective");
+      store.commit("updateEditorObjective", selectedObjective.value.data);
+      router.push("/objectives/editor");
     };
 
-    const deleteObjective = () => {
-      // Logic for deleting a objective
+    const deleteObjective = async () => {
+      if (selectedObjective.value.data.id) {
+        await store.dispatch(
+          "deleteObjective",
+          selectedObjective.value.data.id
+        );
+      } else {
+        goal.value.objectives = goal.value.objectives.filter((objective) => {
+          return objective.data.title != selectedObjective.value.data.title;
+        });
+      }
     };
 
     if (
