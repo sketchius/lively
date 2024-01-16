@@ -24,8 +24,8 @@ export default createStore({
         timeFrame: "",
         modified: false,
       },
-      currentOperation: "none",
       lastAction: "none",
+      currentCommand: "none",
       goals: [],
       currentRightPanelComponent: "CreateGoal",
       editingGoal: null,
@@ -47,18 +47,21 @@ export default createStore({
     setTasks(state, tasks) {
       state.tasks = tasks;
     },
-    setCurrentOperation(state, operation) {
-      state.currentOperation = operation;
-    },
+
     setLastAction(state, lastAction) {
       state.lastAction = lastAction;
     },
+    setCurrentCommand(state, currentCommand) {
+      state.currentCommand = currentCommand;
+    },
+
     setCurrentRightPanelComponent(state, component) {
       state.currentRightPanelComponent = component;
     },
     setEditingGoal(state, goal) {
       state.editingGoal = goal;
     },
+    
     setGoalListNeedsRefresh(state, value) {
       state.goalListNeedsRefresh = value;
     },
@@ -68,6 +71,7 @@ export default createStore({
     setTaskListNeedsRefresh(state, value) {
       state.taskListNeedsRefresh = value;
     },
+
     updateEditorGoal(state, goalData) {
       state.currentEditorGoal = goalData;
     },
@@ -77,18 +81,45 @@ export default createStore({
     updateEditorTask(state, taskData) {
       state.currentEditorTask = taskData;
     },
+
+    resetEditorGoal(state) {
+      state.currentEditorGoal = {
+        title: "",
+        details: "",
+        timeFrame: "",
+        objectives: [],
+        modified: false,
+      };
+    },
+    resetEditorObjective(state) {
+      state.currentEditorObjective = {
+        title: "",
+        details: "",
+        timeFrame: "",
+        tasks: [],
+        modified: false,
+      };
+    },
+    resetEditorTask(state) {
+      state.currentEditorTask = {
+        title: "",
+        details: "",
+        timeFrame: "",
+        modified: false,
+      };
+    },
+
     markEditorGoalModified(state) {
-      if (state.currentEditorGoal)
-        state.currentEditorGoal.modified = true;
+      if (state.currentEditorGoal) state.currentEditorGoal.modified = true;
     },
     markEditorObjectiveModified(state) {
       if (state.currentEditorObjective)
         state.currentEditorObjective.modified = true;
     },
     markEditorTaskModified(state) {
-      if (state.currentEditorTask)
-        state.currentEditorTask.modified = true;
+      if (state.currentEditorTask) state.currentEditorTask.modified = true;
     },
+
     addEditorObjectiveToEditorGoal(state) {
       state.currentEditorGoal.objectives.push({
         phase: 1,

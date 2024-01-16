@@ -2,7 +2,7 @@
   <div class="goal-list">
     <div class="list-heading">
       <h2>Goals</h2>
-      ><button class="button icon" @click="createGoal()">+</button>
+      <button class="button icon" @click="createGoal()">+</button>
     </div>
     <div v-for="goal in goals" :key="goal.id" class="goal-item">
       <div class="title">
@@ -60,13 +60,14 @@ export default {
     };
 
     const editGoal = (goal) => {
-      store.commit("setCurrentOperation", "edit");
+      store.commit("setCurrentCommand", "updateGoal");
       store.commit("updateEditorGoal",goal);
       router.push("/goals/editor");
     };
 
     const createGoal = () => {
-      store.commit("setCurrentOperation", "create");
+      store.commit("setCurrentCommand", "createGoal");
+      store.commit("resetEditorGoal");
       router.push("/goals/editor");
     };
 

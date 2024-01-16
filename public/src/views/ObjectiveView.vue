@@ -2,9 +2,7 @@
   <div class="objective-list">
     <div class="list-heading">
       <h2>Objectives</h2>
-      <router-link to="/objectives/editor"
-        ><button class="button icon">+</button></router-link
-      >
+      <button class="button icon" @click="createObjective()">+</button>
     </div>
     <div v-for="objective in objectives" :key="objective.id" class="objective-item">
       <div class="title">
@@ -48,13 +46,14 @@ export default {
     };
 
     const editObjective = (objective) => {
-      store.commit("setCurrentOperation", "edit");
+      store.commit("setCurrentCommand", "updateObjective");
       store.commit("updateEditorObjective",objective);
       router.push("/objectives/editor");
     };
 
     const createObjective = () => {
-      store.commit("setCurrentOperation", "create");
+      store.commit("setCurrentCommand", "createObjective");
+      store.commit("resetEditorObjective");
       router.push("/objectives/editor");
     };
 

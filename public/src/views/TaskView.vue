@@ -2,9 +2,7 @@
   <div class="task-list">
     <div class="list-heading">
       <h2>Tasks</h2>
-      <router-link to="/tasks/editor"
-        ><button class="button icon">+</button></router-link
-      >
+      <button class="button icon" @click="createTask()">+</button>
     </div>
     <div v-for="task in tasks" :key="task.id" class="task-item">
       <div class="title">
@@ -48,13 +46,14 @@ export default {
     };
 
     const editTask = (task) => {
-      store.commit("setCurrentOperation", "edit");
+      store.commit("setCurrentCommand", "updateTask");
       store.commit("updateEditorTask",task);
       router.push("/tasks/editor");
     };
 
     const createTask = () => {
-      store.commit("setCurrentOperation", "create");
+      store.commit("setCurrentCommand", "createTask");
+      store.commit("resetEditorTask");
       router.push("/tasks/editor");
     };
 

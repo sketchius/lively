@@ -1,6 +1,6 @@
 <template>
   <div class="objective-form-container">
-    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>{{ currentCommand == "createObjective" ? "New Objective" : "Edit Objective" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input
@@ -50,6 +50,8 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
+import dataService from "../services/dataService.js";
+
 
 export default {
   name: "ObjectiveEditor",
@@ -57,8 +59,8 @@ export default {
     const router = useRouter();
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
-
     const lastAction = store.state.lastAction;
+    const currentCommand = store.state.currentCommand;
 
     if (lastAction === "createTask") {
       store.commit("addEditorTaskToEditorObjective");
@@ -82,9 +84,20 @@ export default {
       // Logic for deleting a objective
     };
 
-    const save = () => {
-      updateNewObjective();
-      store.commit("setLastAction", "createObjective");
+    const save = async () => {
+      switch (currentCommand) {
+        case "createObjective":
+          await dataService.createObjective(objective.value);
+          break;
+        case "updateObjective":
+          await dataService.updateObjective(objective.value.id, objective.value);
+          break;
+        case "updateGoal":
+        case "createGoal":
+          updateNewObjective();
+          store.commit("setLastAction", "createObjective");
+          break;
+      }
       router.back();
     };
 
@@ -92,7 +105,7 @@ export default {
       router.back();
     };
 
-    return { objective, addTask, editTask, deleteTask, save, cancel };
+    return { objective, currentCommand, addTask, editTask, deleteTask, save, cancel };
   },
 };
 </script>

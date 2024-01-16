@@ -1,6 +1,6 @@
 <template>
   <div class="task-form-container">
-    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>{{ currentCommand == "createTask" ? "New Task" : "Edit Task" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="task.title" placeholder="Title" />
@@ -32,24 +32,35 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
+import dataService from "../services/dataService.js";
 
 export default {
   name: "TaskEditor",
   setup() {
     const router = useRouter();
     const store = useStore();
-    const task = ref(
-      store.state.currentEditorTask || { title: "", details: "", timeFrame: "" }
-    );
+    const task = ref(store.state.currentEditorTask);
 
-    const updateEditorTask = () => {
+    const currentCommand = store.state.currentCommand;
+
+    const updateNewTask = () => {
       store.commit("updateEditorTask", task.value);
       store.commit("markEditorObjectiveModified");
     };
 
-    const save = () => {
-      updateEditorTask();
-      store.commit("setLastAction", "createTask");
+    const save = async () => {
+      switch (currentCommand) {
+        case "createTask":
+          await dataService.createTask(task.value);
+          break;
+        case "updateTask":
+          await dataService.updateTask(task.value.id, task.value);
+          break;
+        case "createObjective":
+          updateNewTask();
+          store.commit("setLastAction", "createTask");
+          break;
+      }
       router.back();
     };
 
@@ -57,7 +68,7 @@ export default {
       router.back();
     };
 
-    return { task, save, cancel };
+    return { task, currentCommand, save, cancel };
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="goal-form-container">
-    <h2>{{ operation == "create" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>{{ currentCommand == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="goal.title" placeholder="Title" />
@@ -26,7 +26,15 @@
       <label for="objective-map">Objective List</label>
       <div class="objective-map">
         <div v-for="objective in goal.objectives" :key="objective.id">
-          <span>{{ objective.data.title }}</span>
+          <span
+            :class="{
+              selected:
+                selectedObjective &&
+                selectedObjective.data.title == objective.data.title,
+            }"
+            @click="selectObjective(objective)"
+            >{{ objective.data.title }}</span
+          >
         </div>
       </div>
     </div>
@@ -53,10 +61,12 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
-    const operation = store.state.currentOperation;
+    const currentCommand = store.state.currentCommand;
     const lastAction = store.state.lastAction;
+    let selectedObjective = ref(null);
 
     if (lastAction === "createObjective") {
+      console.log("Adding new objective to goal");
       store.commit("addEditorObjectiveToEditorGoal");
     }
 
@@ -70,6 +80,10 @@ export default {
       router.push("/objectives/editor");
     };
 
+    const selectObjective = (objective) => {
+      selectedObjective.value = objective;
+    };
+
     const editObjective = () => {
       // Logic for editing a objective
     };
@@ -79,21 +93,22 @@ export default {
     };
 
     const save = async () => {
-      switch (operation) {
+      switch (currentCommand) {
         case "create":
           await dataService.createGoal(goal.value);
-          router.back();
           break;
         case "edit":
           await dataService.updateGoal(goal.value.id, goal.value);
-          router.back();
           break;
       }
+      router.back();
     };
 
     return {
       goal,
-      operation,
+      currentCommand,
+      selectedObjective,
+      selectObjective,
       addObjective,
       editObjective,
       deleteObjective,
@@ -120,6 +135,10 @@ export default {
   display: block; /* Ensure the label is above the input */
   margin-bottom: 5px; /* Space between label and input */
   font-weight: bold; /* Bold label text */
+}
+
+.selected {
+  background-color: #586069;
 }
 
 .objective-map {
