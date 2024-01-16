@@ -235,8 +235,10 @@ dataApp.delete("/objectives/:objectiveId", async (req, res) => {
   try {
     const userId = getUserId();
     await objectiveData.deleteObjective(userId, req.params.objectiveId);
+    await goalData.removeObjectiveFromGoals(userId, req.params.objectiveId);
     res.send("Objective deleted successfully");
   } catch (error) {
+    console.log(error);
     res.status(500).send(error.message);
   }
 });

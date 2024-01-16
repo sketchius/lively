@@ -56,6 +56,10 @@ export const goalData = {
     const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
     await firestore.delete(path);
   },
+
+  async removeObjectiveFromGoals(userId, objectiveId) {
+    await firestore.removeObjectiveFromGoals(userId, objectiveId);
+  }
 };
 
 export const objectiveData = {
@@ -112,6 +116,10 @@ export const objectiveData = {
     const path = `users/${userId}/goals/${goalId}/plans/${planId}`;
     await firestore.delete(path);
   },
+  
+  async removeTaskFromObjectives(userId, taskId) {
+    await firestore.removeTaskFromObjectives(userId, taskId);
+  }
 };
 
 export const taskData = {
