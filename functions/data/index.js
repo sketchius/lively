@@ -94,28 +94,36 @@ dataApp.put("/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId();
     const data = req.body;
-    
+
     for (let i = 0; i < data.objectives.length; i++) {
       const objective = data.objectives[i];
 
-      for (let j = 0; j < objective.data.tasks.length; j++) {
-        const task = objective.data.tasks[j];
-        if (task.id && task.modified) {
-          await taskData.updateTask(userId, task.id, task.data);
+            for (let j = 0; j < objective.data.tasks.length; j++) {
+                const task = objective.data.tasks[j];
+        if (task.data.modified) {
+          if (task.id) {
+            await taskData.updateTask(userId, task.id, task.data);
+          } else {
+            const taskId = await taskData.createTask(userId, task.data);
+            task.id = taskId;
+          }
         }
         delete task.data;
-        delete task.modified;
       }
 
-      if (objective.id && objective.modified) {
-        await objectiveData.updateObjective(
-          userId,
-          objective.id,
-          objective.data
-        );
+      if (objective.data.modified) {
+        if (objective.id) {
+          await objectiveData.updateObjective(
+            userId,
+            objective.id,
+            objective.data
+          );
+        } else {
+          const objectiveId = await objectiveData.createObjective(userId, objective.data);
+          objective.id = objectiveId;
+        }
       }
       delete objective.data;
-      delete objective.modified;
     }
 
     await goalData.updateGoal(userId, req.params.goalId, data);
@@ -168,7 +176,6 @@ dataApp.get("/objectives/:objectiveId", async (req, res) => {
   }
 });
 
-
 dataApp.get("/objectives", async (req, res) => {
   try {
     const userId = getUserId();
@@ -181,10 +188,7 @@ dataApp.get("/objectives", async (req, res) => {
         for (let j = 0; j < objective.tasks.length; j++) {
           const task = objective.tasks[j];
 
-          task.data = await taskData.getTask(
-            userId,
-            task.id
-          );
+          task.data = await taskData.getTask(userId, task.id);
         }
       }
     }
@@ -200,18 +204,16 @@ dataApp.put("/objectives/:objectiveId", async (req, res) => {
   try {
     const userId = getUserId();
     const data = req.body;
-    
-      for (let j = 0; j < data.tasks.length; j++) {
-        const task = data.tasks[j];
-        if (task.id && task.modified) {
-          await taskData.updateTask(userId, task.id, task.data);
-        }
-        delete task.data;
-        delete task.modified;
+
+    for (let j = 0; j < data.tasks.length; j++) {
+      const task = data.tasks[j];
+      if (task.id && task.modified) {
+        await taskData.updateTask(userId, task.id, task.data);
       }
-    await objectiveData.updateObjective(
-      userId,req.params.objectiveId, data
-    );
+      delete task.data;
+      delete task.modified;
+    }
+    await objectiveData.updateObjective(userId, req.params.objectiveId, data);
     res.status(200).send("Objective updated.");
   } catch (error) {
     console.log(error);

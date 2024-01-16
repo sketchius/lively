@@ -65,10 +65,7 @@ export default {
     const lastAction = store.state.lastAction;
     let selectedObjective = ref(null);
 
-    if (lastAction === "createObjective") {
-      console.log("Adding new objective to goal");
-      store.commit("addEditorObjectiveToEditorGoal");
-    }
+
 
     const updateNewGoal = () => {
       store.commit("updateEditorGoal", goal.value);
@@ -92,12 +89,21 @@ export default {
       // Logic for deleting a objective
     };
 
+    if (lastAction === "createObjective" && store.state.currentEditorObjective.title && store.state.currentEditorObjective.title != "") {
+      goal.value.objectives.push({
+        phase: 1,
+        data: store.state.currentEditorObjective
+      });
+      store.commit("resetEditorObjective");
+      updateNewGoal();
+    }
+
     const save = async () => {
       switch (currentCommand) {
-        case "create":
+        case "createGoal":
           await dataService.createGoal(goal.value);
           break;
-        case "edit":
+        case "updateGoal":
           await dataService.updateGoal(goal.value.id, goal.value);
           break;
       }
