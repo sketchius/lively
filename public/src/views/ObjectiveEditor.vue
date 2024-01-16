@@ -1,9 +1,7 @@
 <template>
   <div class="objective-form-container">
     <h2>
-      {{
-        globalCommand == "createObjective" ? "New Objective" : "Edit Objective"
-      }}
+      {{ command == "createObjective" ? "New Objective" : "Edit Objective" }}
     </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
@@ -35,7 +33,14 @@
       <label for="task-map">Task List</label>
       <div class="task-map">
         <div v-for="task in objective.tasks" :key="task.id">
-          <span>{{ task.data.title }}</span>
+          <span
+            :class="{
+              selected:
+                selectedTask && selectedTask.data.title == task.data.title,
+            }"
+            @click="selectTask(task)"
+            >{{ task.data.title }}</span
+          >
         </div>
       </div>
       <div class="buttons">
@@ -63,8 +68,9 @@ export default {
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
 
-    const globalCommand = store.state.globalCommand;
-    const localCommand = store.state.localCommand;
+    const command = store.state.command;
+    const previousView = store.state.previousView;
+    let selectedTask = ref(null);
 
     const updateNewObjective = () => {
       store.commit("updateEditorObjective", objective.value);
@@ -76,14 +82,27 @@ export default {
       router.push("/tasks/editor");
     };
 
-    const editTask = () => {
-      // Logic for editing a objective
+    const selectTask = (task) => {
+      selectedTask.value = task;
     };
 
-    const deleteTask = () => {
-      // Logic for deleting a objective
+    const editTask = () => {
+      store.commit("setPreviousView", "updateTask");
+      store.commit("updateEditorTask", selectedTask.value.data);
+      router.push("/tasks/editor");
     };
-    switch (localCommand) {
+
+    const deleteTask = async () => {
+      if (selectedTask.value.data.id) {
+        await store.dispatch("deleteTask", selectedTask.value.data.id);
+      } else {
+        objective.value.tasks = objective.value.tasks.filter((task) => {
+          return task.data.title != selectedTask.value.data.title;
+        });
+      }
+    };
+
+    switch (previousView) {
       case "createTask":
         if (
           store.state.currentEditorTask.title &&
@@ -104,7 +123,7 @@ export default {
     }
 
     const save = async () => {
-      switch (globalCommand) {
+      switch (command) {
         case "createObjective":
           await dataService.createObjective(objective.value);
           break;
@@ -117,7 +136,7 @@ export default {
         case "updateGoal":
         case "createGoal":
           updateNewObjective();
-          store.commit("setLocalCommand", "createObjective");
+          store.commit("setPreviousView", "createObjective");
           break;
       }
       router.back();
@@ -129,7 +148,9 @@ export default {
 
     return {
       objective,
-      globalCommand: globalCommand,
+      command: command,
+      selectedTask,
+      selectTask,
       addTask,
       editTask,
       deleteTask,
@@ -157,6 +178,10 @@ export default {
   display: block; /* Ensure the label is above the input */
   margin-bottom: 5px; /* Space between label and input */
   font-weight: bold; /* Bold label text */
+}
+
+.selected {
+  background-color: #586069;
 }
 
 .objective-map {

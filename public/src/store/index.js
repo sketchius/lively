@@ -24,8 +24,8 @@ export default createStore({
         timeFrame: "",
         modified: false,
       },
-      localCommand: "none",
-      globalCommand: "none",
+      previousView: "none",
+      command: "none",
       goals: [],
       currentRightPanelComponent: "CreateGoal",
       editingGoal: null,
@@ -48,11 +48,11 @@ export default createStore({
       state.tasks = tasks;
     },
 
-    setLocalCommand(state, localCommand) {
-      state.localCommand = localCommand;
+    setPreviousView(state, previousView) {
+      state.previousView = previousView;
     },
-    setGlobalCommand(state, globalCommand) {
-      state.globalCommand = globalCommand;
+    setCommand(state, command) {
+      state.command = command;
     },
 
     setCurrentRightPanelComponent(state, component) {
@@ -194,7 +194,14 @@ export default createStore({
         console.error("Error deleting objective:", error);
       }
     },
-
+    async deleteTask({ dispatch }, taskId) {
+      try {
+        await dataService.deleteTask(taskId);
+        dispatch("fetchTask");
+      } catch (error) {
+        console.error("Error deleting objective:", error);
+      }
+    },
 
     changeRightPanelComponent({ commit }, component) {
       commit("setCurrentRightPanelComponent", component);

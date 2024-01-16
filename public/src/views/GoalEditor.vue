@@ -1,6 +1,6 @@
 <template>
   <div class="goal-form-container">
-    <h2>{{ globalCommand == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>{{ command == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="goal.title" placeholder="Title" />
@@ -61,8 +61,8 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
-    const globalCommand = store.state.globalCommand;
-    const localCommand = store.state.localCommand;
+    const command = store.state.command;
+    const previousView = store.state.previousView;
     let selectedObjective = ref(null);
 
     const updateNewGoal = () => {
@@ -80,7 +80,7 @@ export default {
     };
 
     const editObjective = () => {
-      store.commit("setLocalCommand", "updateObjective");
+      store.commit("setPreviousView", "updateObjective");
       store.commit("updateEditorObjective", selectedObjective.value.data);
       router.push("/objectives/editor");
     };
@@ -99,7 +99,7 @@ export default {
     };
 
     if (
-      localCommand === "createObjective" &&
+      previousView === "createObjective" &&
       store.state.currentEditorObjective.title &&
       store.state.currentEditorObjective.title != ""
     ) {
@@ -112,7 +112,7 @@ export default {
     }
 
     const save = async () => {
-      switch (globalCommand) {
+      switch (command) {
         case "createGoal":
           await dataService.createGoal(goal.value);
           break;
@@ -125,7 +125,7 @@ export default {
 
     return {
       goal,
-      globalCommand,
+      command,
       selectedObjective,
       selectObjective,
       addObjective,

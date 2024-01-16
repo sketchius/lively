@@ -53,13 +53,13 @@ export default {
     };
 
     const editObjective = (objective) => {
-      store.commit("setGlobalCommand", "updateObjective");
+      store.commit("setCommand", "updateObjective");
       store.commit("updateEditorObjective", objective);
       router.push("/objectives/editor");
     };
 
     const createObjective = () => {
-      store.commit("setGlobalCommand", "createObjective");
+      store.commit("setCommand", "createObjective");
       store.commit("resetEditorObjective");
       router.push("/objectives/editor");
     };

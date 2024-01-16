@@ -1,6 +1,6 @@
 <template>
   <div class="task-form-container">
-    <h2>{{ globalCommand == "createTask" ? "New Task" : "Edit Task" }}</h2>
+    <h2>{{ command == "createTask" ? "New Task" : "Edit Task" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="task.title" placeholder="Title" />
@@ -41,7 +41,7 @@ export default {
     const store = useStore();
     const task = ref(store.state.currentEditorTask);
 
-    const globalCommand = store.state.globalCommand;
+    const command = store.state.command;
 
     const updateNewTask = () => {
       store.commit("updateEditorTask", task.value);
@@ -49,17 +49,19 @@ export default {
     };
 
     const save = async () => {
-      switch (globalCommand) {
+      switch (command) {
         case "createTask":
           await dataService.createTask(task.value);
           break;
         case "updateTask":
           await dataService.updateTask(task.value.id, task.value);
           break;
+        case "createGoal":
+        case "updateGoal":
         case "updateObjective":
         case "createObjective":
           updateNewTask();
-          store.commit("setLocalCommand", "createTask");
+          store.commit("setPreviousView", "createTask");
           break;
       }
       router.back();
@@ -69,7 +71,7 @@ export default {
       router.back();
     };
 
-    return { task, globalCommand, save, cancel };
+    return { task, command, save, cancel };
   },
 };
 </script>
