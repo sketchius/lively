@@ -168,12 +168,30 @@ dataApp.get("/objectives/:objectiveId", async (req, res) => {
   }
 });
 
+
 dataApp.get("/objectives", async (req, res) => {
   try {
     const userId = getUserId();
     const objectives = await objectiveData.listObjectives(userId);
+
+    for (let i = 0; i < objectives.length; i++) {
+      const objective = objectives[i];
+
+      if (objective.tasks) {
+        for (let j = 0; j < objective.tasks.length; j++) {
+          const task = objective.tasks[j];
+
+          task.data = await taskData.getTask(
+            userId,
+            task.id
+          );
+        }
+      }
+    }
+
     res.json(objectives);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error.message);
   }
 });
@@ -181,13 +199,22 @@ dataApp.get("/objectives", async (req, res) => {
 dataApp.put("/objectives/:objectiveId", async (req, res) => {
   try {
     const userId = getUserId();
+    const data = req.body;
+    
+      for (let j = 0; j < data.tasks.length; j++) {
+        const task = data.tasks[j];
+        if (task.id && task.modified) {
+          await taskData.updateTask(userId, task.id, task.data);
+        }
+        delete task.data;
+        delete task.modified;
+      }
     await objectiveData.updateObjective(
-      userId,
-      req.params.objectiveId,
-      req.body
+      userId,req.params.objectiveId, data
     );
-    res.send("Objective updated successfully");
+    res.status(200).send("Objective updated.");
   } catch (error) {
+    console.log(error);
     res.status(500).send(error.message);
   }
 });
