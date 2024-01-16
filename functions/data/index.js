@@ -74,9 +74,11 @@ dataApp.get("/goals", async (req, res) => {
 
           if (objective.data.tasks) {
             for (let k = 0; k < objective.data.tasks.length; k++) {
-              const task = objective.data.tasks[j];
+              const task = objective.data.tasks[k];
+              console.log("Getting task data for ID " + task.id);
 
               task.data = await taskData.getTask(userId, task.id);
+              console.log(task.data);
             }
           }
         }
@@ -98,8 +100,8 @@ dataApp.put("/goals/:goalId", async (req, res) => {
     for (let i = 0; i < data.objectives.length; i++) {
       const objective = data.objectives[i];
 
-            for (let j = 0; j < objective.data.tasks.length; j++) {
-                const task = objective.data.tasks[j];
+      for (let j = 0; j < objective.data.tasks.length; j++) {
+        const task = objective.data.tasks[j];
         if (task.data.modified) {
           if (task.id) {
             await taskData.updateTask(userId, task.id, task.data);
@@ -119,7 +121,10 @@ dataApp.put("/goals/:goalId", async (req, res) => {
             objective.data
           );
         } else {
-          const objectiveId = await objectiveData.createObjective(userId, objective.data);
+          const objectiveId = await objectiveData.createObjective(
+            userId,
+            objective.data
+          );
           objective.id = objectiveId;
         }
       }
@@ -205,14 +210,19 @@ dataApp.put("/objectives/:objectiveId", async (req, res) => {
     const userId = getUserId();
     const data = req.body;
 
-    for (let j = 0; j < data.tasks.length; j++) {
-      const task = data.tasks[j];
-      if (task.id && task.modified) {
-        await taskData.updateTask(userId, task.id, task.data);
+    for (let i = 0; i < data.tasks.length; i++) {
+      const task = data.tasks[i];
+      if (task.data.modified) {
+        if (task.id) {
+          await taskData.updateTask(userId, task.id, task.data);
+        } else {
+          const taskId = await taskData.createTask(userId, task.data);
+          task.id = taskId;
+        }
       }
       delete task.data;
-      delete task.modified;
     }
+
     await objectiveData.updateObjective(userId, req.params.objectiveId, data);
     res.status(200).send("Objective updated.");
   } catch (error) {

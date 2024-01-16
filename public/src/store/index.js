@@ -24,8 +24,8 @@ export default createStore({
         timeFrame: "",
         modified: false,
       },
-      lastAction: "none",
-      currentCommand: "none",
+      localCommand: "none",
+      globalCommand: "none",
       goals: [],
       currentRightPanelComponent: "CreateGoal",
       editingGoal: null,
@@ -48,11 +48,11 @@ export default createStore({
       state.tasks = tasks;
     },
 
-    setLastAction(state, lastAction) {
-      state.lastAction = lastAction;
+    setLocalCommand(state, localCommand) {
+      state.localCommand = localCommand;
     },
-    setCurrentCommand(state, currentCommand) {
-      state.currentCommand = currentCommand;
+    setGlobalCommand(state, globalCommand) {
+      state.globalCommand = globalCommand;
     },
 
     setCurrentRightPanelComponent(state, component) {
@@ -61,7 +61,7 @@ export default createStore({
     setEditingGoal(state, goal) {
       state.editingGoal = goal;
     },
-    
+
     setGoalListNeedsRefresh(state, value) {
       state.goalListNeedsRefresh = value;
     },

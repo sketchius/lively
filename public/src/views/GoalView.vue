@@ -47,7 +47,7 @@ export default {
 
     onMounted(() => {
       store.dispatch("fetchGoals");
-          });
+    });
 
     watch(goalListNeedsRefresh, (newValue) => {
       if (newValue) {
@@ -60,13 +60,13 @@ export default {
     };
 
     const editGoal = (goal) => {
-      store.commit("setCurrentCommand", "updateGoal");
-      store.commit("updateEditorGoal",goal);
+      store.commit("setGlobalCommand", "updateGoal");
+      store.commit("updateEditorGoal", goal);
       router.push("/goals/editor");
     };
 
     const createGoal = () => {
-      store.commit("setCurrentCommand", "createGoal");
+      store.commit("setGlobalCommand", "createGoal");
       store.commit("resetEditorGoal");
       router.push("/goals/editor");
     };
@@ -117,5 +117,12 @@ h3 {
   border: 1px solid rgb(67, 65, 80);
   border-radius: 104px;
   cursor: pointer;
+}
+
+.objective-item {
+  margin-left: 1rem;
+}
+.task-item {
+  margin-left: 1.5rem;
 }
 </style>

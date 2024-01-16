@@ -1,6 +1,10 @@
 <template>
   <div class="objective-form-container">
-    <h2>{{ currentCommand == "createObjective" ? "New Objective" : "Edit Objective" }}</h2>
+    <h2>
+      {{
+        currentCommand == "createObjective" ? "New Objective" : "Edit Objective"
+      }}
+    </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input
@@ -52,19 +56,15 @@ import { useStore } from "vuex";
 import { ref } from "vue";
 import dataService from "../services/dataService.js";
 
-
 export default {
   name: "ObjectiveEditor",
   setup() {
     const router = useRouter();
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
-    const lastAction = store.state.lastAction;
-    const currentCommand = store.state.currentCommand;
 
-    if (lastAction === "createTask") {
-      store.commit("addEditorTaskToEditorObjective");
-    }
+    const currentCommand = store.state.currentCommand;
+    const localCommand = store.state.localCommand;
 
     const updateNewObjective = () => {
       store.commit("updateEditorObjective", objective.value);
@@ -83,6 +83,25 @@ export default {
     const deleteTask = () => {
       // Logic for deleting a objective
     };
+    switch (localCommand) {
+      case "createTask":
+        if (
+          store.state.currentEditorTask.title &&
+          store.state.currentEditorTask.title != ""
+        ) {
+          objective.value.tasks.push({
+            phase: 1,
+            data: store.state.currentEditorTask,
+          });
+          store.commit("resetEditorTask");
+          updateNewObjective();
+          console.log("");
+        }
+        break;
+      case "updateGoal":
+      case "createGoal":
+        break;
+    }
 
     const save = async () => {
       switch (currentCommand) {
@@ -90,12 +109,15 @@ export default {
           await dataService.createObjective(objective.value);
           break;
         case "updateObjective":
-          await dataService.updateObjective(objective.value.id, objective.value);
+          await dataService.updateObjective(
+            objective.value.id,
+            objective.value
+          );
           break;
         case "updateGoal":
         case "createGoal":
           updateNewObjective();
-          store.commit("setLastAction", "createObjective");
+          store.commit("setLocalCommand", "createObjective");
           break;
       }
       router.back();
@@ -105,7 +127,15 @@ export default {
       router.back();
     };
 
-    return { objective, currentCommand, addTask, editTask, deleteTask, save, cancel };
+    return {
+      objective,
+      currentCommand,
+      addTask,
+      editTask,
+      deleteTask,
+      save,
+      cancel,
+    };
   },
 };
 </script>

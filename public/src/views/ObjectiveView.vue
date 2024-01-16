@@ -4,11 +4,18 @@
       <h2>Objectives</h2>
       <button class="button icon" @click="createObjective()">+</button>
     </div>
-    <div v-for="objective in objectives" :key="objective.id" class="objective-item">
+    <div
+      v-for="objective in objectives"
+      :key="objective.id"
+      class="objective-item"
+    >
       <div class="title">
         <h3>{{ objective.title }}</h3>
         <button class="icon-button" @click="editObjective(objective)">E</button>
-        <button class="icon-button delete" @click="deleteObjective(objective.id)">
+        <button
+          class="icon-button delete"
+          @click="deleteObjective(objective.id)"
+        >
           D
         </button>
       </div>
@@ -46,13 +53,13 @@ export default {
     };
 
     const editObjective = (objective) => {
-      store.commit("setCurrentCommand", "updateObjective");
-      store.commit("updateEditorObjective",objective);
+      store.commit("setGlobalCommand", "updateObjective");
+      store.commit("updateEditorObjective", objective);
       router.push("/objectives/editor");
     };
 
     const createObjective = () => {
-      store.commit("setCurrentCommand", "createObjective");
+      store.commit("setGlobalCommand", "createObjective");
       store.commit("resetEditorObjective");
       router.push("/objectives/editor");
     };
@@ -61,7 +68,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .list-heading {

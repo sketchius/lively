@@ -46,13 +46,13 @@ export default {
     };
 
     const editTask = (task) => {
-      store.commit("setCurrentCommand", "updateTask");
-      store.commit("updateEditorTask",task);
+      store.commit("setGlobalCommand", "updateTask");
+      store.commit("updateEditorTask", task);
       router.push("/tasks/editor");
     };
 
     const createTask = () => {
-      store.commit("setCurrentCommand", "createTask");
+      store.commit("setGlobalCommand", "createTask");
       store.commit("resetEditorTask");
       router.push("/tasks/editor");
     };

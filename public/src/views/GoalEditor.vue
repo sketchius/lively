@@ -1,6 +1,6 @@
 <template>
   <div class="goal-form-container">
-    <h2>{{ currentCommand == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>{{ globalCommand == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="goal.title" placeholder="Title" />
@@ -61,11 +61,9 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
-    const currentCommand = store.state.currentCommand;
-    const lastAction = store.state.lastAction;
+    const globalCommand = store.state.globalCommand;
+    const localCommand = store.state.localCommand;
     let selectedObjective = ref(null);
-
-
 
     const updateNewGoal = () => {
       store.commit("updateEditorGoal", goal.value);
@@ -82,24 +80,28 @@ export default {
     };
 
     const editObjective = () => {
-      // Logic for editing a objective
+      store.commit("setLocalCommand");
     };
 
     const deleteObjective = () => {
       // Logic for deleting a objective
     };
 
-    if (lastAction === "createObjective" && store.state.currentEditorObjective.title && store.state.currentEditorObjective.title != "") {
+    if (
+      localCommand === "createObjective" &&
+      store.state.currentEditorObjective.title &&
+      store.state.currentEditorObjective.title != ""
+    ) {
       goal.value.objectives.push({
         phase: 1,
-        data: store.state.currentEditorObjective
+        data: store.state.currentEditorObjective,
       });
       store.commit("resetEditorObjective");
       updateNewGoal();
     }
 
     const save = async () => {
-      switch (currentCommand) {
+      switch (globalCommand) {
         case "createGoal":
           await dataService.createGoal(goal.value);
           break;
@@ -112,7 +114,7 @@ export default {
 
     return {
       goal,
-      currentCommand,
+      globalCommand,
       selectedObjective,
       selectObjective,
       addObjective,
