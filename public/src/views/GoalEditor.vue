@@ -61,8 +61,10 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
-    const command = store.state.command;
-    const previousView = store.state.previousView;
+    const command = store.state.commandStack[0];
+    const returnValue = store.state.returnValue;
+    store.commit("clearReturnValue");
+
     let selectedObjective = ref(null);
 
     const updateNewGoal = () => {
@@ -72,6 +74,7 @@ export default {
 
     const addObjective = () => {
       updateNewGoal();
+      store.commit("pushCommand", "createObjective");
       router.push("/objectives/editor");
     };
 
@@ -80,8 +83,8 @@ export default {
     };
 
     const editObjective = () => {
-      store.commit("setPreviousView", "updateObjective");
       store.commit("updateEditorObjective", selectedObjective.value.data);
+      store.commit("pushCommand", "updateObjective");
       router.push("/objectives/editor");
     };
 
@@ -98,17 +101,30 @@ export default {
       }
     };
 
-    if (
-      previousView === "createObjective" &&
-      store.state.currentEditorObjective.title &&
-      store.state.currentEditorObjective.title != ""
-    ) {
-      goal.value.objectives.push({
-        phase: 1,
-        data: store.state.currentEditorObjective,
-      });
-      store.commit("resetEditorObjective");
-      updateNewGoal();
+    console.log("Entering GoalEditor...");
+    console.log("Return value =");
+    console.log(returnValue);
+
+    switch (returnValue.type) {
+      case "createObjective":
+        goal.value.objectives.push({
+          phase: 1,
+          data: store.state.currentEditorObjective,
+        });
+        store.commit("resetEditorObjective");
+        updateNewGoal();
+        break;
+      case "updateObjective":
+        goal.value.objectives = goal.value.objectives.map((objective) => {
+          if (objective.data.id == store.state.currentEditorObjective.data.id) {
+            objective.data = store.state.currentEditorObjective.data;
+          }
+        });
+        store.commit("resetEditorObjective");
+        updateNewGoal();
+        break;
+      case null:
+        break;
     }
 
     const save = async () => {

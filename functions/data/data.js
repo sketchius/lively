@@ -3,7 +3,7 @@ import { createUID } from "../utils/uid.js";
 
 export const goalData = {
   async createGoal(userId, goalData) {
-    const uid = createUID();
+    const uid = goalData.id ? goalData.id : createUID();
     const path = `users/${userId}/goals/${uid}`;
     console.log(goalData);
     await firestore.create(path, goalData);
@@ -64,7 +64,7 @@ export const goalData = {
 
 export const objectiveData = {
   async createObjective(userId, objectiveData) {
-    const uid = createUID();
+    const uid = objectiveData.id ? objectiveData.id : createUID();
     const path = `users/${userId}/objectives/${uid}`;
     await firestore.create(path, objectiveData);
     return uid;
@@ -124,7 +124,7 @@ export const objectiveData = {
 
 export const taskData = {
   async createTask(userId, taskData) {
-    const uid = createUID();
+    const uid = taskData.id ? taskData.id : createUID();
     const path = `users/${userId}/tasks/${uid}`;
     await firestore.create(path, taskData);
     return uid;

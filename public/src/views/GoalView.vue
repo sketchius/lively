@@ -60,13 +60,13 @@ export default {
     };
 
     const editGoal = (goal) => {
-      store.commit("setCommand", "updateGoal");
+      store.commit("pushCommand", "updateGoal");
       store.commit("updateEditorGoal", goal);
       router.push("/goals/editor");
     };
 
     const createGoal = () => {
-      store.commit("setCommand", "createGoal");
+      store.commit("pushCommand", "createGoal");
       store.commit("resetEditorGoal");
       router.push("/goals/editor");
     };

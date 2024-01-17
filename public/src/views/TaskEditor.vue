@@ -61,7 +61,6 @@ export default {
         case "updateObjective":
         case "createObjective":
           updateNewTask();
-          store.commit("setPreviousView", "createTask");
           break;
       }
       router.back();

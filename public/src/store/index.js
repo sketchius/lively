@@ -1,31 +1,15 @@
 import { createStore } from "vuex";
 import dataService from "@/services/dataService";
+import { createUID } from '@/util/uuid';
 
 export default createStore({
   state() {
     return {
-      currentEditorGoal: {
-        title: "",
-        details: "",
-        timeFrame: "",
-        objectives: [],
-        modified: false,
-      },
-      currentEditorObjective: {
-        title: "",
-        details: "",
-        timeFrame: "",
-        tasks: [],
-        modified: false,
-      },
-      currentEditorTask: {
-        title: "",
-        details: "",
-        timeFrame: "",
-        modified: false,
-      },
-      previousView: "none",
-      command: "none",
+      currentEditorGoal: {},
+      currentEditorObjective: {},
+      currentEditorTask: {},
+      commandStack: [],
+      returnValue: {type: "null", data: null},
       goals: [],
       currentRightPanelComponent: "CreateGoal",
       editingGoal: null,
@@ -47,12 +31,19 @@ export default createStore({
     setTasks(state, tasks) {
       state.tasks = tasks;
     },
-
-    setPreviousView(state, previousView) {
-      state.previousView = previousView;
+    
+    pushCommand(state, command) {
+      state.commandStack.push(command);
     },
-    setCommand(state, command) {
-      state.command = command;
+    popCommand(state) {
+      state.commandStack.pop();
+    },
+
+    setReturnValue(state, value) {
+      state.returnValue = value;
+    },
+    clearReturnValue(state) {
+      state.returnValue = {type: "null", data: null};
     },
 
     setCurrentRightPanelComponent(state, component) {
@@ -84,28 +75,34 @@ export default createStore({
 
     resetEditorGoal(state) {
       state.currentEditorGoal = {
+        id: createUID(),
         title: "",
         details: "",
         timeFrame: "",
         objectives: [],
         modified: false,
+        new: true
       };
     },
     resetEditorObjective(state) {
       state.currentEditorObjective = {
+        id: createUID(),
         title: "",
         details: "",
         timeFrame: "",
         tasks: [],
         modified: false,
+        new: true
       };
     },
     resetEditorTask(state) {
       state.currentEditorTask = {
+        id: createUID(),
         title: "",
         details: "",
         timeFrame: "",
         modified: false,
+        new: true
       };
     },
 

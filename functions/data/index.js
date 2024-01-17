@@ -103,34 +103,35 @@ dataApp.put("/goals/:goalId", async (req, res) => {
       for (let j = 0; j < objective.data.tasks.length; j++) {
         const task = objective.data.tasks[j];
         if (task.data.modified) {
-          if (task.id) {
-            await taskData.updateTask(userId, task.id, task.data);
-          } else {
+          if (task.data.new) {
+            task.data.new = false;
             const taskId = await taskData.createTask(userId, task.data);
             task.id = taskId;
+          } else {
+            await taskData.updateTask(userId, task.id, task.data);
           }
         }
         delete task.data;
       }
 
       if (objective.data.modified) {
-        if (objective.id) {
-          await objectiveData.updateObjective(
-            userId,
-            objective.id,
-            objective.data
-          );
+        if (objective.data.new) {
         } else {
+          objective.data.new = false;
           const objectiveId = await objectiveData.createObjective(
             userId,
             objective.data
           );
           objective.id = objectiveId;
+          await objectiveData.updateObjective(
+            userId,
+            objective.id,
+            objective.data
+          );
         }
       }
       delete objective.data;
     }
-
     await goalData.updateGoal(userId, req.params.goalId, data);
     res.status(200).send("Goal updated.");
   } catch (error) {
@@ -213,11 +214,12 @@ dataApp.put("/objectives/:objectiveId", async (req, res) => {
     for (let i = 0; i < data.tasks.length; i++) {
       const task = data.tasks[i];
       if (task.data.modified) {
-        if (task.id) {
-          await taskData.updateTask(userId, task.id, task.data);
-        } else {
+        if (task.data.new) {
+          task.data.new = false;
           const taskId = await taskData.createTask(userId, task.data);
           task.id = taskId;
+        } else {
+          await taskData.updateTask(userId, task.id, task.data);
         }
       }
       delete task.data;

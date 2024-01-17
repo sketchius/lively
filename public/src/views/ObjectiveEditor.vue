@@ -68,8 +68,10 @@ export default {
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
 
-    const command = store.state.command;
-    const previousView = store.state.previousView;
+    const currentCommand =
+      store.state.commandStack[store.state.commandStack.length - 1];
+    const primaryCommand = store.state.commandStack[0];
+
     let selectedTask = ref(null);
 
     const updateNewObjective = () => {
@@ -87,56 +89,47 @@ export default {
     };
 
     const editTask = () => {
-      store.commit("setPreviousView", "updateTask");
       store.commit("updateEditorTask", selectedTask.value.data);
       router.push("/tasks/editor");
     };
 
     const deleteTask = async () => {
-      if (selectedTask.value.data.id) {
-        await store.dispatch("deleteTask", selectedTask.value.data.id);
-      } else {
+      if (selectedTask.value.data.new) {
         objective.value.tasks = objective.value.tasks.filter((task) => {
           return task.data.title != selectedTask.value.data.title;
         });
+      } else {
+        await store.dispatch("deleteTask", selectedTask.value.data.id);
       }
     };
 
-    switch (previousView) {
-      case "createTask":
-        if (
-          store.state.currentEditorTask.title &&
-          store.state.currentEditorTask.title != ""
-        ) {
-          objective.value.tasks.push({
-            phase: 1,
-            data: store.state.currentEditorTask,
-          });
-          store.commit("resetEditorTask");
-          updateNewObjective();
-          console.log("");
-        }
-        break;
-      case "updateGoal":
-      case "createGoal":
-        break;
-    }
-
     const save = async () => {
-      switch (command) {
+      switch (currentCommand) {
         case "createObjective":
-          await dataService.createObjective(objective.value);
+          if (primaryCommand == currentCommand) {
+            await dataService.createObjective(objective.value);
+          } else {
+            console.log("Updating objective");
+            updateNewObjective();
+            store.commit("setReturnValue", {
+              data: objective,
+              type: currentCommand,
+            });
+          }
           break;
         case "updateObjective":
-          await dataService.updateObjective(
-            objective.value.id,
-            objective.value
-          );
-          break;
-        case "updateGoal":
-        case "createGoal":
-          updateNewObjective();
-          store.commit("setPreviousView", "createObjective");
+          if (primaryCommand == currentCommand) {
+            await dataService.updateObjective(
+              objective.value.id,
+              objective.value
+            );
+          } else {
+            updateNewObjective();
+            store.commit("setReturnValue", {
+              data: objective,
+              type: currentCommand,
+            });
+          }
           break;
       }
       router.back();
@@ -148,7 +141,6 @@ export default {
 
     return {
       objective,
-      command: command,
       selectedTask,
       selectTask,
       addTask,
@@ -156,6 +148,8 @@ export default {
       deleteTask,
       save,
       cancel,
+      currentCommand,
+      primaryCommand,
     };
   },
 };
