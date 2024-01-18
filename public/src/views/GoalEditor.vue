@@ -53,6 +53,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
 import dataService from "../services/dataService.js";
+import { createUID } from '@/util/uuid';
 
 export default {
   name: "GoalEditor",
@@ -75,6 +76,7 @@ export default {
     const addObjective = () => {
       updateNewGoal();
       store.commit("pushCommand", "createObjective");
+      store.commit("resetEditorObjective");
       router.push("/objectives/editor");
     };
 
@@ -89,15 +91,15 @@ export default {
     };
 
     const deleteObjective = async () => {
-      if (selectedObjective.value.data.id) {
+      if (selectedObjective.value.data.new) {
+        goal.value.objectives = goal.value.objectives.filter((objective) => {
+          return objective.data.title != selectedObjective.value.data.title;
+        });
+      } else {
         await store.dispatch(
           "deleteObjective",
           selectedObjective.value.data.id
         );
-      } else {
-        goal.value.objectives = goal.value.objectives.filter((objective) => {
-          return objective.data.title != selectedObjective.value.data.title;
-        });
       }
     };
 
@@ -109,17 +111,22 @@ export default {
       case "createObjective":
         goal.value.objectives.push({
           phase: 1,
-          data: store.state.currentEditorObjective,
+          data: {id: createUID(), ...store.state.currentEditorObjective},
         });
         store.commit("resetEditorObjective");
         updateNewGoal();
         break;
       case "updateObjective":
-        goal.value.objectives = goal.value.objectives.map((objective) => {
-          if (objective.data.id == store.state.currentEditorObjective.data.id) {
-            objective.data = store.state.currentEditorObjective.data;
-          }
-        });
+        // console.log(goal.value.objectives);
+        // goal.value.objectives = goal.value.objectives.map((objective) => {
+        //   console.log("Objective in map (old)");
+        //   console.log(objective.data);
+        //   console.log("Objective in store (new)");
+        //   console.log(store.state.currentEditorObjective);
+        //   if (objective.data.id == store.state.currentEditorObjective.id) {
+        //     objective.data = store.state.currentEditorObjective;
+        //   }
+        // });
         store.commit("resetEditorObjective");
         updateNewGoal();
         break;

@@ -1,7 +1,7 @@
 <template>
   <div class="objective-form-container">
     <h2>
-      {{ command == "createObjective" ? "New Objective" : "Edit Objective" }}
+      {{ currentCommand == "createObjective" ? "New Objective" : "Edit Objective" }}
     </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
@@ -109,12 +109,12 @@ export default {
           if (primaryCommand == currentCommand) {
             await dataService.createObjective(objective.value);
           } else {
-            console.log("Updating objective");
             updateNewObjective();
             store.commit("setReturnValue", {
               data: objective,
               type: currentCommand,
             });
+            store.commit("popCommand");
           }
           break;
         case "updateObjective":
@@ -129,6 +129,7 @@ export default {
               data: objective,
               type: currentCommand,
             });
+            store.commit("popCommand");
           }
           break;
       }
