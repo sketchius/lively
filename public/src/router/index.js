@@ -45,21 +45,42 @@ const routes = [
   },
 
   {
-    path: "/goals/editor",
+    path: "/goal-editor",
     name: "Goals Editor",
     component: GoalsEditor,
+    meta: { level: 1 }
+  },
+  {
+    path: "/goal-editor/objective-editor",
+    name: "Goal Editor > Objectives Editor",
+    component: ObjectivesEditor,
+    meta: { level: 2 }
+  },
+  {
+    path: "/goal-editor/objective-editor/task-editor",
+    name: "Goal Editor > Objectives Editor > Tasks Editor",
+    component: TasksEditor,
+    meta: { level: 3 }
   },
 
   {
-    path: "/objectives/editor",
+    path: "/objective-editor",
     name: "Objectives Editor",
     component: ObjectivesEditor,
+    meta: { level: 1 }
+  },
+  {
+    path: "/objective-editor/task-editor",
+    name: "Objectives Editor > Tasks Editor",
+    component: TasksEditor,
+    meta: { level: 2 }
   },
 
   {
-    path: "/tasks/editor",
+    path: "/task-editor",
     name: "Tasks Editor",
     component: TasksEditor,
+    meta: { level: 1 }
   },
 ];
 

@@ -2,7 +2,7 @@
   <div class="goal-list">
     <div class="list-heading">
       <h2>Goals</h2>
-      <router-link to="/goals/editor"
+      <router-link to="/goal-editor"
         ><button class="button icon">+</button></router-link
       >
     </div>

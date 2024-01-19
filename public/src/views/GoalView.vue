@@ -62,13 +62,13 @@ export default {
     const editGoal = (goal) => {
       store.commit("pushCommand", "updateGoal");
       store.commit("updateEditorGoal", goal);
-      router.push("/goals/editor");
+      router.push("/goal-editor");
     };
 
     const createGoal = () => {
       store.commit("pushCommand", "createGoal");
       store.commit("resetEditorGoal");
-      router.push("/goals/editor");
+      router.push("/goal-editor");
     };
 
     return { goals, deleteGoal, editGoal, createGoal };

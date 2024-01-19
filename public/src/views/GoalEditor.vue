@@ -1,6 +1,8 @@
 <template>
   <div class="goal-form-container">
-    <h2>{{ command == "createGoal" ? "New Goal" : "Edit Goal" }}</h2>
+    <h2>
+      {{ editing ? "Edit Goal" : "New Goal" }}
+    </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="goal.title" placeholder="Title" />
@@ -44,7 +46,10 @@
       <button class="button" @click="deleteObjective">Delete Objective</button>
     </div>
 
-    <button class="button" @click="save">Save</button>
+    <button class="button" @click="save">
+      {{ editing ? "Save" : "Create" }}
+    </button>
+    <button class="button" @click="cancel">Cancel</button>
   </div>
 </template>
 
@@ -53,7 +58,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
 import dataService from "../services/dataService.js";
-import { createUID } from '@/util/uuid';
+import { createUID } from "@/util/uuid";
 
 export default {
   name: "GoalEditor",
@@ -62,8 +67,9 @@ export default {
     const store = useStore();
     const goal = ref(store.state.currentEditorGoal);
 
-    const command = store.state.commandStack[0];
     const returnValue = store.state.returnValue;
+    const editing = goal.value.title != "";
+
     store.commit("clearReturnValue");
 
     let selectedObjective = ref(null);
@@ -75,9 +81,8 @@ export default {
 
     const addObjective = () => {
       updateNewGoal();
-      store.commit("pushCommand", "createObjective");
       store.commit("resetEditorObjective");
-      router.push("/objectives/editor");
+      router.push("/goal-editor/objective-editor");
     };
 
     const selectObjective = (objective) => {
@@ -86,8 +91,7 @@ export default {
 
     const editObjective = () => {
       store.commit("updateEditorObjective", selectedObjective.value.data);
-      store.commit("pushCommand", "updateObjective");
-      router.push("/objectives/editor");
+      router.push("/goal-editor/objective-editor");
     };
 
     const deleteObjective = async () => {
@@ -108,25 +112,15 @@ export default {
     console.log(returnValue);
 
     switch (returnValue.type) {
-      case "createObjective":
+      case "create":
         goal.value.objectives.push({
           phase: 1,
-          data: {id: createUID(), ...store.state.currentEditorObjective},
+          data: { id: createUID(), ...store.state.currentEditorObjective },
         });
         store.commit("resetEditorObjective");
         updateNewGoal();
         break;
-      case "updateObjective":
-        // console.log(goal.value.objectives);
-        // goal.value.objectives = goal.value.objectives.map((objective) => {
-        //   console.log("Objective in map (old)");
-        //   console.log(objective.data);
-        //   console.log("Objective in store (new)");
-        //   console.log(store.state.currentEditorObjective);
-        //   if (objective.data.id == store.state.currentEditorObjective.id) {
-        //     objective.data = store.state.currentEditorObjective;
-        //   }
-        // });
+      case "update":
         store.commit("resetEditorObjective");
         updateNewGoal();
         break;
@@ -135,26 +129,29 @@ export default {
     }
 
     const save = async () => {
-      switch (command) {
-        case "createGoal":
-          await dataService.createGoal(goal.value);
-          break;
-        case "updateGoal":
-          await dataService.updateGoal(goal.value.id, goal.value);
-          break;
+      if (editing) {
+        await dataService.updateGoal(goal.value.id, goal.value);
+      } else {
+        await dataService.createGoal(goal.value);
       }
+      router.back();
+    };
+
+    const cancel = () => {
+      store.commit("resetEditorGoal");
       router.back();
     };
 
     return {
       goal,
-      command,
+      editing,
       selectedObjective,
       selectObjective,
       addObjective,
       editObjective,
       deleteObjective,
       save,
+      cancel
     };
   },
 };

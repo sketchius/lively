@@ -81,7 +81,8 @@ export default createStore({
         timeFrame: "",
         objectives: [],
         modified: false,
-        new: true
+        new: true,
+        saved: false
       };
     },
     resetEditorObjective(state) {
@@ -92,7 +93,8 @@ export default createStore({
         timeFrame: "",
         tasks: [],
         modified: false,
-        new: true
+        new: true,
+        saved: false
       };
     },
     resetEditorTask(state) {
@@ -102,7 +104,8 @@ export default createStore({
         details: "",
         timeFrame: "",
         modified: false,
-        new: true
+        new: true,
+        saved: false
       };
     },
 

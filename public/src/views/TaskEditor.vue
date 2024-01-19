@@ -1,6 +1,8 @@
 <template>
   <div class="task-form-container">
-    <h2>{{ command == "createTask" ? "New Task" : "Edit Task" }}</h2>
+    <h2>
+      {{ editing ? "Edit Task" : "New Task" }}
+    </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
       <input type="text" id="title" v-model="task.title" placeholder="Title" />
@@ -23,7 +25,9 @@
       />
     </div>
 
-    <button class="button" @click="save">Save</button>
+    <button class="button" @click="save">
+        {{ editing ? "Save" : "Create" }}
+      </button>
     <button class="button" @click="cancel">Cancel</button>
   </div>
 </template>
@@ -41,7 +45,7 @@ export default {
     const store = useStore();
     const task = ref(store.state.currentEditorTask);
 
-    const command = store.state.command;
+    const editing = task.value.title != "";
 
     const updateNewTask = () => {
       store.commit("updateEditorTask", task.value);
@@ -49,28 +53,37 @@ export default {
     };
 
     const save = async () => {
-      switch (command) {
-        case "createTask":
-          await dataService.createTask(task.value);
-          break;
-        case "updateTask":
+      if (editing) {
+        if (router.currentRoute.value.meta.level == 1) {
           await dataService.updateTask(task.value.id, task.value);
-          break;
-        case "createGoal":
-        case "updateGoal":
-        case "updateObjective":
-        case "createObjective":
+        } else {
           updateNewTask();
-          break;
+          store.commit("setReturnValue", {
+            data: task,
+            type: editing ? "update":"create",
+          });
+        }
+      } else {
+        if (router.currentRoute.value.meta.level == 1) {
+          await dataService.createTask(task.value);
+        } else {
+          updateNewTask();
+          store.commit("setReturnValue", {
+            data: task,
+            type: editing ? "update":"create",
+          });
+        }
       }
+
       router.back();
     };
 
     const cancel = () => {
+      store.commit("resetEditorTask");
       router.back();
     };
 
-    return { task, command, save, cancel };
+    return { task, editing, save, cancel };
   },
 };
 </script>

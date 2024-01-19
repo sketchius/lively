@@ -1,7 +1,7 @@
 <template>
   <div class="objective-form-container">
     <h2>
-      {{ currentCommand == "createObjective" ? "New Objective" : "Edit Objective" }}
+      {{ editing ? "Edit Objective" : "New Objective" }}
     </h2>
     <div class="input-wrapper">
       <label for="title">Title</label>
@@ -49,7 +49,9 @@
         <button class="button" @click="deleteTask">Delete Task</button>
       </div>
 
-      <button class="button" @click="save">Save</button>
+      <button class="button" @click="save">
+        {{ editing ? "Save" : "Create" }}
+      </button>
       <button class="button" @click="cancel">Cancel</button>
     </div>
   </div>
@@ -60,6 +62,8 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
 import dataService from "../services/dataService.js";
+import { createUID } from '@/util/uuid';
+
 
 export default {
   name: "ObjectiveEditor",
@@ -67,10 +71,9 @@ export default {
     const router = useRouter();
     const store = useStore();
     const objective = ref(store.state.currentEditorObjective);
-
-    const currentCommand =
-      store.state.commandStack[store.state.commandStack.length - 1];
-    const primaryCommand = store.state.commandStack[0];
+    
+    const returnValue = store.state.returnValue;
+    const editing = objective.value.title != "";
 
     let selectedTask = ref(null);
 
@@ -81,7 +84,10 @@ export default {
 
     const addTask = () => {
       updateNewObjective();
-      router.push("/tasks/editor");
+      store.commit("resetEditorTask");
+      if (router.currentRoute.value.path == "/goal-editor/objective-editor")
+        router.push("/goal-editor/objective-editor/task-editor");
+      else router.push("/objective-editor/task-editor");
     };
 
     const selectTask = (task) => {
@@ -90,7 +96,9 @@ export default {
 
     const editTask = () => {
       store.commit("updateEditorTask", selectedTask.value.data);
-      router.push("/tasks/editor");
+      if (router.currentRoute.value.path == "/goal-editor/objective-editor")
+        router.push("/goal-editor/objective-editor/task-editor");
+      else router.push("/objective-editor/task-editor");
     };
 
     const deleteTask = async () => {
@@ -103,45 +111,61 @@ export default {
       }
     };
 
+    switch (returnValue.type) {
+      case "create":
+        objective.value.tasks.push({
+          phase: 1,
+          data: {id: createUID(), ...store.state.currentEditorTask},
+        });
+        store.commit("resetEditorTask");
+        updateNewObjective();
+        break;
+      case "update":
+        store.commit("resetEditorTask");
+        updateNewObjective();
+        break;
+      case null:
+        break;
+    }
+
     const save = async () => {
-      switch (currentCommand) {
-        case "createObjective":
-          if (primaryCommand == currentCommand) {
-            await dataService.createObjective(objective.value);
-          } else {
-            updateNewObjective();
-            store.commit("setReturnValue", {
-              data: objective,
-              type: currentCommand,
-            });
-            store.commit("popCommand");
-          }
-          break;
-        case "updateObjective":
-          if (primaryCommand == currentCommand) {
-            await dataService.updateObjective(
-              objective.value.id,
-              objective.value
-            );
-          } else {
-            updateNewObjective();
-            store.commit("setReturnValue", {
-              data: objective,
-              type: currentCommand,
-            });
-            store.commit("popCommand");
-          }
-          break;
+      if (editing) {
+        if (router.currentRoute.value.meta.level == 1) {
+          await dataService.updateObjective(
+            objective.value.id,
+            objective.value
+          );
+        } else {
+          updateNewObjective();
+          store.commit("setReturnValue", {
+            data: objective,
+            type: editing ? "update":"create",
+          });
+        }
+      } else {
+        if (router.currentRoute.value.meta.level == 1) {
+          await dataService.createObjective(objective.value);
+        } else {
+          updateNewObjective();
+          store.commit("setReturnValue", {
+            data: objective,
+            type: editing ? "update":"create",
+          });
+        }
       }
+
+
       router.back();
     };
 
     const cancel = () => {
+      store.commit("resetEditorObjective");
       router.back();
     };
 
     return {
       objective,
+      editing,
       selectedTask,
       selectTask,
       addTask,
@@ -149,8 +173,6 @@ export default {
       deleteTask,
       save,
       cancel,
-      currentCommand,
-      primaryCommand,
     };
   },
 };
