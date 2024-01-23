@@ -4,7 +4,7 @@
       <h2>Goals</h2>
       <button class="button icon" @click="createGoal()">+</button>
     </div>
-    <div v-for="goal in goals" :key="goal.id" class="goal-item">
+    <div v-for="goal in goals" :key="goal.id" class="goal-card">
       <div class="title">
         <h3>{{ goal.title }}</h3>
         <button class="icon-button" @click="editGoal(goal)">E</button>
@@ -13,16 +13,17 @@
         </button>
       </div>
       <p>{{ goal.description }}</p>
+      OBJECTIVES
       <div
         v-for="objective in goal.objectives"
         :key="objective.id"
-        class="objective-item"
+        class="objective-card"
       >
         <h4>{{ objective.data.title }}</h4>
         <div
           v-for="task in objective.data.tasks"
           :key="task.id"
-          class="task-item"
+          class="task-card"
         >
           <h5>{{ task.data.title }}</h5>
         </div>
@@ -89,11 +90,11 @@ export default {
   min-height: 80%;
 }
 
-.goal-item {
+.goal-card {
   margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 2rem;
+  border: 1px black solid;
+  border-radius: 8px;
 }
 
 .goal-item p {
@@ -119,8 +120,11 @@ h3 {
   cursor: pointer;
 }
 
-.objective-item {
-  margin-left: 1rem;
+.objective-card {
+  max-width: 40ch;
+  padding: 0rem 1rem;
+  border: 1px black solid;
+  border-radius: 8px;
 }
 .task-item {
   margin-left: 1.5rem;
