@@ -71,6 +71,7 @@ dataApp.get("/goals", async (req, res) => {
             userId,
             objective.id
           );
+          objective.data.new = false;
 
           if (objective.data.tasks) {
             for (let k = 0; k < objective.data.tasks.length; k++) {
@@ -78,11 +79,13 @@ dataApp.get("/goals", async (req, res) => {
               console.log("Getting task data for ID " + task.id);
 
               task.data = await taskData.getTask(userId, task.id);
+              task.data.new = false;
               console.log(task.data);
             }
           }
         }
       }
+      goal.new = false;
     }
 
     res.json(goals);
