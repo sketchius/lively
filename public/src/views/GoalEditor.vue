@@ -42,8 +42,15 @@
     </div>
     <div class="buttons">
       <button class="button" @click="addObjective">New Objective</button>
-      <button class="button" @click="editObjective">Edit Objective</button>
-      <button class="button" @click="deleteObjective">Delete Objective</button>
+      <button
+        class="button"
+        @click="editObjective"
+        :disabled="!selectedObjective"
+      >
+        Edit Objective
+      </button>
+      <button class="button" @click="deleteObjective"
+        :disabled="!selectedObjective">Delete Objective</button>
     </div>
 
     <button class="button" @click="save">
@@ -151,7 +158,7 @@ export default {
       editObjective,
       deleteObjective,
       save,
-      cancel
+      cancel,
     };
   },
 };
@@ -177,7 +184,7 @@ export default {
 }
 
 .selected {
-  background-color: #586069;
+  background-color: #539ff5;
 }
 
 .objective-map {
@@ -214,6 +221,13 @@ export default {
   cursor: pointer;
 }
 
+.button:disabled {
+  background-color: #79857b;
+}
+
+.button:disabled:hover {
+  background-color: #79857b;
+}
 .button:hover {
   background-color: #239639; /* Darker shade on hover */
 }

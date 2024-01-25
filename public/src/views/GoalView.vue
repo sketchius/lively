@@ -1,31 +1,36 @@
 <template>
-  <div class="goal-list">
-    <div class="list-heading">
-      <h2>Goals</h2>
-      <button class="button icon" @click="createGoal()">+</button>
+  <div class="outer-grid">
+    <div class="row headers">
+      <div>Title</div>
+      <div>Progress</div>
+      <div>Priority</div>
+      <div>Due Date</div>
+      <div>Tags</div>
     </div>
-    <div v-for="goal in goals" :key="goal.id" class="goal-card">
-      <div class="title">
-        <h3>{{ goal.title }}</h3>
-        <button class="icon-button" @click="editGoal(goal)">E</button>
-        <button class="icon-button delete" @click="deleteGoal(goal.id)">
-          D
-        </button>
+
+    <div v-for="goal in goals" :key="goal.id" class="goal">
+      <div @click="goal.isExpanded = !goal.isExpanded" class="row">
+        <div>{{ goal.title }}</div>
+        <div>{{ goal.progress }}%</div>
+        <div>{{ goal.priority }}</div>
+        <div>{{ goal.dueDate }}</div>
+        <div>
+          <span v-for="tag in goal.tags" :key="tag">{{ tag }}</span>
+        </div>
       </div>
-      <p>{{ goal.description }}</p>
-      OBJECTIVES
-      <div
-        v-for="objective in goal.objectives"
-        :key="objective.id"
-        class="objective-card"
-      >
-        <h4>{{ objective.data.title }}</h4>
+      <div v-if="goal.isExpanded">
         <div
-          v-for="task in objective.data.tasks"
-          :key="task.id"
-          class="task-card"
+          v-for="objective in goal.objectives"
+          :key="objective.id"
+          class="row child"
         >
-          <h5>{{ task.data.title }}</h5>
+          <div class="indent">{{ objective.data.title }}</div>
+          <div>{{ objective.data.progress }}%</div>
+          <div>{{ objective.data.priority }}</div>
+          <div>{{ objective.data.dueDate }}</div>
+          <div>
+            <span v-for="tag in objective.tags" :key="tag">{{ tag }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -128,5 +133,34 @@ h3 {
 }
 .task-item {
   margin-left: 1.5rem;
+}
+
+.outer-grid {
+  width: 100ch;
+}
+
+.headers {
+  padding: 0 15px;
+}
+
+.goal {
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 5px 15px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+}
+
+.child {
+  margin-top: 10px;
+}
+
+.indent {
+  margin-left: 15px;
 }
 </style>
