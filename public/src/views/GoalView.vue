@@ -10,7 +10,10 @@
 
     <div v-for="goal in goals" :key="goal.id" class="goal">
       <div @click="goal.isExpanded = !goal.isExpanded" class="row">
-        <div>{{ goal.title }}</div>
+        <div class="title-group">
+          <div class="title">{{ goal.title }}</div>
+          <div>Edit</div>
+        </div>
         <div>{{ goal.progress }}%</div>
         <div>{{ goal.priority }}</div>
         <div>{{ goal.dueDate }}</div>
@@ -24,7 +27,10 @@
           :key="objective.id"
           class="row child"
         >
-          <div class="indent">{{ objective.data.title }}</div>
+          <div class="indent title-group">
+            <div class="title">{{ objective.data.title }}</div>
+            <div>Edit</div>
+          </div>
           <div>{{ objective.data.progress }}%</div>
           <div>{{ objective.data.priority }}</div>
           <div>{{ objective.data.dueDate }}</div>
@@ -162,5 +168,14 @@ h3 {
 
 .indent {
   margin-left: 15px;
+}
+
+.title-group {
+  display: flex;
+  gap: 0.5rem;
+  padding-right: 1rem;
+}
+.title {
+  margin-right: auto;
 }
 </style>
