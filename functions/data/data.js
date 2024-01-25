@@ -145,6 +145,11 @@ export const taskData = {
     await firestore.update(path, taskData);
   },
 
+  async updateTaskStatus(userId, taskId, newStatus) {
+    const path = `users/${userId}/tasks/${taskId}`;
+    await firestore.updateField(path, "complete", newStatus);
+  },
+
   async deleteObjective(userId, taskId) {
     const path = `users/${userId}/tasks/${taskId}`;
     await firestore.delete(path);

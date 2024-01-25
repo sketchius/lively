@@ -32,6 +32,12 @@ export const firestore = {
     await ref.update(data);
   },
 
+  async updateField(path, fieldName, value) {
+    const ref = this.getPathRef(path);
+    if (!ref) throw new Error("Invalid path for updateField operation");
+    await ref.update({ [fieldName]: value });
+  },
+
   async delete(path) {
     const ref = this.getPathRef(path);
     if (!ref) throw new Error("Invalid path for delete operation");

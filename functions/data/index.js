@@ -143,6 +143,8 @@ dataApp.put("/goals/:goalId", async (req, res) => {
   }
 });
 
+
+
 dataApp.delete("/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId();
@@ -283,6 +285,16 @@ dataApp.put("/tasks/:taskId", async (req, res) => {
   try {
     const userId = getUserId();
     await taskData.updateTask(userId, req.params.taskId, req.body);
+    res.send("Task updated successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.put("/tasks/:taskId/completion", async (req, res) => {
+  try {
+    const userId = getUserId();
+    await taskData.updateTaskStatus(userId, req.params.taskId, req.body);
     res.send("Task updated successfully");
   } catch (error) {
     res.status(500).send(error.message);
