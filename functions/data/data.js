@@ -5,19 +5,38 @@ export const goalData = {
   async createGoal(userId, goalData) {
     const uid = goalData.id ? goalData.id : createUID();
     const path = `users/${userId}/goals/${uid}`;
-    console.log(goalData);
     await firestore.create(path, goalData);
     return uid;
   },
 
   async getGoal(userId, goalId) {
     const path = `users/${userId}/goals/${goalId}`;
-    return await firestore.read(path);
+    const goal = await firestore.read(path);
+    if (goal.subGoals) {
+      goal.subGoals = await Promise.all(
+        goal.subGoals.map((subGoalId) => this.getGoal(userId, subGoalId))
+      );
+    }
+    return goal;
   },
 
   async listGoals(userId) {
     const path = `users/${userId}/goals`;
     return await firestore.list(path);
+  },
+
+  async listTopLevelGoals(userId) {
+    const path = `users/${userId}/goals`;
+    let goals = await firestore.list(path);
+    goals = goals.filter((goal) => goal.parentGoal == null);
+    for (const goal of goals) {
+      if (goal.subGoals) {
+        goal.subGoals = await Promise.all(
+          goal.subGoals.map((subGoalId) => this.getGoal(userId, subGoalId))
+        );
+      }
+    }
+    return goals;
   },
 
   async updateGoal(userId, goalId, goalData) {
@@ -60,7 +79,7 @@ export const goalData = {
   async removeObjectiveFromGoals(userId, objectiveId) {
     await firestore.removeObjectiveFromGoals(userId, objectiveId);
   },
-  
+
   async updateGoalStatus(userId, goalId, newStatus) {
     const path = `users/${userId}/goals/${goalId}`;
     await firestore.updateField(path, "complete", newStatus);

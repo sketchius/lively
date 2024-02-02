@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 
-import { goalData, objectiveData, taskData } from "./data.js";
+import { goalData } from "./data.js";
 
 const dataApp = express();
 dataApp.use(express.json());
@@ -37,6 +37,18 @@ dataApp.post("/goals", async (req, res) => {
 
     const goalId = await goalData.createGoal(userId, data);
     res.json({ goalId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.get("/goals/top", async (req, res) => {
+  try {
+    const userId = getUserId();
+    const goals = await goalData.listTopLevelGoals(userId);
+
+    res.json(goals);
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
@@ -162,6 +174,5 @@ dataApp.put("/goals/:goalId/completion", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-
 
 export { dataApp };
