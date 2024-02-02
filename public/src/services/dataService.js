@@ -11,7 +11,7 @@ export default {
     return axios.get(`${API_URL}/goals/${goalId}`);
   },
   listGoals() {
-    return axios.get(`${API_URL}/goals`);
+    return axios.get(`${API_URL}/goals/top`);
   },
   updateGoal(goalId, goalData) {
     return axios.put(`${API_URL}/goals/${goalId}`, goalData);

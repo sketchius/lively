@@ -147,7 +147,7 @@ export default createStore({
     },
   },
   actions: {
-    async fetchGoals({ commit }) {
+    async fetchTopLevelGoals({ commit }) {
       const response = await dataService.listGoals();
       commit("setGoals", response.data);
       commit("setGoalListNeedsRefresh", false);
@@ -176,7 +176,7 @@ export default createStore({
     async deleteGoal({ dispatch }, goalId) {
       try {
         await dataService.deleteGoal(goalId);
-        dispatch("fetchGoals");
+        dispatch("fetchTopLevelGoals");
       } catch (error) {
         console.error("Error deleting goal:", error);
       }
