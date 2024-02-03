@@ -1,5 +1,5 @@
 <template>
-  <div class="outer-grid">
+  <div class="rows">
     <div class="row headers">
       <div>Title</div>
       <div>Progress</div>
@@ -8,38 +8,14 @@
       <div>Tags</div>
     </div>
 
-    <div v-for="goal in goals" :key="goal.id" class="goal">
-      <div @click="goal.isExpanded = !goal.isExpanded" class="row">
-        <div class="title-group">
-          <div class="title">{{ goal.title }}</div>
-          <div>Edit</div>
-        </div>
-        <div>{{ goal.progress }}%</div>
-        <div>{{ goal.priority }}</div>
-        <div>{{ goal.dueDate }}</div>
-        <div>
-          <span v-for="tag in goal.tags" :key="tag">{{ tag }}</span>
-        </div>
-      </div>
-      <div v-if="goal.isExpanded">
-        <div
-          v-for="objective in goal.objectives"
-          :key="objective.id"
-          class="row child"
-        >
-          <div class="indent title-group">
-            <div class="title">{{ objective.data.title }}</div>
-            <div>Edit</div>
-          </div>
-          <div>{{ objective.data.progress }}%</div>
-          <div>{{ objective.data.priority }}</div>
-          <div>{{ objective.data.dueDate }}</div>
-          <div>
-            <span v-for="tag in objective.tags" :key="tag">{{ tag }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <GoalListItem
+      v-for="goal in goals"
+      :key="goal.id"
+      :goal="goal"
+      :depth="0"
+      :dist="0"
+      :top="true"
+    />
   </div>
 </template>
 
@@ -47,6 +23,7 @@
 import { computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import GoalListItem from "../components/GoalListItem.vue";
 
 export default {
   setup() {
@@ -58,7 +35,7 @@ export default {
     );
 
     onMounted(() => {
-      store.dispatch("fetchGoals");
+      store.dispatch("fetchTopLevelGoals");
     });
 
     watch(goalListNeedsRefresh, (newValue) => {
@@ -84,6 +61,9 @@ export default {
     };
 
     return { goals, deleteGoal, editGoal, createGoal };
+  },
+  components: {
+    GoalListItem,
   },
 };
 </script>
@@ -141,12 +121,14 @@ h3 {
   margin-left: 1.5rem;
 }
 
-.outer-grid {
-  width: 100ch;
-}
-
-.headers {
-  padding: 0 15px;
+.rows {
+  display: flex;
+  padding: 10px;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-end;
+  width: fit-content;
+  border: 2px solid #8592c1;
 }
 
 .goal {
@@ -158,8 +140,13 @@ h3 {
 }
 
 .row {
+  width: 60vw;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 20vw 1fr 1fr 1fr 1fr;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #5a6798;
 }
 
 .child {

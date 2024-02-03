@@ -6,6 +6,7 @@
         ><button class="button icon">+</button></router-link
       >
     </div>
+
     <div v-for="goal in goals" :key="goal.id" class="goal-item">
       <div class="title">
         <h3>{{ goal.title }}</h3>
