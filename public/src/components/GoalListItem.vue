@@ -21,7 +21,7 @@
         class="collapsible-icon"
         @click="toggleCollapsed"
       ></div>
-      <input type="checkbox" />
+      <CheckboxInput :checked="checked" @click="handleCheckboxClick" />
       <div
         class="type-marker"
         :class="{
@@ -53,6 +53,7 @@
 
 <script setup>
 import { defineProps, defineEmits, onMounted, ref } from "vue";
+import CheckboxInput from "../components/CheckboxInput.vue";
 
 const props = defineProps({
   goal: Object,
@@ -68,6 +69,7 @@ const props = defineProps({
 
 const emit = defineEmits(["count-descendants", "set-collapsed"]);
 const childCount = ref(0);
+const checked = ref(props.goal.complete);
 
 const childData = ref(
   props.goal.subGoals.map(() => {
@@ -75,7 +77,7 @@ const childData = ref(
   })
 );
 
-const collapsed = ref(true);
+const collapsed = ref(false);
 
 const handleCount = (data) => {
   childCount.value += data.count;
@@ -112,6 +114,10 @@ const toggleCollapsed = () => {
   }
   computeDists();
   emit("set-collapsed", { index: props.index, collapsed: collapsed.value });
+};
+
+const handleCheckboxClick = () => {
+  checked.value = !checked.value;
 };
 
 onMounted(() => {
@@ -170,6 +176,7 @@ summary {
 .collapsible-icon {
   width: 20px;
   height: 20px;
+  z-index: 1;
 }
 .collapsible-icon.collapsed {
   background-image: url("../assets/images/icons/expand-icon.svg");
@@ -191,13 +198,13 @@ summary.child::before {
   content: "";
   display: block;
   position: absolute;
-  left: -20px;
+  left: -22px;
   top: calc(((30px * var(--dist)) * -1) + 10px);
   width: 25px;
   height: calc((30px * var(--dist)));
   border: solid #8592c1;
   border-width: 0 0 3px 3px;
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 12px;
   z-index: 0;
 }
 summary.child.subsequent::before {
