@@ -41,7 +41,7 @@ body {
   display: grid;
   grid-template-columns: 10ch 1fr;
   padding: 2rem;
-  background-color: white;
+  background-color: #fffcf2;
 }
 
 h2 {
