@@ -1,7 +1,6 @@
 <template>
   <div
     :style="{
-      gridTemplateColumns: `3fr 1fr 1fr 1fr 2fr`,
       '--dist': props.dist,
     }"
     class="row"
@@ -33,8 +32,8 @@
       </div>
     </summary>
     <div class="cell"><ImportanceTag :level="goal.importance" /></div>
-    <div class="cell">{{ props.dist }}</div>
-    <div class="cell">
+    <div class="cell duedate">{{ props.dist }}</div>
+    <div class="cell scheduled">
       {{
         goal.type.includes("task")
           ? goal.scheduled
@@ -43,7 +42,7 @@
           : scheduledDescendantCount + "/" + descendantCount + " tasks"
       }}
     </div>
-    <div class="cell">Work</div>
+    <div class="cell tags">Work</div>
   </div>
   <template v-for="(subGoal, index) in goal.subGoals" :key="subGoal.id">
     <GoalListItem
@@ -165,7 +164,7 @@ summary {
 .row {
   display: grid;
   position: relative;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 3fr 0.75fr 1fr 1fr 1fr;
   align-items: center;
   max-height: 35px;
   width: 100%;
@@ -263,5 +262,14 @@ input[type="checkbox"] {
   align-items: center;
   min-height: 30px;
   border-bottom: 1px #b7bfdf solid;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.duedate,
+.scheduled,
+.tags {
+  font-size: 14px;
 }
 </style>

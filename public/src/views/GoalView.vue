@@ -23,9 +23,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch, ref } from 'vue';
-import { useStore } from 'vuex';
-import GoalListItem from '../components/GoalListItem.vue';
+import { computed, onMounted, watch, ref } from "vue";
+import { useStore } from "vuex";
+import GoalListItem from "../components/GoalListItem.vue";
 
 const store = useStore();
 
@@ -41,7 +41,7 @@ const initializeGoalData = () => {
 console.log("goalData set up");
 
 onMounted(() => {
-  store.dispatch('fetchTopLevelGoals');
+  store.dispatch("fetchTopLevelGoals");
 });
 
 const handleChildCollapse = (data) => {
@@ -52,13 +52,17 @@ const handleChildCollapse = (data) => {
 
 watch(goalListNeedsRefresh, (newValue) => {
   if (newValue) {
-    store.dispatch('fetchGoals');
+    store.dispatch("fetchGoals");
   }
 });
 
-watch(goals, () => {
-  initializeGoalData();
-}, { immediate: true });
+watch(
+  goals,
+  () => {
+    initializeGoalData();
+  },
+  { immediate: true }
+);
 
 // const deleteGoal = async (goalId) => {
 //   await store.dispatch('deleteGoal', goalId);
@@ -76,7 +80,6 @@ watch(goals, () => {
 //   router.push('/goal-editor');
 // };
 </script>
-
 
 <style scoped>
 .list-heading {
@@ -136,7 +139,7 @@ h3 {
   position: relative;
   flex-direction: column;
   align-items: flex-end;
-  width: clamp(800px, 80vw, 900px);
+  width: clamp(900px, 80vw, 1200px);
   border: 3px solid #8592c1;
   border-radius: 10px;
   padding-top: 10px;
@@ -154,7 +157,7 @@ h3 {
 .row {
   width: 100%;
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 2fr;
+  grid-template-columns: 3fr 0.75fr 1fr 1fr 1fr;
   padding-bottom: 2px;
   font-weight: 600;
   font-size: 18px;
