@@ -1,25 +1,24 @@
 <template>
   <div
     :style="{
-      gridTemplateColumns: `calc(20vw - ${depth * 15}px) 1fr 1fr 1fr 1fr`,
-      width: `calc(60vw - ${depth * 15}px)`,
+      gridTemplateColumns: `3fr 1fr 1fr 1fr 2fr`,
       '--dist': props.dist,
     }"
     class="row"
     :class="{ top: props.top, bottom: props.bottom }"
   >
     <summary
-      :style="{ marginLeft: `${depth * 15}px` }"
+      :style="{ marginLeft: `${15 + depth * 30}px` }"
       :class="{ child: depth > 0, subsequent: index > 0 && dist == 1 }"
     >
       <div
         :class="{
-          collapsed: collapsed && props.goal.subGoals.length > 0,
-          expanded: !collapsed && props.goal.subGoals.length > 0,
+          collapsed: props.collapsed && props.goal.subGoals.length > 0,
+          expanded: !props.collapsed && props.goal.subGoals.length > 0,
           childless: props.goal.subGoals.length == 0,
         }"
         class="collapsible-icon"
-        @click="toggleCollapsed"
+        @click="handleCollapseButtonClick"
       ></div>
       <CheckboxInput :checked="checked" @click="handleCheckboxClick" />
       <div
@@ -29,12 +28,14 @@
           task: goal.type.includes('task'),
         }"
       ></div>
-      <div class="title">{{ goal.title }}</div>
+      <div class="title-container">
+        <div class="title">{{ goal.title }}</div>
+      </div>
     </summary>
-    <div>Desc: {{ childCount }}</div>
-    <div>Dist: {{ props.dist }}</div>
-    <div>Today</div>
-    <div>Work</div>
+    <div class="cell"><ImportanceTag :level="goal.importance" /></div>
+    <div class="cell">Dist: {{ props.dist }}</div>
+    <div class="cell">Today</div>
+    <div class="cell">Work</div>
   </div>
   <template v-for="(subGoal, index) in goal.subGoals" :key="subGoal.id">
     <GoalListItem
@@ -42,11 +43,12 @@
       :depth="depth + 1"
       @count-descendants="handleCount"
       @set-collapsed="handleChildCollapse"
+      :collapsed="childData[index].collapsed"
       :index="index"
       :top="false"
       :bottom="props.top && index == goal.subGoals.length - 1"
       :dist="childData[index].dist || 1"
-      v-if="!collapsed"
+      v-if="!props.collapsed"
     />
   </template>
 </template>
@@ -54,6 +56,7 @@
 <script setup>
 import { defineProps, defineEmits, onMounted, ref } from "vue";
 import CheckboxInput from "../components/CheckboxInput.vue";
+import ImportanceTag from "../components/ImportanceTag.vue";
 
 const props = defineProps({
   goal: Object,
@@ -65,6 +68,7 @@ const props = defineProps({
   dist: Number,
   top: Boolean,
   bottom: Boolean,
+  collapsed: Boolean
 });
 
 const emit = defineEmits(["count-descendants", "set-collapsed"]);
@@ -77,7 +81,7 @@ const childData = ref(
   })
 );
 
-const collapsed = ref(false);
+
 
 const handleCount = (data) => {
   childCount.value += data.count;
@@ -94,6 +98,7 @@ const handleChildCollapse = (data) => {
   computeDists();
 };
 
+
 const computeDists = () => {
   let dist = 1;
   for (let i = 0; i < props.goal.subGoals.length; i++) {
@@ -105,20 +110,15 @@ const computeDists = () => {
   }
 };
 
-const toggleCollapsed = () => {
-  collapsed.value = !collapsed.value;
-  if (collapsed.value) {
-    childData.value.forEach((child) => {
-      child.collapsed = true;
-    });
-  }
+const handleCollapseButtonClick = () => {
   computeDists();
-  emit("set-collapsed", { index: props.index, collapsed: collapsed.value });
+  emit("set-collapsed", { index: props.index, collapsed: !props.collapsed });
 };
 
 const handleCheckboxClick = () => {
   checked.value = !checked.value;
 };
+
 
 onMounted(() => {
   if (props.goal.subGoals.length == 0)
@@ -136,19 +136,22 @@ summary {
   display: flex;
   position: relative;
   align-items: center;
+  min-height: 30px;
 }
+
 .row {
   display: grid;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  position: relative;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   align-items: center;
   max-height: 35px;
+  width: 100%;
 }
 
 .type-marker {
   width: 8px;
   height: 18px;
+  min-width: 8px;
   margin-left: 10px;
   border: 3px solid #5a6798;
   border-radius: 2px;
@@ -163,6 +166,16 @@ summary {
   background-color: #7fefa6;
 }
 
+.title-container {
+  min-height: 30px;
+  min-width: 5px;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  flex-shrink: 1;
+  border-bottom: 1px #b7bfdf solid;
+}
+
 .title {
   margin-left: 5px;
   font-weight: 600;
@@ -171,12 +184,14 @@ summary {
   white-space: nowrap;
   overflow: hidden;
   color: #5a6798;
+  width: 90%;
 }
 
 .collapsible-icon {
   width: 20px;
   height: 20px;
   z-index: 1;
+  min-width: 20px;
 }
 .collapsible-icon.collapsed {
   background-image: url("../assets/images/icons/expand-icon.svg");
@@ -199,16 +214,16 @@ summary.child::before {
   display: block;
   position: absolute;
   left: -22px;
-  top: calc(((30px * var(--dist)) * -1) + 10px);
+  top: calc(((30px * var(--dist)) * -1) + 15px);
   width: 25px;
   height: calc((30px * var(--dist)));
   border: solid #8592c1;
-  border-width: 0 0 3px 3px;
+  border-width: 0 0 2px 2px;
   border-bottom-left-radius: 12px;
   z-index: 0;
 }
 summary.child.subsequent::before {
-  top: calc(((40px * var(--dist)) * -1) + 10px);
+  top: calc(((40px * var(--dist)) * -1) + 15px);
   height: calc((40px * var(--dist)));
 }
 
@@ -218,5 +233,12 @@ input[type="checkbox"] {
   margin-bottom: 0;
   width: 20px;
   height: 20px;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  border-bottom: 1px #b7bfdf solid;
 }
 </style>

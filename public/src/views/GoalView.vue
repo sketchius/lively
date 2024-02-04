@@ -1,72 +1,82 @@
 <template>
   <div class="rows">
     <div class="row headers">
-      <div>Title</div>
-      <div>Progress</div>
+      <div class="title">Goal Title</div>
       <div>Priority</div>
       <div>Due Date</div>
+      <div>Scheduled</div>
       <div>Tags</div>
     </div>
 
     <GoalListItem
-      v-for="goal in goals"
+      v-for="(goal, index) in goals"
       :key="goal.id"
       :goal="goal"
       :depth="0"
+      :index="index"
       :dist="0"
       :top="true"
+      @set-collapsed="handleChildCollapse"
+      :collapsed="goalData[index].collapsed"
     />
   </div>
 </template>
 
-<script>
-import { computed, watch, onMounted } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import GoalListItem from "../components/GoalListItem.vue";
+<script setup>
+import { computed, onMounted, watch, ref } from 'vue';
+import { useStore } from 'vuex';
+import GoalListItem from '../components/GoalListItem.vue';
 
-export default {
-  setup() {
-    const router = useRouter();
-    const store = useStore();
-    const goals = computed(() => store.state.goals);
-    const goalListNeedsRefresh = computed(
-      () => store.state.goalListNeedsRefresh
-    );
+const store = useStore();
 
-    onMounted(() => {
-      store.dispatch("fetchTopLevelGoals");
-    });
+const goals = computed(() => store.state.goals);
+const goalListNeedsRefresh = computed(() => store.state.goalListNeedsRefresh);
 
-    watch(goalListNeedsRefresh, (newValue) => {
-      if (newValue) {
-        store.dispatch("fetchGoals");
-      }
-    });
+const goalData = ref([]);
 
-    const deleteGoal = async (goalId) => {
-      await store.dispatch("deleteGoal", goalId);
-    };
-
-    const editGoal = (goal) => {
-      store.commit("pushCommand", "updateGoal");
-      store.commit("updateEditorGoal", goal);
-      router.push("/goal-editor");
-    };
-
-    const createGoal = () => {
-      store.commit("pushCommand", "createGoal");
-      store.commit("resetEditorGoal");
-      router.push("/goal-editor");
-    };
-
-    return { goals, deleteGoal, editGoal, createGoal };
-  },
-  components: {
-    GoalListItem,
-  },
+const initializeGoalData = () => {
+  goalData.value = goals.value.map(() => ({ collapsed: false }));
 };
+
+console.log("goalData set up");
+
+onMounted(() => {
+  store.dispatch('fetchTopLevelGoals');
+});
+
+const handleChildCollapse = (data) => {
+  console.log(goalData.value);
+  console.log(data);
+  goalData.value[data.index].collapsed = data.collapsed;
+};
+
+watch(goalListNeedsRefresh, (newValue) => {
+  if (newValue) {
+    store.dispatch('fetchGoals');
+  }
+});
+
+watch(goals, () => {
+  initializeGoalData();
+}, { immediate: true });
+
+// const deleteGoal = async (goalId) => {
+//   await store.dispatch('deleteGoal', goalId);
+// };
+
+// const editGoal = (goal) => {
+//   store.commit('pushCommand', 'updateGoal');
+//   store.commit('updateEditorGoal', goal);
+//   router.push('/goal-editor');
+// };
+
+// const createGoal = () => {
+//   store.commit('pushCommand', 'createGoal');
+//   store.commit('resetEditorGoal');
+//   router.push('/goal-editor');
+// };
 </script>
+
 
 <style scoped>
 .list-heading {
@@ -93,8 +103,8 @@ export default {
 }
 
 .title {
-  display: flex;
-  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 h3 {
@@ -123,12 +133,14 @@ h3 {
 
 .rows {
   display: flex;
-  padding: 10px;
   position: relative;
   flex-direction: column;
   align-items: flex-end;
-  width: fit-content;
-  border: 2px solid #8592c1;
+  width: clamp(800px, 80vw, 900px);
+  border: 3px solid #8592c1;
+  border-radius: 10px;
+  padding-top: 10px;
+  padding-bottom: 15px;
 }
 
 .goal {
@@ -140,13 +152,14 @@ h3 {
 }
 
 .row {
-  width: 60vw;
+  width: 100%;
   display: grid;
-  grid-template-columns: 20vw 1fr 1fr 1fr 1fr;
-  margin-bottom: 10px;
+  grid-template-columns: 3fr 1fr 1fr 1fr 2fr;
+  padding-bottom: 2px;
   font-weight: 600;
   font-size: 18px;
   color: #5a6798;
+  border-bottom: 2px #b7bfdf solid;
 }
 
 .child {
