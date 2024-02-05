@@ -38,7 +38,6 @@ const initializeGoalData = () => {
   goalData.value = goals.value.map(() => ({ collapsed: false }));
 };
 
-console.log("goalData set up");
 
 onMounted(() => {
   store.dispatch("fetchTopLevelGoals");
