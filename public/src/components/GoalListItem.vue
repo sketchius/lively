@@ -32,7 +32,9 @@
       </div>
     </summary>
     <div class="cell"><ImportanceTag :level="goal.importance" /></div>
-    <div class="cell duedate">{{ props.dist }}</div>
+    <div class="cell duedate">
+      Dist = {{ props.dist }}, Desc = {{ descendantCount }}
+    </div>
     <div class="cell scheduled">
       {{
         goal.type.includes("task")
@@ -42,13 +44,14 @@
           : scheduledDescendantCount + "/" + descendantCount + " tasks"
       }}
     </div>
-    <div class="cell tags">Work</div>
+    <div class="cell tags">Depth = {{ depth }}, Index = {{ index }}</div>
   </div>
   <template v-for="(subGoal, index) in goal.subGoals" :key="subGoal.id">
     <GoalListItem
       :goal="subGoal"
       :depth="depth + 1"
       @set-collapsed="handleChildCollapse"
+      @report-descendants="handleChildReportDescendants"
       :collapsed="childData[index].collapsed"
       :index="index"
       :top="false"
@@ -60,7 +63,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, onMounted } from "vue";
 import CheckboxInput from "../components/CheckboxInput.vue";
 import ImportanceTag from "../components/ImportanceTag.vue";
 
@@ -77,7 +80,7 @@ const props = defineProps({
   collapsed: Boolean,
 });
 
-const emit = defineEmits([ "set-collapsed"]);
+const emit = defineEmits(["set-collapsed", "report-descendants"]);
 const descendantCount = ref(0);
 const scheduledDescendantCount = ref(0);
 
@@ -85,12 +88,16 @@ const checked = ref(props.goal.complete);
 
 const childData = ref(
   props.goal.subGoals.map(() => {
-    return {};
+    return { collapsed: false, descendantCount: 0 };
   })
 );
 
 const updateDescendantCount = () => {
   descendantCount.value = recursiveCountDescendants(props.goal);
+  emit("report-descendants", {
+    index: props.index,
+    descendantCount: descendantCount.value,
+  });
 };
 
 const recursiveCountDescendants = (goal) => {
@@ -104,7 +111,9 @@ const recursiveCountDescendants = (goal) => {
 };
 
 const updateScheduledCount = () => {
-  scheduledDescendantCount.value = recursiveCountScheduledDescendants(props.goal);
+  scheduledDescendantCount.value = recursiveCountScheduledDescendants(
+    props.goal
+  );
 };
 
 const recursiveCountScheduledDescendants = (goal) => {
@@ -127,13 +136,18 @@ const handleChildCollapse = (data) => {
   computeDists();
 };
 
+const handleChildReportDescendants = (data) => {
+  childData.value[data.index].descendantCount = data.descendantCount;
+};
+
 const computeDists = () => {
   let dist = 1;
   for (let i = 0; i < props.goal.subGoals.length; i++) {
     childData.value[i].dist = dist;
+    dist++;
 
-    if (childData.value[i].count && !childData.value[i].collapsed) {
-      dist += childData.value[i].count;
+    if (childData.value[i].descendantCount && !childData.value[i].collapsed) {
+      dist += childData.value[i].descendantCount;
     }
   }
 };
@@ -146,6 +160,10 @@ const handleCollapseButtonClick = () => {
 const handleCheckboxClick = () => {
   checked.value = !checked.value;
 };
+
+onMounted(() => {
+  computeDists();
+});
 </script>
 
 <style scoped>
