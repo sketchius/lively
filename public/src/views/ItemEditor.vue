@@ -8,12 +8,18 @@
           <button class="cancel">X</button>
         </div>
       </header>
+      <div class="socket">
+        <TypeStep />
+      </div>
     </div>
     <div class="flex-wing"></div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+// import DescribeStep from '@/components/DescribeStep.vue';
+import TypeStep from '@/components/TypeStep.vue';
+</script>
 
 <style scoped>
 .layout {
