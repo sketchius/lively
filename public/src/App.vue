@@ -26,10 +26,23 @@ body {
 }
 
 #layout {
-  --primaryteal: rgb(63, 204, 214);
-  --primaryviolet: rgb(192, 178, 255);
-  --primaryteallight: rgb(119, 246, 255);
-  --primaryvioletlight: rgb(192, 169, 255);
+  --ink: #5A6798;
+  --white: #FFFFFF;
+  --red: #FFCACA;
+  --blue: #8AE3F5;
+  --green: #B0FFCB;
+  --yellow: #FFF6A5;
+  --redLight: #FFEBEB;
+  --blueLight: #DAF9FF;
+  --greenLight: #E1FFEB;
+  --yellowLight: #FFFAD1;
+  --size1: 9px;
+  --size2: 14px;
+  --size3: 23px;
+  --size4: 37px;
+  --size5: 60px;
+  --size6: 97px;
+  --size7: 157px;
   font-family: "Inter", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   margin: 0;
