@@ -7,7 +7,7 @@ import Tasks from "../views/TaskView.vue";
 import Objectives from "../views/ObjectiveView.vue";
 import Habits from "../views/HabitsView.vue";
 import Routines from "../views/RoutinesView.vue";
-import ItemEditor from "../views/ItemEditor.vue";
+import ItemEditor from "../item-editor/view/ItemEditor.vue";
 
 // Define your routes
 const routes = [

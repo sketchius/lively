@@ -29,8 +29,8 @@
 </template>
 
 <script setup>
-import AssistantDialogue from "./AssistantDialogue.vue";
-import FormOption from "./FormOption.vue";
+import AssistantDialogue from "@/components/AssistantDialogue.vue";
+import FormOption from "@/components/FormOption.vue";
 import { ref } from "vue";
 
 const selectedOption = ref(0);

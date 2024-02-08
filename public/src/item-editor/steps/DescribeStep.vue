@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import AssistantDialogue from './AssistantDialogue.vue';
+import AssistantDialogue from '@/components/AssistantDialogue.vue';
 </script>
 
 <style scoped>

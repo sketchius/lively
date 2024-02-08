@@ -18,7 +18,7 @@
 
 <script setup>
 // import DescribeStep from '@/components/DescribeStep.vue';
-import TypeStep from '@/components/TypeStep.vue';
+import TypeStep from '@/item-editor/steps/TypeStep.vue';
 </script>
 
 <style scoped>
