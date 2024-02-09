@@ -58,6 +58,39 @@ body {
   background-color: #fffcf2;
 }
 
+textarea {
+  position: relative;
+  font-family: "Inter", sans-serif;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 400;
+  width: 45ch;
+  border: 3px solid var(--ink);
+  border-radius: 3px;
+  padding: 18px 20px;
+  background: transparent;
+  resize: none;
+}
+
+.textarea-container {
+  position: relative;
+}
+.textarea-container::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: var(--white);
+  pointer-events: none;
+}
+
+textarea::placeholder {
+  font-weight: 200;
+}
+
 h1 {
   font-size: 36px;
 }
@@ -85,6 +118,11 @@ button.minor {
   font-size: 18px;
   font-weight: 600;
   padding: 6px 24px;
+}
+
+button {
+  box-sizing: border-box;
+
 }
 
 button.major {
