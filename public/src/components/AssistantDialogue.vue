@@ -1,5 +1,5 @@
 <template>
-  <div class="dialogue-container">
+  <div class="dialogue">
     <div class="icon-container"><div class="icon"></div></div>
     <div class="content" :class="{ gap: props.subtext }">
       <div class="message">
@@ -24,15 +24,18 @@ const props = defineProps({
 
 <style scoped>
 
-.dialogue-container {
+.dialogue {
   display: flex;
   align-items: center;
   margin-top: var(--size5);
   margin-bottom: var(--size4);
+  margin-left: 0;
+  margin-right: 0;
   border: 4px double var(--ink);
   border-radius: 8px;
   padding: 20px;
-  width: 30ch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content {
@@ -57,6 +60,7 @@ const props = defineProps({
 
 .icon-container {
   margin-right: 20px;
+  margin-left: 10px;
   padding: 5px 0;
   border-right: 1px dashed var(--ink);
 }
