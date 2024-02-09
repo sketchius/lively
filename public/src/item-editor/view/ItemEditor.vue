@@ -9,7 +9,7 @@
         </div>
       </header>
       <div class="socket">
-        <TypeStep />
+        <component :is="currentComponent" @submit="handleSubmit"></component>
       </div>
     </div>
     <div class="flex-wing"></div>
@@ -17,8 +17,58 @@
 </template>
 
 <script setup>
-// import DescribeStep from '@/components/DescribeStep.vue';
-import TypeStep from '@/item-editor/steps/TypeStep.vue';
+import { computed } from "vue";
+import { useStore } from "vuex";
+import DescribeStep from "@/item-editor/steps/DescribeStep.vue";
+import TypeStep from "@/item-editor/steps/TypeStep.vue";
+import { useRouter, useRoute } from "vue-router";
+
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+
+// const formData = store.state.formData;
+
+
+
+const validateRoute = () => {
+  let actualStep = getCurrentStep();
+  console.log("Validating Route.");
+  console.log(`Actual step = ${actualStep}`);
+  console.log(`Path step = ${route.meta.editorStep}`);
+
+  if (route.meta.editorStep > actualStep) {
+    router.push({ name: `item-editor-${actualStep}` });
+  }
+};
+
+const getCurrentStep = () => {
+  if (!store.state.formData.type) {
+    return 1;
+  }
+  if (!store.state.formData.description) {
+    return 2;
+  }
+  return 2;
+};
+
+validateRoute();
+
+const currentComponent = computed(() => {
+  switch (route.meta.editorStep) {
+    default:
+    case 1:
+      return TypeStep;
+    case 2:
+      return DescribeStep;
+  }
+});
+
+const handleSubmit = () => {
+  const currentStep = getCurrentStep();
+  console.log("Running getCurrentStep(). Result: " + currentStep);
+  router.push({ name: `item-editor-${currentStep}` });
+};
 </script>
 
 <style scoped>
@@ -40,6 +90,9 @@ import TypeStep from '@/item-editor/steps/TypeStep.vue';
 .socket {
   flex-grow: 1;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 header {
