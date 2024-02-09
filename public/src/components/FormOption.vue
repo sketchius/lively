@@ -16,8 +16,8 @@ import { defineProps, defineEmits } from "vue";
 const props = defineProps({
   title: String,
   text: String,
+  data: String,
   style: String,
-  index: Number,
   selected: Boolean,
   width: Number
 });
@@ -25,7 +25,7 @@ const props = defineProps({
 const emit = defineEmits(["clickEvent"]);
 
 const handleClick = () => {
-  emit("clickEvent",props.index);
+  emit("clickEvent",props.data);
 }
 
 </script>
