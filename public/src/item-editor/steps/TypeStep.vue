@@ -8,22 +8,24 @@
       <div class="options">
         <FormOption
           :title="'Task'"
+          :data="'task'"
           :text="'A singular action that you need to complete.'"
           :index="0"
           :width="20"
           @click-event="handleClickEvent"
-          :selected="selectedOption == 0"
+          :selected="selectedOption == 'task'"
         />
         <FormOption
           :title="'Goal'"
+          :data="'goal'"
           :text="'Something you want to accomplish that requires a series of steps.'"
           :index="1"
           :width="20"
           @click-event="handleClickEvent"
-          :selected="selectedOption == 1"
+          :selected="selectedOption == 'goal'"
         />
       </div>
-      <button class="major">NEXT</button>
+      <button class="major" @click.prevent="handleNext">NEXT</button>
     </form>
   </div>
 </template>
@@ -32,17 +34,32 @@
 import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import FormOption from "@/components/FormOption.vue";
 import { ref } from "vue";
+import { useStore } from "vuex";
+import { defineEmits } from "vue";
 
-const selectedOption = ref(0);
+const emit = defineEmits(["submit"]);
 
-const handleClickEvent = (index) => {
-  selectedOption.value = index;
+const store = useStore();
+
+const selectedOption = ref("task");
+
+const handleClickEvent = (data) => {
+  selectedOption.value = data;
+};
+
+const handleNext = () => {
+  store.commit("setFormDataField", {
+    field: "type",
+    payload: selectedOption.value,
+  });
+  emit("submit");
 };
 </script>
 
 <style scoped>
 .component {
   display: flex;
+  width: fit-content;
   flex-direction: column;
   align-items: center;
 }
@@ -65,7 +82,12 @@ form {
   grid-gap: var(--size2);
 }
 
+.dialogue-container {
+  width: 60%;
+}
+
 .options {
+  width: 100%;
   display: flex;
   grid-gap: var(--size4);
 }
