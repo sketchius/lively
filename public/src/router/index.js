@@ -1,15 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-// Import your view components
 import Home from "../views/HomeView.vue";
 import Tasks from "../views/TaskView.vue";
-// import Goals from "../views/GoalView.vue";
-import Objectives from "../views/ObjectiveView.vue";
-import Habits from "../views/HabitsView.vue";
-import Routines from "../views/RoutinesView.vue";
+import Goals from "../views/GoalView.vue";
 import ItemEditor from "../item-editor/view/ItemEditor.vue";
 
-// Define your routes
 const routes = [
   {
     path: "/",
@@ -24,32 +19,28 @@ const routes = [
   {
     path: "/goals",
     name: "Goals",
+    component: Goals,
+  },
+  {
+    path: "/item-editor",
     component: ItemEditor,
+    name: "item-editor-undefined",
+    meta: { editorStep: -1 },
   },
   {
-    path: "/objectives",
-    name: "Objectives",
-    component: Objectives,
-  },
-  {
-    path: "/habits",
-    name: "Habits",
-    component: Habits,
-  },
-  {
-    path: "/routines",
-    name: "Routines",
-    component: Routines,
-  },
-
-  {
-    path: "/goal-editor",
-    name: "Goals Editor",
+    path: "/item-editor/type",
     component: ItemEditor,
+    name: "item-editor-1",
+    meta: { editorStep: 1 },
+  },
+  {
+    path: "/item-editor/describe",
+    component: ItemEditor,
+    name: "item-editor-2",
+    meta: { editorStep: 2 },
   },
 ];
 
-// Create the router instance
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,

@@ -16,6 +16,7 @@ export default createStore({
       goalListNeedsRefresh: false,
       objectiveListNeedsRefresh: false,
       taskListNeedsRefresh: false,
+      formData: {},
     };
   },
   getters: {
@@ -144,6 +145,10 @@ export default createStore({
         timeFrame: "",
         requiresWrite: true,
       };
+    },
+
+    setFormDataField(state, data) {
+      state.formData[data.field] = data.payload;
     },
   },
   actions: {
