@@ -19,8 +19,12 @@
 <script setup>
 import { computed } from "vue";
 import { useStore } from "vuex";
+import TitleStep from "@/item-editor/steps/TitleStep.vue";
 import DescribeStep from "@/item-editor/steps/DescribeStep.vue";
 import TypeStep from "@/item-editor/steps/TypeStep.vue";
+import PriorityStep from "@/item-editor/steps/PriorityStep.vue";
+import TimeframeStep from "@/item-editor/steps/TimeframeStep.vue";
+import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
@@ -49,7 +53,19 @@ const getCurrentStep = () => {
   if (!store.state.formData.description) {
     return 2;
   }
-  return 2;
+  if (!store.state.formData.title) {
+    return 3;
+  }
+  if (!store.state.formData.priority) {
+    return 4;
+  }
+  if (!store.state.formData.timeframe) {
+    return 5;
+  }
+  if (!store.state.formData.done) {
+    return 6;
+  }
+  return 1;
 };
 
 validateRoute();
@@ -61,6 +77,14 @@ const currentComponent = computed(() => {
       return TypeStep;
     case 2:
       return DescribeStep;
+    case 3:
+      return TitleStep;
+    case 4:
+      return PriorityStep;
+    case 5:
+      return TimeframeStep;
+    case 6:
+      return SummaryStep;
   }
 });
 
@@ -117,9 +141,10 @@ button.cancel {
   height: var(--size5);
   width: var(--size5);
   background: none;
-  border: 2px solid var(--ink);
+  border: none;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: 500;
   border-radius: 15px;
   margin-left: auto;
 }
