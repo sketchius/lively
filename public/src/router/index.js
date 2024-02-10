@@ -39,6 +39,30 @@ const routes = [
     name: "item-editor-2",
     meta: { editorStep: 2 },
   },
+  {
+    path: "/item-editor/title",
+    component: ItemEditor,
+    name: "item-editor-3",
+    meta: { editorStep: 3 },
+  },
+  {
+    path: "/item-editor/priority",
+    component: ItemEditor,
+    name: "item-editor-4",
+    meta: { editorStep: 4 },
+  },
+  {
+    path: "/item-editor/timeframe",
+    component: ItemEditor,
+    name: "item-editor-5",
+    meta: { editorStep: 5 },
+  },
+  {
+    path: "/item-editor/summary",
+    component: ItemEditor,
+    name: "item-editor-6",
+    meta: { editorStep: 6 },
+  }
 ];
 
 const router = createRouter({
