@@ -27,6 +27,7 @@ body {
 
 #layout {
   --ink: #5a6798;
+  --inkLight: #a7a8c4;
   --white: #ffffff;
   --red: #ffcaca;
   --blue: #8ae3f5;
@@ -36,6 +37,10 @@ body {
   --blueLight: #daf9ff;
   --greenLight: #e1ffeb;
   --yellowLight: #fffad1;
+  --redDark: #da8c8c;
+  --blueDark: #4babbe;
+  --greenDark: #55c47c;
+  --yellowDark: #e4da82;
   --size1: 9px;
   --size2: 14px;
   --size3: 23px;
@@ -70,6 +75,12 @@ textarea {
   padding: 18px 20px;
   background: transparent;
   resize: none;
+}
+
+input:focus,
+textarea:focus {
+  outline: none !important;
+  border: 3px solid var(--blueDark);
 }
 
 .textarea-container {
@@ -117,12 +128,11 @@ button.minor {
   color: var(--ink);
   font-size: 18px;
   font-weight: 600;
-  padding: 6px 24px;
+  padding: 4px 24px;
 }
 
 button {
   box-sizing: border-box;
-
 }
 
 button.major {
@@ -131,8 +141,8 @@ button.major {
   border-radius: 12px;
   color: var(--ink);
   font-size: 18px;
-  font-weight: 800;
-  padding: 3px 24px;
+  font-weight: 600;
+  padding: 4px 24px;
 }
 
 .button:hover {
@@ -141,11 +151,59 @@ button.major {
 
 label {
   display: block;
-  margin-bottom: 5px;
-  color: #9792a5;
+  margin-left: var(--size2);
+  margin-bottom: var(--size1);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  width: fit-content;
+  padding: 2px 8px;
+  border-bottom: 1px dashed var(--ink);
+  background-color: var(--blueLight);
 }
+
+label.horizontal {
+  margin: 0;
+  border-bottom: none;
+  border-right: 1px dashed var(--ink);
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+}
+
+.explanation {
+  display: inline;
+  margin-left: 12px;
+  margin-bottom: var(--size1);
+  font-size: 16px;
+  font-weight: 400;
+  width: fit-content;
+}
+
+.label-required {
+  display: inline;
+  margin-left: 8px;
+  margin-bottom: var(--size1);
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--redDark);
+  width: fit-content;
+}
+
+
+.label-optional {
+  display: inline;
+  margin-left: 8px;
+  margin-bottom: var(--size1);
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--greenDark);
+  width: fit-content;
+}
+
 
 ::-webkit-scrollbar {
   width: 10px;
