@@ -1,25 +1,37 @@
 <template>
   <div class="component">
-    <StepHeader :header="'Description'" @back="handleBack"/>
-    <div class="assistant-container"><AssistantDialogue
-      :message="`Excellent! To begin with, please describe the ${
-        itemType || 'item'
-      } in your own words.`"
-      :subtext="'Hint: Start with “I want to...” or “I need to...”.'"
-    /></div>
+    <StepHeader :header="'Description'" @back="handleBack" />
+    <div class="assistant-container">
+      <AssistantDialogue
+        :message="`Based on your description, I've recommended a ${
+          itemType || 'item'
+        } title and description.`"
+        :subtext="'Please edit the fields as needed.'"
+      />
+    </div>
     <form>
-      <TextArea
-          :label="'DESCRIPTION'"
-          v-model="description"
-          :explanation="`A description of the ${
+      <div class="fields">
+        <TextArea
+          :label="'TITLE'"
+          v-model="title"
+          :explanation="`A clear and concise name for the ${
             itemType || 'item'
-          } in your own words.`"
-          :requirement="'optional'"
-          :rows="3"
+          }.`"
+          :requirement="'required'"
+          :rows="1"
         />
+        <TextArea
+          :label="'DETAILS'"
+          v-model="details"
+          :explanation="`Additional information about the ${
+                itemType || 'item'
+              }.`"
+          :requirement="'optional'"
+          :rows="2"
+        />
+      </div>
       <div class="buttons">
         <button class="help minor" @click.prevent="handleNext">HELP</button>
-        <button class="skip minor" @click.prevent="handleNext">SKIP</button>
         <button class="submit major" @click.prevent="handleNext">NEXT</button>
       </div>
     </form>
@@ -32,7 +44,7 @@ import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
 import { defineEmits, ref } from "vue";
 import { useRouter } from "vue-router";
-import TextArea from '@/components/TextArea.vue';
+import TextArea from "@/components/TextArea.vue";
 
 const emit = defineEmits(["submit"]);
 
@@ -40,15 +52,19 @@ const store = useStore();
 const router = useRouter();
 
 const itemType = ref(store.state.formData.type);
-const description = ref(store.state.formData.description || "");
+const title = ref(store.state.formData.title || "");
+const details = ref(store.state.formData.details || "");
 
-const existingData = store.state.formData.description;
+const existingData = store.state.formData.title;
 
 const handleNext = () => {
-  console.log(`description.value = ${description.value}`);
   store.commit("setFormDataField", {
-    field: "description",
-    payload: description.value,
+    field: "title",
+    payload: title.value,
+  });
+  store.commit("setFormDataField", {
+    field: "details",
+    payload: details.value,
   });
   emit("submit");
 };
@@ -56,11 +72,11 @@ const handleNext = () => {
 const handleBack = () => {
   if (!existingData) {
     store.commit("setFormDataField", {
-      field: "description",
-      payload: description.value,
+      field: "title",
+      payload: title.value,
     });
   }
-  router.push({ name: `item-editor-1` });
+  router.push({ name: `item-editor-2` });
 };
 </script>
 
@@ -80,6 +96,12 @@ form {
   display: flex;
   flex-direction: column;
   grid-gap: var(--size2);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  grid-gap: var(--size3);
 }
 
 textarea {

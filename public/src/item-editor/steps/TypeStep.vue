@@ -1,16 +1,17 @@
 <template>
   <div class="component">
-    <h1>Item Type</h1>
-    <AssistantDialogue
-      :message="`First, let's choose a type of item to create.`"
-    />
+    <StepHeader :header="'Item Type'" @back="handleBack"/>
+    <div class="assistant">
+      <AssistantDialogue
+        :message="`First, let's choose a type of item to create.`"
+      />
+    </div>
     <form>
       <div class="options">
         <FormOption
           :title="'Task'"
           :data="'task'"
           :text="'A singular action that you need to complete.'"
-          :index="0"
           :width="20"
           @click-event="handleClickEvent"
           :selected="selectedOption == 'task'"
@@ -19,7 +20,6 @@
           :title="'Goal'"
           :data="'goal'"
           :text="'Something you want to accomplish that requires a series of steps.'"
-          :index="1"
           :width="20"
           @click-event="handleClickEvent"
           :selected="selectedOption == 'goal'"
@@ -31,6 +31,7 @@
 </template>
 
 <script setup>
+import StepHeader from "../components/StepHeader.vue";
 import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import FormOption from "@/components/FormOption.vue";
 import { ref } from "vue";
@@ -44,7 +45,7 @@ const store = useStore();
 const selectedOption = ref("task");
 
 const handleClickEvent = (data) => {
-  selectedOption.value = data;
+  selectedOption.value = data.selection;
 };
 
 const handleNext = () => {
@@ -64,17 +65,6 @@ const handleNext = () => {
   align-items: center;
 }
 
-h1 {
-  margin: 0;
-  padding: 0px 12px;
-  background: linear-gradient(
-    to top,
-    transparent 25%,
-    var(--blueLight) 25%,
-    var(--blueLight) 75%,
-    transparent 75%
-  );
-}
 
 form {
   display: flex;
@@ -82,8 +72,8 @@ form {
   grid-gap: var(--size2);
 }
 
-.dialogue-container {
-  width: 60%;
+.assistant {
+  width: 450px;
 }
 
 .options {
