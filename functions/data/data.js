@@ -9,12 +9,33 @@ export const goalData = {
     return uid;
   },
 
+
+  async createGoal(userId, goalData, parentId = null) {
+    let linkedGoalData = {
+      ...goalData,
+      parent: parentId,
+      children: [] 
+    };
+  
+    const goalId = await firestore.create(`users/${userId}/goals/${linkedGoalData.id}`, linkedGoalData);
+  
+    if (goalData.children && goalData.children.length > 0) {
+      const childIds = await Promise.all(goalData.children.map(childGoalData =>
+        this.createGoal(userId, childGoalData, goalId)
+      ));
+  
+      await firestore.update(`users/${userId}/goals/${goalId}`, { children: childIds });
+    }
+  
+    return goalId;
+  },
+
   async getGoal(userId, goalId) {
     const path = `users/${userId}/goals/${goalId}`;
     const goal = await firestore.read(path);
-    if (goal.subGoals) {
-      goal.subGoals = await Promise.all(
-        goal.subGoals.map((subGoalId) => this.getGoal(userId, subGoalId))
+    if (goal.children) {
+      goal.children = await Promise.all(
+        goal.children.map((childId) => this.getGoal(userId, childId))
       );
     }
     return goal;
@@ -28,11 +49,11 @@ export const goalData = {
   async listTopLevelGoals(userId) {
     const path = `users/${userId}/goals`;
     let goals = await firestore.list(path);
-    goals = goals.filter((goal) => goal.parentGoal == null);
+    goals = goals.filter((goal) => goal.parent == null);
     for (const goal of goals) {
-      if (goal.subGoals) {
-        goal.subGoals = await Promise.all(
-          goal.subGoals.map((subGoalId) => this.getGoal(userId, subGoalId))
+      if (goal.children) {
+        goal.children = await Promise.all(
+          goal.children.map((childId) => this.getGoal(userId, childId))
         );
       }
     }
