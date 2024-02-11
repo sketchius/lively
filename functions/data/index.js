@@ -14,26 +14,27 @@ function getUserId() {
 // Goal routes
 dataApp.post("/goals", async (req, res) => {
   try {
+    console.log(`req.body = `, req.body);
     const userId = getUserId();
     const data = req.body;
 
-    for (let i = 0; i < data.objectives.length; i++) {
-      const objective = data.objectives[i];
+    // for (let i = 0; i < data.objectives.length; i++) {
+    //   const objective = data.objectives[i];
 
-      for (let j = 0; j < objective.data.tasks.length; j++) {
-        const task = objective.data.tasks[j];
-        task.id = await taskData.createTask(userId, task.data);
-        delete task.data;
-        delete task.modified;
-      }
+    //   for (let j = 0; j < objective.data.tasks.length; j++) {
+    //     const task = objective.data.tasks[j];
+    //     task.id = await taskData.createTask(userId, task.data);
+    //     delete task.data;
+    //     delete task.modified;
+    //   }
 
-      objective.id = await objectiveData.createObjective(
-        userId,
-        objective.data
-      );
-      delete objective.data;
-      delete objective.modified;
-    }
+    //   objective.id = await objectiveData.createObjective(
+    //     userId,
+    //     objective.data
+    //   );
+    //   delete objective.data;
+    //   delete objective.modified;
+    // }
 
     const goalId = await goalData.createGoal(userId, data);
     res.json({ goalId });
