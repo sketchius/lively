@@ -52,8 +52,8 @@ h1 {
   background: linear-gradient(
     to top,
     transparent 25%,
-    var(--blueLight) 25%,
-    var(--blueLight) 75%,
+    var(--yellowLight) 25%,
+    var(--yellowLight) 75%,
     transparent 75%
   );
 }

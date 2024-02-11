@@ -150,6 +150,9 @@ export default createStore({
     setFormDataField(state, data) {
       state.formData[data.field] = data.payload;
     },
+    resetFormData(state) {
+      state.formData = {};
+    },
   },
   actions: {
     async fetchTopLevelGoals({ commit }) {

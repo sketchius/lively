@@ -12,9 +12,9 @@
     >
       <div
         :class="{
-          collapsed: props.collapsed && props.goal.subGoals.length > 0,
-          expanded: !props.collapsed && props.goal.subGoals.length > 0,
-          childless: props.goal.subGoals.length == 0,
+          collapsed: props.collapsed && props.goal.children.length > 0,
+          expanded: !props.collapsed && props.goal.children.length > 0,
+          childless: props.goal.children.length == 0,
         }"
         class="collapsible-icon"
         @click="handleCollapseButtonClick"
@@ -46,7 +46,7 @@
     </div>
     <div class="cell tags">Depth = {{ depth }}, Index = {{ index }}</div>
   </div>
-  <template v-for="(subGoal, index) in goal.subGoals" :key="subGoal.id">
+  <template v-for="(subGoal, index) in goal.children" :key="subGoal.id">
     <GoalListItem
       :goal="subGoal"
       :depth="depth + 1"
@@ -55,7 +55,7 @@
       :collapsed="childData[index].collapsed"
       :index="index"
       :top="false"
-      :bottom="props.top && index == goal.subGoals.length - 1"
+      :bottom="props.top && index == goal.children.length - 1"
       :dist="childData[index].dist || 1"
       v-if="!props.collapsed"
     />
@@ -87,7 +87,7 @@ const scheduledDescendantCount = ref(0);
 const checked = ref(props.goal.complete);
 
 const childData = ref(
-  props.goal.subGoals.map(() => {
+  props.goal.children.map(() => {
     return { collapsed: false, descendantCount: 0 };
   })
 );
@@ -103,7 +103,7 @@ const updateDescendantCount = () => {
 const recursiveCountDescendants = (goal) => {
   let count = 0;
 
-  for (let subGoal of goal.subGoals) {
+  for (let subGoal of goal.children) {
     count++;
     count += recursiveCountDescendants(subGoal);
   }
@@ -119,7 +119,7 @@ const updateScheduledCount = () => {
 const recursiveCountScheduledDescendants = (goal) => {
   let count = 0;
 
-  for (let subGoal of goal.subGoals) {
+  for (let subGoal of goal.children) {
     if (subGoal.scheduled) {
       count++;
     }
@@ -142,7 +142,7 @@ const handleChildReportDescendants = (data) => {
 
 const computeDists = () => {
   let dist = 1;
-  for (let i = 0; i < props.goal.subGoals.length; i++) {
+  for (let i = 0; i < props.goal.children.length; i++) {
     childData.value[i].dist = dist;
     dist++;
 

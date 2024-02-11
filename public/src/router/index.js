@@ -62,7 +62,13 @@ const routes = [
     component: ItemEditor,
     name: "item-editor-6",
     meta: { editorStep: 6 },
-  }
+  },
+  {
+    path: "/item-editor/steps",
+    component: ItemEditor,
+    name: "item-editor-7",
+    meta: { editorStep: 7 },
+  },
 ];
 
 const router = createRouter({

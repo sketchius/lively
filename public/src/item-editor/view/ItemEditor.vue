@@ -25,6 +25,7 @@ import TypeStep from "@/item-editor/steps/TypeStep.vue";
 import PriorityStep from "@/item-editor/steps/PriorityStep.vue";
 import TimeframeStep from "@/item-editor/steps/TimeframeStep.vue";
 import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
+import ChildrenStep from "@/item-editor/steps/ChildrenStep.vue";
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
@@ -32,8 +33,6 @@ const route = useRoute();
 const router = useRouter();
 
 // const formData = store.state.formData;
-
-
 
 const validateRoute = () => {
   let actualStep = getCurrentStep();
@@ -50,21 +49,45 @@ const getCurrentStep = () => {
   if (!store.state.formData.type) {
     return 1;
   }
-  if (!store.state.formData.description) {
-    return 2;
+  switch (store.state.formData.type) {
+    case "task":
+      if (!store.state.formData.description) {
+        return 2;
+      }
+      if (!store.state.formData.title) {
+        return 3;
+      }
+      if (!store.state.formData.priority) {
+        return 4;
+      }
+      if (!store.state.formData.timeframe) {
+        return 5;
+      }
+      if (!store.state.formData.done) {
+        return 6;
+      }
+      break;
+    case "goal":
+      if (!store.state.formData.description) {
+        return 2;
+      }
+      if (!store.state.formData.title) {
+        return 3;
+      }
+      if (!store.state.formData.priority) {
+        return 4;
+      }
+      if (!store.state.formData.timeframe) {
+        return 5;
+      }
+      if (!store.state.formData.children) {
+        return 7;
+      }
+      if (!store.state.formData.done) {
+        return 6;
+      }
   }
-  if (!store.state.formData.title) {
-    return 3;
-  }
-  if (!store.state.formData.priority) {
-    return 4;
-  }
-  if (!store.state.formData.timeframe) {
-    return 5;
-  }
-  if (!store.state.formData.done) {
-    return 6;
-  }
+
   return 1;
 };
 
@@ -85,6 +108,8 @@ const currentComponent = computed(() => {
       return TimeframeStep;
     case 6:
       return SummaryStep;
+    case 7:
+      return ChildrenStep;
   }
 });
 
