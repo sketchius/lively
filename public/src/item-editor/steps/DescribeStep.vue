@@ -7,11 +7,23 @@
       } in your own words.`"
       :subtext="'Hint: Start with “I want to...” or “I need to...”.'"
     /></div>
+    <div class="helper-text">
+      <h2>How to describe your item</h2>
+      <div class="row">
+        <div class="item">Expected input</div><div class="help-icon">?</div>
+      </div>
+      <div class="row">
+        <div class="item">Additional nice-to-have</div><div class="help-icon">?</div>
+      </div>
+      <div class="row">
+        <div class="item">Additional nice-to-have</div><div class="help-icon">?</div>
+      </div>
+    </div>
     <form>
       <TextArea
           :label="'DESCRIPTION'"
           v-model="description"
-          :explanation="`A description of the ${
+          :explanationz="`A description of the ${
             itemType || 'item'
           } in your own words.`"
           :requirement="'optional'"
@@ -74,6 +86,23 @@ const handleBack = () => {
 
 .assistant-container {
   width: 450px;
+}
+
+.helper-text .row {
+  display: flex;
+  grid-gap: 5px;
+}
+
+.help-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 14px;
+  font-weight: 900;
+  border: solid 2px var(--ink);
+  border-radius: 100px;
 }
 
 form {
