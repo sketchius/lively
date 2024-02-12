@@ -13,8 +13,7 @@
     }"
     @click="handleClick"
   >
-    <div class="title">{{ props.title }}</div>
-    <div class="text">{{ props.text }}</div>
+  <slot name="content" ></slot>
   </div>
 </template>
 
@@ -22,8 +21,6 @@
 import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  title: String,
-  text: String,
   set: String,
   data: String,
   style: String,
@@ -62,16 +59,7 @@ const handleClick = () => {
 }
 
 
-.title {
-  align-self: center;
-  font-size: 20px;
-  font-weight: 600;
-}
 
-.text {
-  font-size: 16px;
-  font-weight: 500;
-}
 .disabled {
   border-color: var(--inkLight);
 }
