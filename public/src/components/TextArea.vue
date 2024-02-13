@@ -50,3 +50,42 @@ const updateValue = (event) => {
   emit("update:modelValue", event.target.value);
 };
 </script>
+
+<style scoped>
+textarea {
+  position: relative;
+  font-family: "Inter", sans-serif;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 400;
+  width: 100%;
+  border: 3px solid var(--ink);
+  border-radius: 3px;
+  padding: 18px 20px;
+  background: transparent;
+  resize: none;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus {
+  outline: none !important;
+  border: 3px solid var(--blueDark);
+}
+
+.textarea-container {
+  width: clamp(20ch,100%,40ch);
+  position: relative;
+}
+.textarea-container::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: var(--white);
+  pointer-events: none;
+}
+</style>

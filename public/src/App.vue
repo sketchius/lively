@@ -63,40 +63,6 @@ body {
   background-color: #fffcf2;
 }
 
-textarea {
-  position: relative;
-  font-family: "Inter", sans-serif;
-  color: var(--ink);
-  font-size: 20px;
-  font-weight: 400;
-  width: 45ch;
-  border: 3px solid var(--ink);
-  border-radius: 3px;
-  padding: 18px 20px;
-  background: transparent;
-  resize: none;
-}
-
-input:focus,
-textarea:focus {
-  outline: none !important;
-  border: 3px solid var(--blueDark);
-}
-
-.textarea-container {
-  position: relative;
-}
-.textarea-container::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  background: var(--white);
-  pointer-events: none;
-}
 
 textarea::placeholder {
   font-weight: 200;
@@ -133,6 +99,15 @@ button.minor {
 
 button {
   box-sizing: border-box;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }
 
 button.major {
