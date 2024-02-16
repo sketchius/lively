@@ -5,11 +5,7 @@
       large: props.style == 'Large',
       selected: props.selected && !props.disabled,
       disabled: props.disabled,
-    }"
-    :style="{
-      width: props.fullWidth ? '100%' : `${props.width || 24}ch`,
-      padding: props.padding ? props.padding : `18px 30px`,
-      gridGap: props.text ? 'var(--size1)' : '0',
+      yellow: props.color == 'yellow'
     }"
     @click="handleClick"
   >
@@ -24,6 +20,7 @@ const props = defineProps({
   set: String,
   data: String,
   style: String,
+  color: String,
   padding: String,
   selected: Boolean,
   disabled: Boolean,
@@ -43,19 +40,20 @@ const handleClick = () => {
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
   grid-gap: var(--size1);
   border: 3px solid var(--ink);
   border-radius: 4px;
-  padding: 18px 30px;
-  max-width: 25ch;
+  width: fit-content;
   box-sizing: border-box;
 }
 
 .selected {
   background-color: var(--green);
+}
+
+.selected.yellow {
+  background-color: var(--yellowLight);
 }
 
 

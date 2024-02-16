@@ -1,36 +1,69 @@
 <template>
   <div class="component">
-    <StepHeader :header="'Description'" @back="handleBack"/>
-    <div class="assistant-container"><AssistantDialogue
-      :message="`Excellent! To begin with, please describe the ${
-        itemType || 'item'
-      } in your own words.`"
-      :subtext="'Hint: Start with “I want to...” or “I need to...”.'"
-    /></div>
-    <div class="helper-text">
-      <h2>How to describe your item</h2>
-      <div class="row">
-        <div class="item">Expected input</div><div class="help-icon">?</div>
-      </div>
-      <div class="row">
-        <div class="item">Additional nice-to-have</div><div class="help-icon">?</div>
-      </div>
-      <div class="row">
-        <div class="item">Additional nice-to-have</div><div class="help-icon">?</div>
-      </div>
+    <StepHeader :header="`Auto${itemType || 'Fill'}`" @back="handleBack" />
+    <div class="assistant">
+      <AssistantDialogue
+        :subtext="`You can skip this step.`"
+        :button="`Help me write`"
+      >
+        <template #message
+          ><div class="message">
+            <p>
+              <span class="step">First:</span><b>Describe the
+              {{
+                `${
+                  itemType == "Goal"
+                    ? "objective you want to achieve"
+                    : "action you need to do"
+                }`
+              }}</b>
+              in your own words.
+            </p>
+            <p>
+              <span class="step">THEN:</span>Press 'NEXT'. I'll read your
+              description and fill out the
+              {{ `${itemType || "Item"}` }} attributes with suggested values.
+            </p>
+          </div></template
+        >
+      </AssistantDialogue>
     </div>
+
     <form>
       <TextArea
-          :label="'DESCRIPTION'"
-          v-model="description"
-          :explanationz="`A description of the ${
-            itemType || 'item'
-          } in your own words.`"
-          :requirement="'optional'"
-          :rows="3"
-        />
+        :label="'DESCRIPTION'"
+        v-model="description"
+        :requirement="'optional'"
+        :placeholder="`Enter a ${itemType || 'Item'} description.`"
+        :rows="3"
+      />
+      <div class="helper-text">
+        <h2>For Best Results</h2>
+        <ul>
+          <li>
+            <div class="row">
+              <div class="item">Use normal, every-day language</div>
+              <div class="help-icon">?</div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div class="item">Provide 1-3 sentences.</div>
+              <div class="help-icon">?</div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div class="item">
+                Include when you’d like to complete the
+                {{ `${itemType || "Item"}` }}
+              </div>
+              <div class="help-icon">?</div>
+            </div>
+          </li>
+        </ul>
+      </div>
       <div class="buttons">
-        <button class="help minor" @click.prevent="handleNext">HELP</button>
         <button class="skip minor" @click.prevent="handleNext">SKIP</button>
         <button class="submit major" @click.prevent="handleNext">NEXT</button>
       </div>
@@ -44,7 +77,7 @@ import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
 import { defineEmits, ref } from "vue";
 import { useRouter } from "vue-router";
-import TextArea from '@/components/TextArea.vue';
+import TextArea from "@/components/TextArea.vue";
 
 const emit = defineEmits(["submit"]);
 
@@ -84,8 +117,45 @@ const handleBack = () => {
   align-items: center;
 }
 
-.assistant-container {
-  width: 450px;
+.assistant {
+  width: 600px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  grid-gap: 7px;
+}
+
+.message p {
+  margin: 0;
+}
+
+.step {
+  padding: 2px;
+  margin-right: 4px;
+  padding-right: 4px;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.helper-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.helper-text h2 {
+  margin: 0;
+  margin-left: var(--size2);
+  font-size: 18px;
+}
+
+.helper-text ul {
+  margin: 0;
 }
 
 .helper-text .row {
@@ -106,17 +176,18 @@ const handleBack = () => {
 }
 
 form {
+  width: 500px;
   display: flex;
   flex-direction: column;
   grid-gap: var(--size2);
 }
 
-textarea {
-  width: 45ch;
+.textarea-container {
+  display: flex;
 }
 
 .textarea-container {
-  display: flex;
+  width: 600px;
 }
 
 .buttons {

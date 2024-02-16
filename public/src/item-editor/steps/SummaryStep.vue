@@ -1,47 +1,168 @@
 <template>
   <div class="component">
-    <StepHeader :header="'Summary'" @back="handleBack" />
-      <div class="assistant-container">
-        <AssistantDialogue
-          :message="`Here's what we came up with. Would you like to change anything?`"
-        />
-      </div>
+    <StepHeader :header="`${itemType || 'Item'} Details`" @back="handleBack" />
+    <div class="assistant-container">
+      <AssistantDialogue
+        :subtext="`These details are used to help you track, organize, and prioritize your agenda.`"
+      >
+        <template #message
+          ><div class="message">
+            <p>
+              The {{ `${itemType || "Item"}` }} fields have been filled in based
+              on your description. Feel free to edit them to meet your needs and
+              click the <span class="button-ref">SAVE</span> button when you are
+              finished.
+            </p>
+          </div></template
+        >
+      </AssistantDialogue>
+    </div>
 
-        <form>
+    <form @submit.prevent="handleSave">
       <div class="layout">
-          <div class="column">
-            <label  for="title">TITLE</label>
-            <input type="text" name="title" id="title" v-model="title">
-            <label  for="category">CATEGORY</label>
+        <div class="column">
+          <section>
+            <label for="title">TITLE</label>
+            <input type="text" name="title" id="title" v-model="title" />
+          </section>
+          <section>
+            <label for="category">CATEGORY</label>
             <div>To be implemented</div>
-            <TextArea
-          :label="'NOTES'"
-          v-model="notes"
-          :requirement="'optional'"
-          :rows="3"
-        />
-          </div>
-          <div class="column">
-              <label  for="title">IMPORTANCE</label>
-            <div class="importance-container"><div class="value">
-              
+          </section>
+          
+          <section v-if="itemType == 'Goal'">
+            <label for="title">GOAL STEPS</label>
+            <div class="children-list">
+              <draggable
+                v-model="children"
+                class="draggable-list"
+                group="steps"
+                @start="drag = true"
+                @end="drag = false"
+                item-key="id"
+              >
+                <template #item="{ element, index }">
+                  <div class="child list-item">
+                    {{ index + 1 + ") " + element.title }}
+                  </div>
+                </template>
+              </draggable>
+              <input
+                class="list-item"
+                v-if="addingChild"
+                v-focus
+                @keydown="handleInput"
+                type="text"
+                name="newchild"
+                id="newchild"
+              />
+              <button
+                v-if="!addingChild"
+                class="addChild minor"
+                @click.prevent="addChild"
+              >
+                + ADD NEW
+              </button>
+            </div>
+          </section>
+          <section v-if="itemType == 'Task'">
+            <label for="duration">TASK DURATION</label>
+            <div>To be implemented</div>
+          </section>
+          <TextArea
+            :label="'NOTES'"
+            v-model="notes"
+            :requirement="'optional'"
+            :rows="3"
+          />
+        </div>
+        <div class="column">
+          <section>
+            <label for="title">IMPORTANCE</label>
+            <div class="importance-container">
+              <div class="value">
                 <div class="importance">7</div>
                 <div class="math">(6+1)</div>
+              </div>
+              <div class="flex-column">
+                <div class="explanation">
+                  <p>Importance inherited from Category.</p>
+                  <p>
+                    Adjust the slider to fine-tune the importance for this item.
+                  </p>
+                </div>
+                <button class="minor">Edit Modifer</button>
+              </div>
             </div>
-            <div class="flex-column">
-              <div class="explanation">Importance value has been inherited by the category importance. You can add a modifier to give this [item] more or less importance.</div>
-              <button class="minor">Edit Modifer</button>
+          </section>
+          <section>
+            <label for="title">TIMEFRAME</label>
+            <div class="timeframe-display">By the End of January</div>
+            <div class="timeframe-grid">
+              <div class="timeframe-grid-item two-col first">
+                <FormOption
+                  :data="'optionA'"
+                  :color="'yellow'"
+                  :selected="datePickerScheduleType == 'optionA'"
+                  @click-event="handleDatePickerScheduleClick"
+                  ><template #content>{{
+                    datePickerInterval == "day" ? `By` : `By the Start of`
+                  }}</template></FormOption
+                >
+              </div>
+              <div class="timeframe-grid-item two-col last">
+                <FormOption
+                  :data="'optionB'"
+                  :color="'yellow'"
+                  :selected="datePickerScheduleType == 'optionB'"
+                  @click-event="handleDatePickerScheduleClick"
+                  ><template #content>{{
+                    datePickerInterval == "day" ? `On` : `By the End of`
+                  }}</template></FormOption
+                >
+              </div>
+              <div class="timeframe-grid-item first">
+                <FormOption
+                  :data="'day'"
+                  :selected="datePickerInterval == 'day'"
+                  @click-event="handleDateIntervalClick"
+                  ><template #content>Day</template></FormOption
+                >
+              </div>
+              <div class="timeframe-grid-item middle">
+                <FormOption
+                  :data="'week'"
+                  :selected="datePickerInterval == 'week'"
+                  @click-event="handleDateIntervalClick"
+                  ><template #content>Week</template></FormOption
+                >
+              </div>
+              <div class="timeframe-grid-item middle">
+                <FormOption
+                  :data="'month'"
+                  :selected="datePickerInterval == 'month'"
+                  @click-event="handleDateIntervalClick"
+                  ><template #content>Month</template></FormOption
+                >
+              </div>
+              <div class="timeframe-grid-item last">
+                <FormOption
+                  :data="'year'"
+                  :selected="datePickerInterval == 'year'"
+                  @click-event="handleDateIntervalClick"
+                  ><template #content>Year</template></FormOption
+                >
+              </div>
+              <div class="picker"></div>
             </div>
-            </div>
-            <label  for="title">TIMEFRAME</label>
-            <div class="field">By the end of the Month<button class="minor">EDIT</button></div>
-          </div>
+          </section>
+        </div>
       </div>
-      
+
       <div class="buttons">
-            <button class="submit major" @click.prevent="handleSave">SAVE</button>
-          </div>
-        </form>
+        <button class="submit major" @click.prevent="handleSave">SAVE</button>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -53,12 +174,21 @@ import { defineEmits, ref } from "vue";
 import { useRouter } from "vue-router";
 import dataService from "@/services/dataService.js";
 import { createUID } from "@/util/uuid";
-import TextArea from '@/components/TextArea.vue';
+import TextArea from "@/components/TextArea.vue";
+import FormOption from "@/components/FormOption.vue";
+import draggable from "vuedraggable";
 
 const emit = defineEmits(["submit"]);
 
 const store = useStore();
 const router = useRouter();
+
+
+const drag = ref("false");
+const addingChild = ref(false);
+const children = ref(store.state.formData.children || []);
+
+const itemType = ref(store.state.formData.type);
 
 // const type = ref(store.state.formData.type || "");
 const title = ref(store.state.formData.title || "");
@@ -66,7 +196,11 @@ const title = ref(store.state.formData.title || "");
 // const priority = ref(store.state.formData.priority || "");
 // const timeframe = ref(store.state.formData.timeframe || "");
 
+const datePickerScheduleType = ref("optionA");
+const datePickerInterval = ref("day");
+
 const handleSave = async () => {
+  console.log("handleSave");
   await dataService.createGoal({ id: createUID(), ...store.state.formData });
   if (store.state.formData.type == "task") {
     router.push({ name: `Goals` });
@@ -83,6 +217,26 @@ const handleSave = async () => {
   emit("submit");
 };
 
+const handleInput = (event) => {
+  switch (event.key) {
+    case "Enter":
+      children.value.push({ title: event.target.value, id: createUID() });
+      event.target.value = "";
+      addingChild.value = false;
+      break;
+
+    case "Escape":
+      event.target.value = "";
+      addingChild.value = false;
+      break;
+  }
+};
+
+
+const addChild = () => {
+  addingChild.value = true;
+};
+
 // const save = async () => {
 //     if (editing) {
 //       await dataService.updateGoal(goal.value.id, goal.value);
@@ -91,6 +245,14 @@ const handleSave = async () => {
 //     }
 //     router.back();
 //   };
+
+const handleDatePickerScheduleClick = (data) => {
+  datePickerScheduleType.value = data.selection;
+};
+
+const handleDateIntervalClick = (data) => {
+  datePickerInterval.value = data.selection;
+};
 
 const handleBack = () => {
   router.push({ name: `item-editor-5` });
@@ -107,23 +269,25 @@ const handleBack = () => {
 }
 
 .layout {
+  padding: 20px;
+  border: 2px solid var(--ink);
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: var(--size3);
 }
 
 .assistant-container {
-  width: 380px;
+  width: 650px;
+}
+
+.message p {
+  margin: 0;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  grid-column-gap: var(--size1);
-}
-
-label {
-  margin-top: var(--size2);
+  grid-gap: var(--size2);
 }
 
 .field {
@@ -183,9 +347,64 @@ form {
   grid-gap: var(--size2);
 }
 
-
 .textarea-container {
   display: flex;
+}
+
+.timeframe-display {
+  margin-bottom: 6px;
+}
+
+.timeframe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: fit-content fit-content fit-content;
+  grid-row-gap: 3px;
+}
+
+.timeframe-grid-item {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.timeframe-grid-item .container {
+  width: 100%;
+  padding: 2px;
+}
+
+.timeframe-grid-item.first .container {
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.timeframe-grid-item.middle .container {
+  border-right: none;
+  border-radius: 0;
+}
+
+.timeframe-grid-item.last .container {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.two-col {
+  grid-column: span 2;
+}
+.picker {
+  grid-column: span 4;
+  border: 1px solid var(--ink);
+  height: 250px;
+}
+
+.schedule-type-selection,
+.interval-selection {
+  font-weight: 500;
+  padding: 2px;
 }
 
 .buttons {

@@ -74,7 +74,7 @@ textarea:focus {
 }
 
 .textarea-container {
-  width: clamp(20ch,100%,40ch);
+  width: 100%;
   position: relative;
 }
 .textarea-container::before {

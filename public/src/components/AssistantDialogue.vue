@@ -1,17 +1,23 @@
 <template>
-  <div class="dialogue" :class="{ 'vertical': props.layout == 'vertical'}">
-    <div class="icon-container" @click="startAnimation">
-      <div class="icon">
-        <div class="gradient" :class="{ 'animate-once': animate }"></div>
-      </div>
-    </div>
-    <div class="content" :class="{ gap: props.subtext }">
-      <div class="message">
-        {{ props.message }}
-      </div>
-      <div class="subtext">
-        {{ props.subtext }}
-      </div>
+  <div class="dialogue">
+    <div class="layout">
+      <main :class="{ 'has-subtext': props.subtext }">
+        <div class="icon-container" @click="startAnimation">
+          <div class="icon">
+            <div class="gradient" :class="{ 'animate-once': animate }"></div>
+          </div>
+        </div>
+        <div class="content">
+          <slot name="message"></slot>
+        </div>
+          <div class="subtext">{{ props.subtext }}</div>
+      </main>
+      <footer v-if="props.button"><button class="minor" @click.prevent="props.onButtonClick">        <div class="icon-container" @click="startAnimation">
+          <div class="icon">
+            <div class="gradient" :class="{ 'animate-once': animate }"></div>
+          </div>
+        </div>{{ props.button }}</button>
+      </footer>
     </div>
   </div>
 </template>
@@ -22,9 +28,9 @@ import { defineProps, ref } from "vue";
 const animate = ref(false);
 
 const props = defineProps({
-  message: String,
   subtext: String,
-  layout: String
+  button: String,
+  onButtonClick: Function
 });
 
 const startAnimation = () => {
@@ -52,6 +58,40 @@ const startAnimation = () => {
   box-sizing: border-box;
 }
 
+.layout {
+  display: flex;
+  grid-gap: 10px;
+  flex-direction: column;
+}
+
+main {
+  display: flex;
+}
+
+main.has-subtext {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-template-rows: fit-content fit-content;
+  grid-row-gap: 10px;
+}
+
+
+.subtext {
+  grid-column: 2;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+footer {
+  flex-shrink: 1;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+
+
 .vertical {
   flex-direction: column;
 }
@@ -59,6 +99,12 @@ const startAnimation = () => {
 .content {
   display: flex;
   flex-direction: column;
+  grid-gap: 20px;
+}
+
+
+.content ::v-deep button {
+  align-self: center;
 }
 
 .content.gap {
@@ -70,24 +116,13 @@ const startAnimation = () => {
   font-weight: 700;
 }
 
-.subtext {
-  font-size: 16px;
-  font-style: italic;
-  font-weight: 400;
-}
 
 .icon-container {
   margin-right: 20px;
   margin-left: 10px;
   padding: 5px 0;
   border-right: 1px dashed var(--ink);
-}
-
-.vertical .icon-container {
-  margin-bottom: 10px;
-  padding: 5px 0;
-  border-right: none;
-  border-bottom: 1px dashed var(--ink);
+  align-self: center;
 }
 
 .icon-container .icon {
@@ -96,13 +131,6 @@ const startAnimation = () => {
   margin-right: 14px;
   transform: rotate(45deg);
   border: 5px solid var(--ink);
-}
-
-
-.vertical .icon-container .icon {
-  margin-left: 7px;
-  margin-right: 7px;
-  margin-bottom: 3px;
 }
 
 .gradient {
@@ -149,4 +177,24 @@ const startAnimation = () => {
     transform: rotate(405deg);
   }
 } */
+
+button {
+  display: flex;
+  align-items: center;
+  grid-gap: 10px;
+}
+button .icon-container {
+  margin: 0;
+  padding: 0;
+  border: none;
+  align-self: center;
+}
+
+button .icon-container .icon {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  transform: rotate(45deg);
+  border: 2px solid var(--ink);
+}
 </style>

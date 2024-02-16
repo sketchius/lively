@@ -26,6 +26,7 @@ body {
 }
 
 #layout {
+  --paper: #fffcf2;
   --ink: #5a6798;
   --inkLight: #a7a8c4;
   --white: #ffffff;
@@ -38,7 +39,7 @@ body {
   --greenLight: #e1ffeb;
   --yellowLight: #fffad1;
   --redDark: #da8c8c;
-  --blueDark: #4babbe;
+  --blueDark: #4b90be;
   --greenDark: #55c47c;
   --yellowDark: #e4da82;
   --size1: 9px;
@@ -60,7 +61,7 @@ body {
   display: grid;
   grid-template-columns: 10ch 1fr;
   padding: 2rem;
-  background-color: #fffcf2;
+  background-color: var(--paper);
 }
 
 
@@ -76,18 +77,27 @@ h2 {
   text-align: center;
   margin-bottom: 20px;
   margin-top: 0px;
-  color: #626886;
   font-size: 24px;
   font-weight: 600;
 }
 
 h3 {
-  color: #363242;
+  margin: 0;
   font-size: 18px;
   font-weight: 600;
 }
 
 button.minor {
+  background: none;
+  border: 1px solid var(--ink);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 400;
+  padding: 4px 24px;
+}
+
+button.standard {
   background: none;
   border: 2px solid var(--ink);
   border-radius: 12px;
@@ -98,8 +108,24 @@ button.minor {
 }
 
 button {
+  text-transform: uppercase;
   box-sizing: border-box;
 }
+
+b {
+  font-weight: 600;
+  color: var(--blueDark)
+}
+
+.button-ref {
+  border: 1px solid var(--ink);
+  padding: 1px 5px;
+  margin: 1px;
+  border-radius: 7px;
+  font-size: smaller;
+  font-weight: 500;
+}
+
 
 .flex {
   display: flex;
@@ -120,8 +146,8 @@ button.major {
   padding: 4px 24px;
 }
 
-.button:hover {
-  background-color: #7c83a3;
+button:hover {
+  background-color: var(--blueLight);
 }
 
 label {

@@ -50,7 +50,7 @@ const getCurrentStep = () => {
     return 1;
   }
   switch (store.state.formData.type) {
-    case "task":
+    case "Task":
       if (!store.state.formData.description) {
         return 2;
       }
@@ -67,7 +67,7 @@ const getCurrentStep = () => {
         return 6;
       }
       break;
-    case "goal":
+    case "Goal":
       if (!store.state.formData.description) {
         return 2;
       }
