@@ -9,14 +9,17 @@
         <template #message
           ><div class="message">
             <p>
-              <span class="step">First:</span><b>Describe the
-              {{
-                `${
-                  itemType == "Goal"
-                    ? "objective you want to achieve"
-                    : "action you need to do"
-                }`
-              }}</b>
+              <span class="step">First:</span
+              ><b
+                >Describe the
+                {{
+                  `${
+                    itemType == "Goal"
+                      ? "objective you want to achieve"
+                      : "action you need to do"
+                  }`
+                }}</b
+              >
               in your own words.
             </p>
             <p>
@@ -78,8 +81,10 @@ import { useStore } from "vuex";
 import { defineEmits, ref } from "vue";
 import { useRouter } from "vue-router";
 import TextArea from "@/components/TextArea.vue";
+import assistantService from "@/services/assistantService";
 
 const emit = defineEmits(["submit"]);
+emit;
 
 const store = useStore();
 const router = useRouter();
@@ -89,13 +94,40 @@ const description = ref(store.state.formData.description || "");
 
 const existingData = store.state.formData.description;
 
-const handleNext = () => {
-  console.log(`description.value = ${description.value}`);
-  store.commit("setFormDataField", {
-    field: "description",
-    payload: description.value,
-  });
-  emit("submit");
+const handleNext = async () => {
+  const result = await assistantService.getItemFromDescription(
+    description.value
+  );
+
+  const item = result.data;
+  console.log(item);
+  if (!item || !item.valid) {
+    // TODO Add error text.
+    console.log("ERROR!");
+  } else {
+    console.log(item);
+    store.commit("setFormDataField", {
+      field: "description",
+      payload: "set",
+    });
+    store.commit("setFormDataField", {
+      field: "title",
+      payload: item.title,
+    });
+    store.commit("setFormDataField", {
+      field: "timeframe",
+      payload: item.timeframe,
+    });
+    store.commit("setFormDataField", {
+      field: "category",
+      payload: item.category,
+    });
+    store.commit("setFormDataField", {
+      field: "duration",
+      payload: item.duration,
+    });
+    emit("submit");
+  }
 };
 
 const handleBack = () => {

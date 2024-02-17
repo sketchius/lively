@@ -27,7 +27,7 @@
           </section>
           <section>
             <label for="category">CATEGORY</label>
-            <div>To be implemented</div>
+            <div class="categories"><div class="category" v-bind:key="categoryData" :class="{'selected': category==categoryData.name}" v-for="categoryData of categories"><span>{{ categoryData.name }}</span><span class="importance">{{ categoryData.importance }}</span></div></div>
           </section>
           
           <section v-if="itemType == 'Goal'">
@@ -67,7 +67,7 @@
           </section>
           <section v-if="itemType == 'Task'">
             <label for="duration">TASK DURATION</label>
-            <div>To be implemented</div>
+            <div>{{ duration }} minutes</div>
           </section>
           <TextArea
             :label="'NOTES'"
@@ -81,7 +81,7 @@
             <label for="title">IMPORTANCE</label>
             <div class="importance-container">
               <div class="value">
-                <div class="importance">7</div>
+                <div class="importance">{{ categoryImportance }}</div>
                 <div class="math">(6+1)</div>
               </div>
               <div class="flex-column">
@@ -97,7 +97,7 @@
           </section>
           <section>
             <label for="title">TIMEFRAME</label>
-            <div class="timeframe-display">By the End of January</div>
+            <div class="timeframe-display">Within {{ timeframe }} days</div>
             <div class="timeframe-grid">
               <div class="timeframe-grid-item two-col first">
                 <FormOption
@@ -194,7 +194,18 @@ const itemType = ref(store.state.formData.type);
 const title = ref(store.state.formData.title || "");
 // const details = ref(store.state.formData.details || "");
 // const priority = ref(store.state.formData.priority || "");
-// const timeframe = ref(store.state.formData.timeframe || "");
+const duration = ref(store.state.formData.duration || "");
+const timeframe = ref(store.state.formData.timeframe || "");
+const category = ref(store.state.formData.category || "work");
+const categories = [{name:"work",importance:8},{name:"household",importance:6},{name:"errand",importance:6},{name:"life management",importance:7},{name:"fun",importance:3},];
+
+const categoryImportance = ref("");
+
+categories.forEach( categoryItem => {
+  if (categoryItem.name == category.value) {
+    categoryImportance.value = categoryItem.importance;
+  }
+})
 
 const datePickerScheduleType = ref("optionA");
 const datePickerInterval = ref("day");
@@ -270,7 +281,8 @@ const handleBack = () => {
 
 .layout {
   padding: 20px;
-  border: 2px solid var(--ink);
+  border: 5px solid var(--ink);
+  border-radius: 6px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: var(--size3);
@@ -309,8 +321,16 @@ const handleBack = () => {
   padding: 5px 24px;
 }
 
-.importance {
+.value .importance {
   font-size: 48px;
+  display: inline-flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  border-radius: 60px;
+  font-weight: 600;
 }
 
 textarea {
@@ -422,5 +442,37 @@ form {
 .skip {
   margin-right: var(--size1);
   margin-left: auto;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 5px;
+}
+
+.category {
+  display: flex;
+  grid-gap: 5px;
+  text-transform: capitalize;
+  font-weight: 500;
+  width: fit-content;
+  border: 3px solid var(--ink);
+  border-radius: 3px;
+  padding: 4px 6px;
+}
+
+.category.selected {
+  background-color: var(--green);
+}
+
+.category .importance {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  border-radius: 10px;
+  font-weight: 600;
 }
 </style>
