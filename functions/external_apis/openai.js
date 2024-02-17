@@ -5,21 +5,12 @@ const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function (messages, options) {
+const getOpenAIChatResponse = async function (messages, expectJSON) {
   const requestOptions = {
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-0125",
     messages,
   };
 
-  if (options?.logit_bias) {
-    requestOptions.logit_bias = options.logit_bias;
-  }
-  if (options?.functions) {
-    requestOptions.functions = options.functions;
-  }
-  if (options?.functionCall) {
-    requestOptions.functionCall = options.functionCall;
-  }
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
@@ -32,7 +23,12 @@ const getOpenAIChatResponse = async function (messages, options) {
         openai.chat.completions.create(requestOptions),
         timeout(60000), // 10 seconds timeout
       ]);
-      return openAIResponse.choices[0].message;
+      if (expectJSON) {
+        const json = JSON.parse(openAIResponse.choices[0].message.content);
+        return json;
+      } else {
+        return openAIResponse.choices[0].message.content;
+      }
     } catch (error) {
       console.log(`Attempt ${attempt}: `, error.message);
       if (attempt === 3)

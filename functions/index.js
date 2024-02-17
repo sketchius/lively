@@ -4,6 +4,8 @@ import { chatApp } from "./chat/index.js";
 import "dotenv/config.js";
 import { dataApp } from "./data/index.js";
 
+import { assistantApp } from "./assistant/index.js"
+
 export const chat = functions
   .runWith({
     timeoutSeconds: 300,
@@ -15,3 +17,9 @@ export const data = functions
     timeoutSeconds: 300,
   })
   .https.onRequest(dataApp);
+
+  export const assistant = functions
+  .runWith({
+    timeoutSeconds: 300,
+  })
+  .https.onRequest(assistantApp);
