@@ -2,12 +2,6 @@
   <div class="layout">
     <div class="flex-wing"></div>
     <div class="content">
-      <header>
-        <div class="progress-container">
-          <div class="progress"></div>
-          <button class="cancel">X</button>
-        </div>
-      </header>
       <div class="socket">
         <component :is="currentComponent" @submit="handleSubmit"></component>
       </div>
