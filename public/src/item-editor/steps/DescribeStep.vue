@@ -9,23 +9,13 @@
         <template #message
           ><div class="message">
             <p>
-              <span class="step">First:</span
-              ><b
-                >Describe the
-                {{
-                  `${
-                    itemType == "Goal"
-                      ? "objective you want to achieve"
-                      : "action you need to do"
-                  }`
-                }}</b
-              >
+              Please tell me about the
+              {{ itemType || "Item" }}
               in your own words.
             </p>
             <p>
-              <span class="step">THEN:</span>Press 'NEXT'. I'll read your
-              description and fill out the
-              {{ `${itemType || "Item"}` }} attributes with suggested values.
+              AutoGoal converts your written description into a Goal item by
+              automatically filling in the form!
             </p>
           </div></template
         >
@@ -41,26 +31,25 @@
         :rows="3"
       />
       <div class="helper-text">
-        <h2>For Best Results</h2>
+        <h2>For best results, include:</h2>
         <ul>
           <li>
             <div class="row">
-              <div class="item">Use normal, every-day language</div>
-              <div class="help-icon">?</div>
-            </div>
-          </li>
-          <li>
-            <div class="row">
-              <div class="item">Provide 1-3 sentences.</div>
+              <div class="item">What the main objective is</div>
               <div class="help-icon">?</div>
             </div>
           </li>
           <li>
             <div class="row">
               <div class="item">
-                Include when you’d like to complete the
-                {{ `${itemType || "Item"}` }}
+                The timeframe in which you'd like to complete the Goal
               </div>
+              <div class="help-icon">?</div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div class="item">Any challenges or obstacles you anticipate</div>
               <div class="help-icon">?</div>
             </div>
           </li>
@@ -68,7 +57,14 @@
       </div>
       <div class="buttons">
         <button class="skip minor" @click.prevent="handleNext">SKIP</button>
-        <button class="submit major" @click.prevent="handleNext">NEXT</button>
+        <button class="submit major" @click.prevent="handleNext">
+          <div class="icon-container" @click="startAnimation">
+            <div class="icon">
+              <div class="gradient" :class="{ 'animate-once': animate }"></div>
+            </div>
+          </div>
+          <span class="button-text">CONVERT</span>
+        </button>
       </div>
     </form>
   </div>
@@ -184,6 +180,46 @@ const handleBack = () => {
   margin: 0;
   margin-left: var(--size2);
   font-size: 18px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  grid-gap: 10px;
+}
+
+
+button .icon-container {
+  margin: 0;
+  padding: 0;
+  border: none;
+  align-self: center;
+}
+
+button .icon-container .icon {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  transform: rotate(45deg);
+  border: 3px solid var(--ink);
+}
+
+.gradient {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    var(--red) 15%,
+    var(--yellow) 30%,
+    var(--green) 70%,
+    var(--blue) 85%
+  );
+}
+
+.button-text{
+  display: grid;
+  align-items: center;
+  height: 20px;
 }
 
 .helper-text ul {
