@@ -42,6 +42,8 @@ body {
   --blueDark: #4b90be;
   --greenDark: #55c47c;
   --yellowDark: #e4da82;
+  --size00: 3px;
+  --size0: 5px;
   --size1: 9px;
   --size2: 14px;
   --size3: 23px;
@@ -112,6 +114,9 @@ button {
   box-sizing: border-box;
 }
 
+
+
+
 b {
   font-weight: 600;
   color: var(--blueDark)
@@ -148,6 +153,15 @@ button.major {
 
 button:hover {
   background-color: var(--blueLight);
+}
+
+button:disabled {
+  border-color: var(--inkLight);
+  color: var(--inkLight);
+}
+
+button:hover {
+  background: none;
 }
 
 label {
@@ -203,6 +217,43 @@ label.horizontal {
   font-weight: 400;
   color: var(--greenDark);
   width: fit-content;
+}
+
+textarea {
+  position: relative;
+  font-family: "Inter", sans-serif;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 400;
+  width: 100%;
+  border: 3px solid var(--ink);
+  border-radius: 3px;
+  padding: 18px 20px;
+  background: transparent;
+  resize: none;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus {
+  outline: none !important;
+  border: 3px solid var(--blueDark);
+}
+
+.textarea-container {
+  width: 100%;
+  position: relative;
+}
+.textarea-container::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: var(--white);
+  pointer-events: none;
 }
 
 
