@@ -23,13 +23,22 @@
     </div>
 
     <form>
-      <TextArea
-        :label="'DESCRIPTION'"
-        v-model="description"
-        :requirement="'optional'"
-        :placeholder="`Enter a ${itemType || 'Item'} description.`"
-        :rows="3"
-      />
+      <div class="input">
+        <label for="description">DESCRIPTION</label>
+
+        <div class="textarea-container">
+          <textarea
+            v-model="description"
+            :placeholder="`Describe the ${
+              itemType || 'Item'
+            } in 1-3 sentences.`"
+            :name="'description'"
+            :id="'description'"
+            :rows="3"
+          ></textarea>
+        </div>
+        <div class="error-text">{{ errorText }}</div>
+      </div>
       <div class="helper-text">
         <h2>For best results, include:</h2>
         <ul>
@@ -56,8 +65,12 @@
         </ul>
       </div>
       <div class="buttons">
-        <button class="skip minor" @click.prevent="handleNext">SKIP</button>
-        <button class="submit major" @click.prevent="handleNext">
+        <button class="skip minor" @click.prevent="handleSubmit">SKIP</button>
+        <button
+          class="submit major"
+          @click.prevent="handleSubmit"
+          :disabled="submitDisabled"
+        >
           <div class="icon-container" @click="startAnimation">
             <div class="icon">
               <div class="gradient" :class="{ 'animate-once': animate }"></div>
@@ -76,7 +89,6 @@ import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
 import { defineEmits, ref } from "vue";
 import { useRouter } from "vue-router";
-import TextArea from "@/components/TextArea.vue";
 import assistantService from "@/services/assistantService";
 
 const emit = defineEmits(["submit"]);
@@ -90,39 +102,53 @@ const description = ref(store.state.formData.description || "");
 
 const existingData = store.state.formData.description;
 
-const handleNext = async () => {
-  const result = await assistantService.getItemFromDescription(
-    description.value
-  );
+const errorText = ref("");
 
-  const item = result.data;
-  console.log(item);
-  if (!item || !item.valid) {
-    // TODO Add error text.
-    console.log("ERROR!");
+const submitDisabled = ref(false);
+
+const handleSubmit = async () => {
+  submitDisabled.value = true;
+  if (description.value != "") {
+    errorText.value = "";
+    let result;
+    try {
+      result = await assistantService.getItemFromDescription(description.value);
+    } catch (error) {
+      errorText.value = `An error occured while processing the description. Please try again.`;
+      submitDisabled.value = false;
+    }
+    const item = result.data;
+    if (!item || !item.valid) {
+      errorText.value = `A ${itemType.value} could not be determined. Please include a specific objective.`;
+      submitDisabled.value = false;
+    } else {
+      console.log(item);
+      store.commit("setFormDataField", {
+        field: "description",
+        payload: "set",
+      });
+      store.commit("setFormDataField", {
+        field: "title",
+        payload: item.title,
+      });
+      store.commit("setFormDataField", {
+        field: "timeframe",
+        payload: item.timeframe,
+      });
+      store.commit("setFormDataField", {
+        field: "category",
+        payload: item.category,
+      });
+      store.commit("setFormDataField", {
+        field: "duration",
+        payload: item.duration,
+      });
+      emit("submit");
+    }
   } else {
-    console.log(item);
-    store.commit("setFormDataField", {
-      field: "description",
-      payload: "set",
-    });
-    store.commit("setFormDataField", {
-      field: "title",
-      payload: item.title,
-    });
-    store.commit("setFormDataField", {
-      field: "timeframe",
-      payload: item.timeframe,
-    });
-    store.commit("setFormDataField", {
-      field: "category",
-      payload: item.category,
-    });
-    store.commit("setFormDataField", {
-      field: "duration",
-      payload: item.duration,
-    });
-    emit("submit");
+    errorText.value = "You must provide a description.";
+    await sleep(750);
+    submitDisabled.value = false;
   }
 };
 
@@ -135,6 +161,8 @@ const handleBack = () => {
   }
   router.push({ name: `item-editor-1` });
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 </script>
 
 <style scoped>
@@ -188,7 +216,6 @@ button {
   grid-gap: 10px;
 }
 
-
 button .icon-container {
   margin: 0;
   padding: 0;
@@ -216,7 +243,7 @@ button .icon-container .icon {
   );
 }
 
-.button-text{
+.button-text {
   display: grid;
   align-items: center;
   height: 20px;
@@ -243,6 +270,14 @@ button .icon-container .icon {
   border-radius: 100px;
 }
 
+.error-text {
+  min-height: 18px;
+  margin-top: var(--size0);
+  margin-left: var(--size2);
+  color: var(--redDark);
+  font-size: 14px;
+}
+
 form {
   width: 500px;
   display: flex;
@@ -252,10 +287,6 @@ form {
 
 .textarea-container {
   display: flex;
-}
-
-.textarea-container {
-  width: 600px;
 }
 
 .buttons {
@@ -269,5 +300,22 @@ form {
 .skip {
   margin-right: var(--size1);
   margin-left: auto;
+}
+
+button:disabled .icon-container .icon {
+  animation: spin 1.5s ease-in-out forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(45deg);
+  }
+  50% {
+    transform: rotate(405deg);
+  }
+  100% {
+    transform: rotate(405deg);
+  }
 }
 </style>

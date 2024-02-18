@@ -2,9 +2,11 @@
   <div class="layout">
     <div class="flex-wing"></div>
     <div class="content">
+      <div class="top-flex"></div>
       <div class="socket">
         <component :is="currentComponent" @submit="handleSubmit"></component>
       </div>
+      <div class="bottom-flex"></div>
     </div>
     <div class="flex-wing"></div>
   </div>
@@ -128,6 +130,21 @@ const handleSubmit = () => {
 
 .content {
   flex-basis: 1200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.top-flex {
+  flex-grow: 2;
+  flex-shrink: 1;
+}
+
+.bottom-flex {
+  flex-grow: 3;
+  flex-shrink: 2;
 }
 
 .socket {
