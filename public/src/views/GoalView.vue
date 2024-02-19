@@ -1,24 +1,26 @@
 <template>
-  <div class="rows">
-    <div class="row headers">
-      <div class="title">Goal Title</div>
-      <div>Priority</div>
-      <div>Due Date</div>
-      <div>Scheduled</div>
-      <div>Tags</div>
+  <div class="container">
+    <button class="standard" @click="handleNewItem">New Item</button>
+    <div class="rows">
+      <div class="row headers">
+        <div class="title">Goal Title</div>
+        <div>Priority</div>
+        <div>Due Date</div>
+        <div>Scheduled</div>
+        <div>Tags</div>
+      </div>
+      <GoalListItem
+        v-for="(goal, index) in goals"
+        :key="goal.id"
+        :goal="goal"
+        :depth="0"
+        :index="index"
+        :dist="0"
+        :top="true"
+        @set-collapsed="handleChildCollapse"
+        :collapsed="goalData[index].collapsed"
+      />
     </div>
-
-    <GoalListItem
-      v-for="(goal, index) in goals"
-      :key="goal.id"
-      :goal="goal"
-      :depth="0"
-      :index="index"
-      :dist="0"
-      :top="true"
-      @set-collapsed="handleChildCollapse"
-      :collapsed="goalData[index].collapsed"
-    />
   </div>
 </template>
 
@@ -26,6 +28,10 @@
 import { computed, onMounted, watch, ref } from "vue";
 import { useStore } from "vuex";
 import GoalListItem from "../components/GoalListItem.vue";
+
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const store = useStore();
 
@@ -38,7 +44,6 @@ const initializeGoalData = () => {
   goalData.value = goals.value.map(() => ({ collapsed: false }));
 };
 
-
 onMounted(() => {
   store.dispatch("fetchTopLevelGoals");
 });
@@ -47,6 +52,10 @@ const handleChildCollapse = (data) => {
   console.log(goalData.value);
   console.log(data);
   goalData.value[data.index].collapsed = data.collapsed;
+};
+
+const handleNewItem = () => {
+  router.push({ name: `item-editor-1` });
 };
 
 watch(goalListNeedsRefresh, (newValue) => {
@@ -81,6 +90,15 @@ watch(
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  grid-gap: var(--size1);
+}
+
+.container button {
+  align-self: flex-start;
+}
 .list-heading {
   display: flex;
   justify-content: space-between;
