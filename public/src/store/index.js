@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import dataService from "@/services/dataService";
-import { createUID } from '@/util/uuid';
+import { createUID } from "@/util/uuid";
 
 export default createStore({
   state() {
@@ -9,7 +9,7 @@ export default createStore({
       currentEditorObjective: {},
       currentEditorTask: {},
       commandStack: [],
-      returnValue: {type: "null", data: null},
+      returnValue: { type: "null", data: null },
       goals: [],
       currentRightPanelComponent: "CreateGoal",
       editingGoal: null,
@@ -32,7 +32,7 @@ export default createStore({
     setTasks(state, tasks) {
       state.tasks = tasks;
     },
-    
+
     pushCommand(state, command) {
       state.commandStack.push(command);
     },
@@ -44,7 +44,7 @@ export default createStore({
       state.returnValue = value;
     },
     clearReturnValue(state) {
-      state.returnValue = {type: "null", data: null};
+      state.returnValue = { type: "null", data: null };
     },
 
     setCurrentRightPanelComponent(state, component) {
@@ -83,7 +83,7 @@ export default createStore({
         objectives: [],
         modified: false,
         new: true,
-        saved: false
+        saved: false,
       };
     },
     resetEditorObjective(state) {
@@ -95,7 +95,7 @@ export default createStore({
         tasks: [],
         modified: false,
         new: true,
-        saved: false
+        saved: false,
       };
     },
     resetEditorTask(state) {
@@ -106,7 +106,7 @@ export default createStore({
         timeFrame: "",
         modified: false,
         new: true,
-        saved: false
+        saved: false,
       };
     },
 
@@ -149,6 +149,9 @@ export default createStore({
 
     setFormDataField(state, data) {
       state.formData[data.field] = data.payload;
+      if (data.field != "type") {
+        state.formData.modified = true;
+      }
     },
     resetFormData(state) {
       state.formData = {};

@@ -1,12 +1,30 @@
 <template>
   <div class="layout">
+    <div class="cancel-modal" v-show="cancelModalVisible">
+      <p>Are you sure you want to discard your item?</p>
+      <div class="buttons">
+        <button class="minor" @click="setCancelModalVisibility(false)">
+          Keep</button
+        ><button class="standard" @click="handleDiscard">Discard</button>
+      </div>
+    </div>
     <div class="flex-wing"></div>
     <div class="content">
       <div class="top-flex"></div>
       <div class="socket">
-      <StepHeader :header="title" @back="handleBack" @cancel="handleCancel"/>
+        <StepHeader
+          :header="title"
+          @back="handleBack"
+          @cancel="handleCancel"
+        />
 
-        <component :is="currentComponent" @back="handleBack" @cancel="handleCancel" @submit="handleSubmit" @setTitle="handleSetTitle"></component>
+        <component
+          :is="currentComponent"
+          @back="handleBack"
+          @cancel="handleCancel"
+          @submit="handleSubmit"
+          @setTitle="handleSetTitle"
+        ></component>
       </div>
       <div class="bottom-flex"></div>
     </div>
@@ -29,7 +47,8 @@ const router = useRouter();
 
 const title = ref("");
 
-// const formData = store.state.formData;
+const cancelModalVisible = ref(false);
+
 
 const validateRoute = () => {
   if (!store.state.formData.type) {
@@ -53,13 +72,28 @@ const currentComponent = computed(() => {
 
 const handleSetTitle = (data) => {
   title.value = data;
+};
+
+const handleCancel = () => {
+  if (store.state.formData.modified) {
+    setCancelModalVisibility(true);
+  } else {
+    handleDiscard();
+  }
 }
 
+const handleDiscard = () => {
+  setCancelModalVisibility(false);
+  store.commit("resetFormData");
+  router.push({ name: `Goals` });
+};
 
 const handleBack = () => {
   switch (route.meta.editorStep) {
     default:
     case 1:
+      handleCancel();
+      break;
     case 2:
       router.push({ name: `item-editor-1` });
       break;
@@ -84,13 +118,41 @@ const handleSubmit = () => {
       break;
   }
 };
+
+const setCancelModalVisibility = (visible) => {
+  cancelModalVisible.value = visible;
+};
 </script>
 
 <style scoped>
 .layout {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
+}
+
+.cancel-modal {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--size3);
+  background-color: var(--paper);
+  border: 8px solid var(--ink);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.cancel-modal p {
+  font-size: 20px;
+}
+
+.cancel-modal .buttons {
+  display: flex;
+  grid-gap: var(--size1);
 }
 
 .flex-wing {

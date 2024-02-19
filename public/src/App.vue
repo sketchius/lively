@@ -109,6 +109,16 @@ button.standard {
   padding: 4px 24px;
 }
 
+button.major {
+  background: none;
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 4px 24px;
+}
+
 button {
   text-transform: uppercase;
   box-sizing: border-box;
@@ -141,16 +151,6 @@ b {
 .flex-column {
   display: flex;
   flex-direction: column;
-}
-
-button.major {
-  background: none;
-  border: 4px solid var(--ink);
-  border-radius: 12px;
-  color: var(--ink);
-  font-size: 18px;
-  font-weight: 600;
-  padding: 4px 24px;
 }
 
 button:hover {
