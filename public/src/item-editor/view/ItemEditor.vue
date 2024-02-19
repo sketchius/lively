@@ -4,7 +4,9 @@
     <div class="content">
       <div class="top-flex"></div>
       <div class="socket">
-        <component :is="currentComponent" @submit="handleSubmit"></component>
+      <StepHeader :header="title" @back="handleBack" @cancel="handleCancel"/>
+
+        <component :is="currentComponent" @back="handleBack" @cancel="handleCancel" @submit="handleSubmit" @setTitle="handleSetTitle"></component>
       </div>
       <div class="bottom-flex"></div>
     </div>
@@ -13,78 +15,26 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import StepHeader from "../components/StepHeader.vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import TitleStep from "@/item-editor/steps/TitleStep.vue";
 import DescribeStep from "@/item-editor/steps/DescribeStep.vue";
 import TypeStep from "@/item-editor/steps/TypeStep.vue";
-import PriorityStep from "@/item-editor/steps/PriorityStep.vue";
-import TimeframeStep from "@/item-editor/steps/TimeframeStep.vue";
 import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
-import ChildrenStep from "@/item-editor/steps/ChildrenStep.vue";
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
+const title = ref("");
+
 // const formData = store.state.formData;
 
 const validateRoute = () => {
-  let actualStep = getCurrentStep();
-  console.log("Validating Route.");
-  console.log(`Actual step = ${actualStep}`);
-  console.log(`Path step = ${route.meta.editorStep}`);
-
-  if (route.meta.editorStep > actualStep) {
-    router.push({ name: `item-editor-${actualStep}` });
-  }
-};
-
-const getCurrentStep = () => {
   if (!store.state.formData.type) {
-    return 1;
+    router.push({ name: `item-editor-1` });
   }
-  switch (store.state.formData.type) {
-    case "Task":
-      if (!store.state.formData.description) {
-        return 2;
-      }
-      if (!store.state.formData.title) {
-        return 3;
-      }
-      if (!store.state.formData.priority) {
-        return 4;
-      }
-      if (!store.state.formData.timeframe) {
-        return 5;
-      }
-      if (!store.state.formData.done) {
-        return 6;
-      }
-      break;
-    case "Goal":
-      if (!store.state.formData.description) {
-        return 2;
-      }
-      if (!store.state.formData.title) {
-        return 3;
-      }
-      if (!store.state.formData.priority) {
-        return 4;
-      }
-      if (!store.state.formData.timeframe) {
-        return 5;
-      }
-      if (!store.state.formData.children) {
-        return 7;
-      }
-      if (!store.state.formData.done) {
-        return 6;
-      }
-  }
-
-  return 1;
 };
 
 validateRoute();
@@ -97,22 +47,42 @@ const currentComponent = computed(() => {
     case 2:
       return DescribeStep;
     case 3:
-      return TitleStep;
-    case 4:
-      return PriorityStep;
-    case 5:
-      return TimeframeStep;
-    case 6:
       return SummaryStep;
-    case 7:
-      return ChildrenStep;
   }
 });
 
+const handleSetTitle = (data) => {
+  title.value = data;
+}
+
+
+const handleBack = () => {
+  switch (route.meta.editorStep) {
+    default:
+    case 1:
+    case 2:
+      router.push({ name: `item-editor-1` });
+      break;
+    case 3:
+      router.push({ name: `item-editor-2` });
+      break;
+  }
+};
+
 const handleSubmit = () => {
-  const currentStep = getCurrentStep();
-  console.log("Running getCurrentStep(). Result: " + currentStep);
-  router.push({ name: `item-editor-${currentStep}` });
+  switch (route.meta.editorStep) {
+    case 1:
+      router.push({ name: `item-editor-2` });
+      break;
+
+    case 2:
+      router.push({ name: `item-editor-3` });
+      break;
+
+    case 3:
+      router.push({ name: `Goals` });
+      break;
+  }
 };
 </script>
 
@@ -149,8 +119,9 @@ const handleSubmit = () => {
 
 .socket {
   flex-grow: 1;
-  width: 100%;
+  width: fit-content;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }

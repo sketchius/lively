@@ -1,6 +1,5 @@
 <template>
   <div class="component">
-    <StepHeader :header="`Auto${itemType || 'Fill'}`" @back="handleBack" />
     <div class="assistant">
       <AssistantDialogue
         :subtext="`You can skip this step.`"
@@ -65,7 +64,7 @@
         </ul>
       </div>
       <div class="buttons">
-        <button class="skip minor" @click.prevent="handleSubmit">SKIP</button>
+        <button class="skip minor" @click.prevent="handleSkip">SKIP</button>
         <button
           class="submit major"
           @click.prevent="handleSubmit"
@@ -84,23 +83,18 @@
 </template>
 
 <script setup>
-import StepHeader from "../components/StepHeader.vue";
 import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
-import { defineEmits, ref } from "vue";
-import { useRouter } from "vue-router";
+import { defineEmits, ref, onMounted } from "vue";
 import assistantService from "@/services/assistantService";
 
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["setTitle","submit","back","cancel"]);
 emit;
 
 const store = useStore();
-const router = useRouter();
 
 const itemType = ref(store.state.formData.type);
 const description = ref(store.state.formData.description || "");
-
-const existingData = store.state.formData.description;
 
 const errorText = ref("");
 
@@ -125,7 +119,7 @@ const handleSubmit = async () => {
       console.log(item);
       store.commit("setFormDataField", {
         field: "description",
-        payload: "set",
+        payload: description,
       });
       store.commit("setFormDataField", {
         field: "title",
@@ -152,15 +146,29 @@ const handleSubmit = async () => {
   }
 };
 
-const handleBack = () => {
-  if (!existingData) {
-    store.commit("setFormDataField", {
-      field: "description",
-      payload: description.value,
-    });
-  }
-  router.push({ name: `item-editor-1` });
-};
+onMounted(() => {
+  emit('setTitle', `Auto${itemType.value}`);
+});
+
+const handleSkip = () => {
+  store.commit("setFormDataField", {
+        field: "title",
+        payload: "",
+      });
+      store.commit("setFormDataField", {
+        field: "timeframe",
+        payload: 0,
+      });
+      store.commit("setFormDataField", {
+        field: "category",
+        payload: "",
+      });
+      store.commit("setFormDataField", {
+        field: "duration",
+        payload: 0,
+      });
+  emit("submit");
+}
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 </script>

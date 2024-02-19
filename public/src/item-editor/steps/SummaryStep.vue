@@ -1,6 +1,5 @@
 <template>
   <div class="component">
-    <StepHeader :header="`${itemType || 'Item'} Details`" @back="handleBack" />
     <div class="assistant-container">
       <AssistantDialogue
         :subtext="`These details are used to help you track, organize, and prioritize your agenda.`"
@@ -96,7 +95,7 @@
             </div>
           </section>
           <section>
-            <label for="title">TIMEFRAME</label>
+            <label for="title">TIME FRAME</label>
             <div class="timeframe-display">Within {{ timeframe }} days</div>
             <div class="timeframe-grid">
               <div class="timeframe-grid-item two-col first">
@@ -167,10 +166,9 @@
 </template>
 
 <script setup>
-import StepHeader from "../components/StepHeader.vue";
 import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
-import { defineEmits, ref } from "vue";
+import { defineEmits, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import dataService from "@/services/dataService.js";
 import { createUID } from "@/util/uuid";
@@ -178,7 +176,7 @@ import TextArea from "@/components/TextArea.vue";
 import FormOption from "@/components/FormOption.vue";
 import draggable from "vuedraggable";
 
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["setTitle","submit","back"]);
 
 const store = useStore();
 const router = useRouter();
@@ -190,10 +188,7 @@ const children = ref(store.state.formData.children || []);
 
 const itemType = ref(store.state.formData.type);
 
-// const type = ref(store.state.formData.type || "");
 const title = ref(store.state.formData.title || "");
-// const details = ref(store.state.formData.details || "");
-// const priority = ref(store.state.formData.priority || "");
 const duration = ref(store.state.formData.duration || "");
 const timeframe = ref(store.state.formData.timeframe || "");
 const category = ref(store.state.formData.category || "work");
@@ -210,6 +205,11 @@ categories.forEach( categoryItem => {
 const datePickerScheduleType = ref("optionA");
 const datePickerInterval = ref("day");
 
+
+onMounted(() => {
+  emit('setTitle', `${itemType.value} Details`);
+});
+
 const handleSave = async () => {
   console.log("handleSave");
   await dataService.createGoal({ id: createUID(), ...store.state.formData });
@@ -225,7 +225,7 @@ const handleSave = async () => {
     }
   }
 
-  emit("submit");
+  emit("submit","summary");
 };
 
 const handleInput = (event) => {
@@ -265,9 +265,7 @@ const handleDateIntervalClick = (data) => {
   datePickerInterval.value = data.selection;
 };
 
-const handleBack = () => {
-  router.push({ name: `item-editor-5` });
-};
+
 </script>
 
 <style scoped>

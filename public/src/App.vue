@@ -112,6 +112,8 @@ button.standard {
 button {
   text-transform: uppercase;
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 

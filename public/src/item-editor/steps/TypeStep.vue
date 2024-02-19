@@ -1,6 +1,5 @@
 <template>
   <div class="component">
-    <StepHeader :header="'Item Type'" @back="handleBack" />
     <div class="assistant">
       <AssistantDialogue>
         <template #message
@@ -83,14 +82,13 @@
 </template>
 
 <script setup>
-import StepHeader from "../components/StepHeader.vue";
 import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import FormOption from "@/components/FormOption.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { defineEmits } from "vue";
 
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["setTitle","submit"]);
 
 const store = useStore();
 
@@ -100,12 +98,17 @@ const handleClickEvent = (data) => {
   selectedOption.value = data.selection;
 };
 
+
+onMounted(() => {
+  emit('setTitle', 'Item Type');
+});
+
 const handleNext = () => {
   store.commit("setFormDataField", {
     field: "type",
     payload: selectedOption.value,
   });
-  emit("submit");
+  emit("submit","type");
 };
 </script>
 

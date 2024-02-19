@@ -14,18 +14,23 @@
       </svg>
     </button>
     <h1>{{ props.header }}</h1>
+    <button class="cancel" @click="handleCancel">X</button>
   </div>
 </template>
 
 <script setup>
 import { defineEmits, defineProps } from "vue";
 
-const emit = defineEmits(["back"]);
+const emit = defineEmits(["back","cancel"]);
 const props = defineProps({ header: String });
 
 const handleBack = () => {
   emit("back");
 };
+
+const handleCancel = () => {
+  emit("cancel");
+}
 </script>
 
 <style scoped>
@@ -34,11 +39,10 @@ const handleBack = () => {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .back {
-  position: absolute;
   left: 0;
   background: none;
   border: none;
@@ -57,4 +61,15 @@ h1 {
     transparent 75%
   );
 }
+
+button.cancel {
+  display: flex;
+  align-items: baseline;
+  background: none;
+  color: var(--ink);
+  border: none;
+  font-size: 36px;
+  font-weight: 200;
+}
+
 </style>
