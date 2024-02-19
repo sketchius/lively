@@ -80,8 +80,8 @@
             <label for="title">IMPORTANCE</label>
             <div class="importance-container">
               <div class="value">
-                <div class="importance">{{ categoryImportance }}</div>
-                <div class="math">(6+1)</div>
+                <div class="importance">{{ categoryImportance+modifier }}</div>
+                <div class="math">({{categoryImportance}}{{modifier < 0 ? '':'+'}}{{ modifier }})</div>
               </div>
               <div class="flex-column">
                 <div class="explanation">
@@ -90,7 +90,11 @@
                     Adjust the slider to fine-tune the importance for this item.
                   </p>
                 </div>
-                <button class="minor">Edit Modifer</button>
+                <div class="modifier-label">Modifier</div>
+                <div class="slider-wrapper">
+                  <vue-slider :data="[-3,-2,-1,0,1,2,3]" 
+                          :marks="true" :tooltip="'none'" :process-style="{backgroundColor: 'var(--greenDark)'}" :step-style="{width: '3px', backgroundColor: 'var(--ink)'}" v-model="modifier"></vue-slider>
+                </div>
               </div>
             </div>
           </section>
@@ -177,6 +181,9 @@ import FormOption from "@/components/FormOption.vue";
 import draggable from "vuedraggable";
 import assistantService from "@/services/assistantService";
 
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/default.css'
+
 const emit = defineEmits(["setTitle","submit","back"]);
 
 const store = useStore();
@@ -195,6 +202,8 @@ const timeframe = ref(store.state.formData.timeframe || "");
 const category = ref(store.state.formData.category || "work");
 const auto = ref(store.state.formData.auto || false);
 const categories = [{name:"work",importance:8},{name:"household",importance:6},{name:"errand",importance:6},{name:"life management",importance:7},{name:"fun",importance:3},];
+const modifier = ref(0);
+
 
 const categoryImportance = ref("");
 
@@ -362,6 +371,11 @@ textarea {
 
 .importance-container button {
   align-self: center;
+}
+
+.importance-container .slider-wrapper {
+  height: 50px;
+  width: 80%;
 }
 
 .field.type {
