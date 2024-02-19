@@ -175,6 +175,7 @@ import { createUID } from "@/util/uuid";
 import TextArea from "@/components/TextArea.vue";
 import FormOption from "@/components/FormOption.vue";
 import draggable from "vuedraggable";
+import assistantService from "@/services/assistantService";
 
 const emit = defineEmits(["setTitle","submit","back"]);
 
@@ -192,6 +193,7 @@ const title = ref(store.state.formData.title || "");
 const duration = ref(store.state.formData.duration || "");
 const timeframe = ref(store.state.formData.timeframe || "");
 const category = ref(store.state.formData.category || "work");
+const auto = ref(store.state.formData.auto || false);
 const categories = [{name:"work",importance:8},{name:"household",importance:6},{name:"errand",importance:6},{name:"life management",importance:7},{name:"fun",importance:3},];
 
 const categoryImportance = ref("");
@@ -206,8 +208,23 @@ const datePickerScheduleType = ref("optionA");
 const datePickerInterval = ref("day");
 
 
-onMounted(() => {
+onMounted(async () => {
   emit('setTitle', `${itemType.value} Details`);
+  if (auto.value) {
+    const response = await assistantService.getAutoStepsForGoal(store.state.formData.description);
+    const steps = response.data.steps.map( (step) => {
+      const child = {};
+      child.title = step;
+      return child;
+      }
+    );
+    console.log(`response = `, response);
+    store.commit("setFormDataField", {
+        field: "children",
+        payload: steps,
+      });
+    children.value = steps;
+  }
 });
 
 const handleSave = async () => {

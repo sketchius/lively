@@ -12,4 +12,10 @@ assistantApp.post("/text-to-item/description", async (req, res) => {
   res.json(result);
 });
 
+assistantApp.post("/text-to-item/steps", async (req, res) => {
+  const result = await assistantController.getGoalStepsFromDescription(req.body.data);
+
+  res.json(result);
+});
+
 export { assistantApp };

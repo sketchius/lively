@@ -26,4 +26,25 @@ export const assistantController = {
 
     return await getOpenAIChatResponse(messages, true);
   },
+
+  async getGoalStepsFromDescription(description) {
+    const messages = [
+
+      {
+        role: "system",
+        content: `# INPUT A user's description of a goal.
+# OUTPUT SCHEMA:
+{
+    "steps" (array of strings): "two to five step titles (maximum 10 characters each) required to complete the goal (the number of steps should reflect the complexity of the task) each step should be a clear and concise action that starts with a verb. the goal should be completed by the final step. 10 char maximum per step."
+}
+`,
+      },
+      {
+        role: "user",
+        content: description,
+      },
+    ];
+
+    return await getOpenAIChatResponse(messages, true);
+  },
 };

@@ -106,7 +106,7 @@ const handleSubmit = async () => {
     errorText.value = "";
     let result;
     try {
-      result = await assistantService.getItemFromDescription(description.value);
+      result = await assistantService.getItemFromDescription(description.value, itemType.value);
     } catch (error) {
       errorText.value = `An error occured while processing the description. Please try again.`;
       submitDisabled.value = false;
@@ -137,6 +137,10 @@ const handleSubmit = async () => {
         field: "duration",
         payload: item.duration,
       });
+      store.commit("setFormDataField", {
+        field: "auto",
+        payload: true,
+      });
       emit("submit");
     }
   } else {
@@ -151,22 +155,6 @@ onMounted(() => {
 });
 
 const handleSkip = () => {
-  store.commit("setFormDataField", {
-        field: "title",
-        payload: "",
-      });
-      store.commit("setFormDataField", {
-        field: "timeframe",
-        payload: 0,
-      });
-      store.commit("setFormDataField", {
-        field: "category",
-        payload: "",
-      });
-      store.commit("setFormDataField", {
-        field: "duration",
-        payload: 0,
-      });
   emit("submit");
 }
 
