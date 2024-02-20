@@ -26,9 +26,20 @@
           </section>
           <section>
             <label for="category">CATEGORY</label>
-            <div class="categories"><div class="category" v-bind:key="categoryData" :class="{'selected': category==categoryData.name}" v-for="categoryData of categories"><span>{{ categoryData.name }}</span><span class="importance">{{ categoryData.importance }}</span></div></div>
+            <div class="categories">
+              <div
+                class="category"
+                v-bind:key="categoryData"
+                :class="{ selected: category == categoryData.name }"
+                @click="selectCategory(categoryData)"
+                v-for="categoryData of categories"
+              >
+                <span>{{ categoryData.name }}</span
+                ><span class="importance">{{ categoryData.importance }}</span>
+              </div>
+            </div>
           </section>
-          
+
           <section v-if="itemType == 'Goal'">
             <label for="title">GOAL STEPS</label>
             <div class="children-list">
@@ -80,8 +91,13 @@
             <label for="title">IMPORTANCE</label>
             <div class="importance-container">
               <div class="value">
-                <div class="importance">{{ categoryImportance+modifier }}</div>
-                <div class="math">({{categoryImportance}}{{modifier < 0 ? '':'+'}}{{ modifier }})</div>
+                <div class="importance">
+                  {{ categoryImportance + modifier }}
+                </div>
+                <div class="math">
+                  ({{ categoryImportance }}{{ modifier < 0 ? "" : "+"
+                  }}{{ modifier }})
+                </div>
               </div>
               <div class="flex-column">
                 <div class="explanation">
@@ -92,8 +108,17 @@
                 </div>
                 <div class="modifier-label">Modifier</div>
                 <div class="slider-wrapper">
-                  <vue-slider :data="[-3,-2,-1,0,1,2,3]" 
-                          :marks="true" :tooltip="'none'" :process-style="{backgroundColor: 'var(--greenDark)'}" :step-style="{width: '3px', backgroundColor: 'var(--ink)'}" v-model="modifier"></vue-slider>
+                  <vue-slider
+                    :data="[-3, -2, -1, 0, 1, 2, 3]"
+                    :marks="true"
+                    :tooltip="'none'"
+                    :process-style="{ backgroundColor: 'var(--greenDark)' }"
+                    :step-style="{
+                      width: '3px',
+                      backgroundColor: 'var(--ink)',
+                    }"
+                    v-model="modifier"
+                  ></vue-slider>
                 </div>
               </div>
             </div>
@@ -181,14 +206,13 @@ import FormOption from "@/components/FormOption.vue";
 import draggable from "vuedraggable";
 import assistantService from "@/services/assistantService";
 
-import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/default.css'
+import VueSlider from "vue-slider-component";
+import "vue-slider-component/theme/default.css";
 
-const emit = defineEmits(["setTitle","submit","back"]);
+const emit = defineEmits(["setTitle", "submit", "back"]);
 
 const store = useStore();
 const router = useRouter();
-
 
 const drag = ref("false");
 const addingChild = ref(false);
@@ -201,37 +225,42 @@ const duration = ref(store.state.formData.duration || "");
 const timeframe = ref(store.state.formData.timeframe || "");
 const category = ref(store.state.formData.category || "work");
 const auto = ref(store.state.formData.auto || false);
-const categories = [{name:"work",importance:8},{name:"household",importance:6},{name:"errand",importance:6},{name:"life management",importance:7},{name:"fun",importance:3},];
+const categories = [
+  { name: "work", importance: 8 },
+  { name: "household", importance: 6 },
+  { name: "errand", importance: 6 },
+  { name: "life management", importance: 7 },
+  { name: "fun", importance: 3 },
+];
 const modifier = ref(0);
-
 
 const categoryImportance = ref("");
 
-categories.forEach( categoryItem => {
+categories.forEach((categoryItem) => {
   if (categoryItem.name == category.value) {
     categoryImportance.value = categoryItem.importance;
   }
-})
+});
 
 const datePickerScheduleType = ref("optionA");
 const datePickerInterval = ref("day");
 
-
 onMounted(async () => {
-  emit('setTitle', `${itemType.value} Details`);
+  emit("setTitle", `${itemType.value} Details`);
   if (auto.value) {
-    const response = await assistantService.getAutoStepsForGoal(store.state.formData.description);
-    const steps = response.data.steps.map( (step) => {
+    const response = await assistantService.getAutoStepsForGoal(
+      store.state.formData.description
+    );
+    const steps = response.data.steps.map((step) => {
       const child = {};
       child.title = step;
       return child;
-      }
-    );
+    });
     console.log(`response = `, response);
     store.commit("setFormDataField", {
-        field: "children",
-        payload: steps,
-      });
+      field: "children",
+      payload: steps,
+    });
     children.value = steps;
   }
 });
@@ -251,7 +280,7 @@ const handleSave = async () => {
     }
   }
 
-  emit("submit","summary");
+  emit("submit", "summary");
 };
 
 const handleInput = (event) => {
@@ -269,10 +298,14 @@ const handleInput = (event) => {
   }
 };
 
-
 const addChild = () => {
   addingChild.value = true;
 };
+
+const selectCategory = (categoryData) => {
+  category.value = categoryData.name;
+  categoryImportance.value = categoryData.importance;
+}
 
 // const save = async () => {
 //     if (editing) {
@@ -290,8 +323,6 @@ const handleDatePickerScheduleClick = (data) => {
 const handleDateIntervalClick = (data) => {
   datePickerInterval.value = data.selection;
 };
-
-
 </script>
 
 <style scoped>
@@ -334,22 +365,24 @@ const handleDateIntervalClick = (data) => {
 
 .importance-container {
   display: flex;
+  grid-gap: 5px;
   border: 1px solid var(--ink);
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 .value {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 5px 24px;
+  width: 100px;
 }
 
 .value .importance {
+  margin: 10px;
   font-size: 48px;
   display: inline-flex;
-  width: 60px;
-  height: 60px;
+
+  width: 1lh;
   align-items: center;
   justify-content: center;
   border: 2px solid var(--ink);
@@ -366,6 +399,7 @@ textarea {
 }
 
 .explanation {
+  margin: 0;
   font-size: smaller;
 }
 
