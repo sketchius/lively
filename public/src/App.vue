@@ -126,7 +126,28 @@ button {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
+input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none; 
+  appearance: none; 
+  width: 20px; 
+  height: 20px; 
+  border: 2px solid var(--ink);
+  margin: 0;
+  border-radius: 50%;
+  outline: none; 
+  cursor: pointer; 
+}
 
+input[type="radio"]:checked {
+  background-color: var(--green); 
+}
+
+input[type="radio"]:focus {
+  outline: 4px solid var(--ink); 
+  outline-offset: 2px; 
+  border: 4px solid var(--ink);
+}
 
 
 b {
