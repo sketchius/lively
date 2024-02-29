@@ -1,23 +1,27 @@
 <template>
   <div id="layout">
     <SidebarMenu />
+    <ChatView />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import SidebarMenu from "./components/SidebarMenu.vue";
+import ChatView from './views/ChatView.vue';
 
 export default {
   name: "App",
   components: {
     SidebarMenu,
-  },
+    ChatView
+},
 };
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Saira:wght@100;200;400;500;600;700;800&display=swap");
 
 body {
   margin: 0;
@@ -52,7 +56,7 @@ body {
   --size6: 97px;
   --size7: 157px;
   color: var(--ink);
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   margin: 0;
   width: 100vw;
@@ -60,12 +64,14 @@ body {
   align-items: center;
   min-height: 100vh;
 
-  display: grid;
-  grid-template-columns: 10ch 1fr;
+  display: flex;
   padding: 2rem;
   background-color: var(--paper);
 }
 
+.display-text {
+  font-family: "Saira", sans-serif;
+}
 
 textarea::placeholder {
   font-weight: 200;
@@ -128,31 +134,30 @@ button {
 
 input[type="radio"] {
   -webkit-appearance: none;
-  -moz-appearance: none; 
-  appearance: none; 
-  width: 20px; 
-  height: 20px; 
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
   border: 2px solid var(--ink);
   margin: 0;
   border-radius: 50%;
-  outline: none; 
-  cursor: pointer; 
+  outline: none;
+  cursor: pointer;
 }
 
 input[type="radio"]:checked {
-  background-color: var(--green); 
+  background-color: var(--green);
 }
 
 input[type="radio"]:focus {
-  outline: 4px solid var(--ink); 
-  outline-offset: 2px; 
+  outline: 4px solid var(--ink);
+  outline-offset: 2px;
   border: 4px solid var(--ink);
 }
 
-
 b {
   font-weight: 600;
-  color: var(--blueDark)
+  color: var(--blueDark);
 }
 
 .button-ref {
@@ -164,7 +169,6 @@ b {
   font-weight: 500;
 }
 
-
 .flex {
   display: flex;
 }
@@ -175,16 +179,12 @@ b {
 }
 
 button:hover {
-  background-color: var(--blueLight);
+  background-color: var(--greenLight);
 }
 
 button:disabled {
   border-color: var(--inkLight);
   color: var(--inkLight);
-}
-
-button:hover {
-  background: none;
 }
 
 label {
@@ -230,7 +230,6 @@ label.horizontal {
   width: fit-content;
 }
 
-
 .label-optional {
   display: inline;
   margin-left: 8px;
@@ -257,6 +256,10 @@ textarea {
   box-sizing: border-box;
 }
 
+.textarea-container {
+  display: flex;
+}
+
 input:focus,
 textarea:focus {
   outline: none !important;
@@ -278,7 +281,6 @@ textarea:focus {
   background: var(--white);
   pointer-events: none;
 }
-
 
 ::-webkit-scrollbar {
   width: 10px;

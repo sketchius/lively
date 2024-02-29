@@ -1,84 +1,75 @@
 <template>
   <div class="chat-view">
-    <h1>Chat</h1>
+    <h1 class="display-text">Assistant</h1>
     <MessageArea ref="messageAreaRef" :messages="messages" />
     <ChatInput @sendMessage="handleSendMessage" />
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref, nextTick } from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
-import chatService from "@/services/chatService";
+// import chatService from "@/services/chatService";
 
-export default {
-  name: "ChatView",
-  components: {
-    MessageArea,
-    ChatInput,
+const messages = ref([
+  { role: "user", content: "Hello!", author:"You" },
+  {
+    role: "assistant",
+    content: "Greetings, {{USER_NAME}}. How are you doing today?", author: "Lively"
   },
-  data() {
-    return {
-      messages: [],
-    };
-  },
-  async created() {
-    try {
-      const response = await chatService.getConversation();
-      if (response.data && response.data.length) {
-        this.messages = response.data;
-      }
-      this.$nextTick(() => {
-        if (this.$refs.messageAreaRef) {
-          this.$refs.messageAreaRef.scrollToBottom();
-        }
-      });
-    } catch (error) {
-      console.error("Error loading conversation:", error);
+]);
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    const messageAreaRef = ref(null);
+    if (messageAreaRef.value) {
+      messageAreaRef.value.scrollToBottom();
     }
-  },
-  methods: {
-    async handleSendMessage(newMessage) {
-      // Add user message to the conversation
-      this.messages.push({ role: "user", content: newMessage });
+  });
+};
 
-      this.$nextTick(() => {
-        if (this.$refs.messageAreaRef) {
-          this.$refs.messageAreaRef.scrollToBottom();
-        }
-      });
+onMounted(async () => {
+  try {
+    // const response = await chatService.getConversation();
+    // if (response.data && response.data.length) {
+    //   messages.value = response.data;
+    // }
+    scrollToBottom();
+  } catch (error) {
+    console.error("Error loading conversation:", error);
+  }
+});
 
-      try {
-        // Assume sendMessageToServer is a method that sends the message to the server and waits for a response
+const handleSendMessage = async (newMessage) => {
+  // Add user message to the conversation
+  messages.value.push({ role: "user", content: newMessage });
+  scrollToBottom();
 
-        const response = await chatService.sendMessage(newMessage);
-        const parsedResponse = JSON.parse(response.data);
-        // Add server (or ChatGPT) response to the conversation
-        this.messages.push({
-          role: "assistant",
-          content: parsedResponse.content,
-        });
-        this.$nextTick(() => {
-          if (this.$refs.messageAreaRef) {
-            this.$refs.messageAreaRef.scrollToBottom();
-          }
-        });
-      } catch (error) {
-        // Handle any errors, e.g., display an error message
-        console.error("Error sending message:", error);
-      }
-    },
-  },
+  // try {
+  //   // Assume sendMessageToServer is a method that sends the message to the server and waits for a response
+
+  //   const response = await chatService.sendMessage(newMessage);
+  //   const parsedResponse = JSON.parse(response.data);
+  //   // Add server (or ChatGPT) response to the conversation
+  //   messages.value.push({
+  //     role: "assistant",
+  //     content: parsedResponse.content,
+  //   });
+  //   scrollToBottom();
+  // } catch (error) {
+  //   // Handle any errors, e.g., display an error message
+  //   console.error("Error sending message:", error);
+  // }
 };
 </script>
 
 <style scoped>
 h1 {
-  color: #4a5d92;
-  font-size: 1.4rem;
-  font-weight: 100;
-  align-self: flex-start;
-  margin-left: 3.5rem;
+  font-size: 36px;
+  font-weight: 200;
+  align-self: center;
+  margin: 0;
 }
 
 .chat-view {

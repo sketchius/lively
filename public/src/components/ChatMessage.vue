@@ -2,47 +2,30 @@
   <div
     class="message-container"
     :class="{
-      'user-message-container': message.role === 'user',
-      'assistant-message-container': message.role === 'assistant',
+      user: message.role === 'user',
+      assistant: message.role === 'assistant',
     }"
   >
-    <img
-      v-if="message.role === 'assistant'"
-      :src="message.profilePicture"
-      @error="assignFallback"
-      class="profile-icon"
-      alt="Assistant's Profile"
-    />
-
-    <div
-      class="message"
-      :class="{
-        'user-message': message.role === 'user',
-        'assistant-message': message.role === 'assistant',
-      }"
-    >
-      {{ message.content }}
+    <div class="author">
+      <img
+        :src="message.profilePicture"
+        class="profile-icon"
+        alt="Assistant's Profile"
+      />
+      <div class="name display-text">
+        {{ message.author }}
+      </div>
     </div>
 
-    <img
-      v-if="message.role === 'user'"
-      :src="message.profilePicture"
-      @error="assignFallback"
-      class="profile-icon"
-      alt="User's Profile"
-    />
+    <div class="message">
+      {{ message.content }}
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "ChatMessage",
-  methods: {
-    assignFallback(event) {
-      // Replace with your actual fallback image path
-      event.target.src = require("../assets/images/profile/generic.png");
-    },
-  },
   props: {
     message: {
       type: Object,
@@ -55,44 +38,77 @@ export default {
 <style scoped>
 .message-container {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--size1);
+  align-items: flex-start;
   margin-bottom: 1rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: var(--size1) var(--size2);
 }
 
-.user-message-container {
-  justify-content: flex-end;
+.message-container.assistant {
+  margin-right: var(--size5);
 }
 
-.assistant-message-container {
-  justify-content: flex-start;
+.message-container.user {
+  margin-left: var(--size5);
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: var(--size2);
+}
+
+.author .name {
+  text-transform: uppercase;
+  position: relative;
+  z-index: 0;
+  font-weight:600;
+  font-size: 16px;
+}
+
+.assistant .author .name::before {
+  position: absolute;
+  content: "";
+  width: 130%;
+  height: 60%;
+  left: -15%;
+  top: 20%;
+  background: linear-gradient(
+    to right,
+    var(--redLight) 0%,
+    var(--yellowLight) 33.334%,
+    var(--greenLight) 66.667%,
+    var(--blueLight) 100%
+  );
+  border-left: 1px solid var(--red);
+  border-right: 1px solid var(--blue);
+  z-index: -1;
+}
+
+.user .author .name::before {
+  position: absolute;
+  content: "";
+  width: 130%;
+  height: 60%;
+  left: -15%;
+  top: 20%;
+  background-color: var(--blueLight);
+  border-left: 1px solid var(--blue);
+  border-right: 1px solid var(--blue);
+  z-index: -1;
 }
 
 .profile-icon {
-  width: 2rem;
-  height: 2rem;
-  margin-top: 0.1rem;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0px 0px 1px 2px #b2aceb;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--ink);
 }
 
 .message {
-  padding: 0.5rem 1rem;
   border-radius: 5px;
   font-size: 0.9rem;
-  max-width: 66.667%;
-}
-
-.user-message {
-  background-color: #f3f1ff;
-  margin-right: 0.5rem;
-}
-
-.assistant-message {
-  background-color: e2e1fc;
-  border: 2px solid #efedff;
-  margin-left: 0.5rem;
 }
 </style>
