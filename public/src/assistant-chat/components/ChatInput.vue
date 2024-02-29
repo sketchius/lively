@@ -7,7 +7,7 @@
       placeholder="Type a message..."
       ref="textarea"
     ></textarea>
-    <img @click="send" src="../assets/images/icons/login.png" />
+    <img @click="send" src="../assets/login.png" />
   </div>
 </template>
 

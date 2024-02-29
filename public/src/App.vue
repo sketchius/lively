@@ -8,7 +8,7 @@
 
 <script>
 import SidebarMenu from "./components/SidebarMenu.vue";
-import ChatView from './views/ChatView.vue';
+import ChatView from './assistant-chat/view/ChatView.vue';
 
 export default {
   name: "App",

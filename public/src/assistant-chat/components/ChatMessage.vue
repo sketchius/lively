@@ -7,11 +7,7 @@
     }"
   >
     <div class="author">
-      <img
-        :src="message.profilePicture"
-        class="profile-icon"
-        alt="Assistant's Profile"
-      />
+      <img :src="iconSrc" class="profile-icon" alt="Assistant's Profile" />
       <div class="name display-text">
         {{ message.author }}
       </div>
@@ -23,16 +19,19 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "ChatMessage",
-  props: {
-    message: {
-      type: Object,
-      required: true,
-    },
+<script setup>
+import { defineProps } from "vue";
+import userIcon from "../assets/user.svg";
+import assistantIcon from "../assets/assistant.svg";
+
+const props = defineProps({
+  message: {
+    type: Object,
+    required: true,
   },
-};
+});
+
+const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
 </script>
 
 <style scoped>
@@ -58,53 +57,48 @@ export default {
 .author {
   display: flex;
   align-items: center;
-  gap: var(--size2);
+  gap: var(--size1);
 }
 
 .author .name {
   text-transform: uppercase;
   position: relative;
   z-index: 0;
-  font-weight:600;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .assistant .author .name::before {
   position: absolute;
   content: "";
-  width: 130%;
+  width: calc(100% + var(--size1));
   height: 60%;
-  left: -15%;
+  left: calc(-0.5 * var(--size1));
   top: 20%;
   background: linear-gradient(
     to right,
-    var(--redLight) 0%,
-    var(--yellowLight) 33.334%,
-    var(--greenLight) 66.667%,
-    var(--blueLight) 100%
+    var(--blueLight) 0%,
+    var(--greenLight) 33.334%,
+    var(--yellowLight) 66.667%,
+    var(--redLight) 100%
   );
-  border-left: 1px solid var(--red);
-  border-right: 1px solid var(--blue);
   z-index: -1;
 }
 
 .user .author .name::before {
   position: absolute;
   content: "";
-  width: 130%;
+  width: calc(100% + var(--size1));
   height: 60%;
-  left: -15%;
+  left: calc(-0.5 * var(--size1));
   top: 20%;
-  background-color: var(--blueLight);
-  border-left: 1px solid var(--blue);
-  border-right: 1px solid var(--blue);
+  background-color: var(--blueLight); 
   z-index: -1;
 }
 
 .profile-icon {
-  width: 16px;
-  height: 16px;
-  border: 3px solid var(--ink);
+  width: 18px;
+  height: 18px;
 }
 
 .message {
