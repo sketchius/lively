@@ -205,15 +205,14 @@ initializeMonthAndYear();
 }
 
 .selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 
 .in-month {
   font-weight: 700;
 }
 
-
 .day:hover {
-  background-color: var(--greenLight);
+  background-color: var(--green300);
 }
 </style>

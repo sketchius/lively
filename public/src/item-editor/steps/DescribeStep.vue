@@ -88,7 +88,7 @@ import { useStore } from "vuex";
 import { defineEmits, ref, onMounted } from "vue";
 import assistantService from "@/services/assistantService";
 
-const emit = defineEmits(["setTitle","submit","back","cancel"]);
+const emit = defineEmits(["setTitle", "submit", "back", "cancel"]);
 emit;
 
 const store = useStore();
@@ -106,7 +106,10 @@ const handleSubmit = async () => {
     errorText.value = "";
     let result;
     try {
-      result = await assistantService.getItemFromDescription(description.value, itemType.value);
+      result = await assistantService.getItemFromDescription(
+        description.value,
+        itemType.value
+      );
     } catch (error) {
       errorText.value = `An error occured while processing the description. Please try again.`;
       submitDisabled.value = false;
@@ -151,12 +154,12 @@ const handleSubmit = async () => {
 };
 
 onMounted(() => {
-  emit('setTitle', `Auto${itemType.value}`);
+  emit("setTitle", `Auto${itemType.value}`);
 });
 
 const handleSkip = () => {
   emit("submit");
-}
+};
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 </script>
@@ -232,10 +235,10 @@ button .icon-container .icon {
   height: 100%;
   background: linear-gradient(
     45deg,
-    var(--red) 15%,
-    var(--yellow) 30%,
-    var(--green) 70%,
-    var(--blue) 85%
+    var(--red500) 15%,
+    var(--yellow500) 30%,
+    var(--green500) 70%,
+    var(--blue500) 85%
   );
 }
 
@@ -270,7 +273,7 @@ button .icon-container .icon {
   min-height: 18px;
   margin-top: var(--size0);
   margin-left: var(--size2);
-  color: var(--redDark);
+  color: var(--red700);
   font-size: 14px;
 }
 
@@ -280,7 +283,6 @@ form {
   flex-direction: column;
   grid-gap: var(--size2);
 }
-
 
 .buttons {
   display: flex;

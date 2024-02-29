@@ -4,8 +4,8 @@
       <AssistantDialogue>
         <template #message
           ><div>
-            Please <b>choose a type</b> for the new item. Your choice
-            will determine how we organize and complete the item.
+            Please <b>choose a type</b> for the new item. Your choice will
+            determine how we organize and complete the item.
           </div></template
         >
         <template #button
@@ -88,7 +88,7 @@ import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { defineEmits } from "vue";
 
-const emit = defineEmits(["setTitle","submit"]);
+const emit = defineEmits(["setTitle", "submit"]);
 
 const store = useStore();
 
@@ -98,9 +98,8 @@ const handleClickEvent = (data) => {
   selectedOption.value = data.selection;
 };
 
-
 onMounted(() => {
-  emit('setTitle', 'Item Type');
+  emit("setTitle", "Item Type");
 });
 
 const handleNext = () => {
@@ -108,7 +107,7 @@ const handleNext = () => {
     field: "type",
     payload: selectedOption.value,
   });
-  emit("submit","type");
+  emit("submit", "type");
 };
 </script>
 
@@ -166,7 +165,7 @@ p.option-description {
 .examples-list li {
   list-style-type: none;
   padding: 0;
-  color: var(--blueDark);
+  color: var(--blue700);
   font-style: italic;
   font-weight: 400;
   font-size: 18px;
@@ -196,19 +195,18 @@ h2 {
   width: fit-content;
   align-self: center;
   justify-self: center;
-  background-color: var(--blueLight);
+  background-color: var(--blue300);
   border-bottom: 1px dashed var(--ink);
 }
 
 .selected h2 {
-  background-color: var(--greenLight);
+  background-color: var(--green300);
 }
 
 h3 {
   font-size: 18px;
   font-weight: 600;
 }
-
 
 .option-name {
   align-self: center;

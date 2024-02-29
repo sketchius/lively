@@ -215,7 +215,7 @@ initializeMonthAndYear();
 }
 
 .selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 
 .in-month {

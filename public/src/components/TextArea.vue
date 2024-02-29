@@ -69,7 +69,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none !important;
-  border: 3px solid var(--blueDark);
+  border: 3px solid var(--blue700);
 }
 
 .textarea-container {

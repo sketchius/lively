@@ -5,11 +5,11 @@
       large: props.style == 'Large',
       selected: props.selected && !props.disabled,
       disabled: props.disabled,
-      yellow: props.color == 'yellow'
+      yellow: props.color == 'yellow',
     }"
     @click="handleClick"
   >
-  <slot name="content" ></slot>
+    <slot name="content"></slot>
   </div>
 </template>
 
@@ -49,21 +49,18 @@ const handleClick = () => {
 }
 
 .selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 
 .selected.yellow {
-  background-color: var(--yellowLight);
+  background-color: var(--yellow300);
 }
 
-
-
 .disabled {
-  border-color: var(--inkLight);
+  border-color: var(--ink300);
 }
 
 .disabled .title {
-  color: var(--inkLight);
+  color: var(--ink300);
 }
-
 </style>

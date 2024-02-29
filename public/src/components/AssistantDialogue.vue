@@ -10,13 +10,17 @@
         <div class="content">
           <slot name="message"></slot>
         </div>
-          <div class="subtext">{{ props.subtext }}</div>
+        <div class="subtext">{{ props.subtext }}</div>
       </main>
-      <footer v-if="props.button"><button class="minor" @click.prevent="props.onButtonClick">        <div class="icon-container" @click="startAnimation">
-          <div class="icon">
-            <div class="gradient" :class="{ 'animate-once': animate }"></div>
+      <footer v-if="props.button">
+        <button class="minor" @click.prevent="props.onButtonClick">
+          <div class="icon-container" @click="startAnimation">
+            <div class="icon">
+              <div class="gradient" :class="{ 'animate-once': animate }"></div>
+            </div>
           </div>
-        </div>{{ props.button }}</button>
+          {{ props.button }}
+        </button>
       </footer>
     </div>
   </div>
@@ -30,7 +34,7 @@ const animate = ref(false);
 const props = defineProps({
   subtext: String,
   button: String,
-  onButtonClick: Function
+  onButtonClick: Function,
 });
 
 const startAnimation = () => {
@@ -75,7 +79,6 @@ main.has-subtext {
   grid-row-gap: 10px;
 }
 
-
 .subtext {
   grid-column: 2;
   font-size: 14px;
@@ -90,8 +93,6 @@ footer {
   justify-content: center;
 }
 
-
-
 .vertical {
   flex-direction: column;
 }
@@ -101,7 +102,6 @@ footer {
   flex-direction: column;
   grid-gap: 20px;
 }
-
 
 .content ::v-deep button {
   align-self: center;
@@ -115,7 +115,6 @@ footer {
   font-size: 18px;
   font-weight: 700;
 }
-
 
 .icon-container {
   margin-right: 20px;
@@ -138,15 +137,15 @@ footer {
   height: 100%;
   background: linear-gradient(
     45deg,
-    var(--red) 0%,
-    var(--yellow) 12.5%,
-    var(--green) 25%,
-    var(--blue) 37.5%,
-    var(--red) 50%,
-    var(--yellow) 62.5%,
-    var(--green) 75%,
-    var(--blue) 87.5%,
-    var(--red) 100%
+    var(--red500) 0%,
+    var(--yellow500) 12.5%,
+    var(--green500) 25%,
+    var(--blue500) 37.5%,
+    var(--red500) 50%,
+    var(--yellow500) 62.5%,
+    var(--green500) 75%,
+    var(--blue500) 87.5%,
+    var(--red500) 100%
   );
   background-position: 110% 32.5%;
   background-size: 230% 200%;

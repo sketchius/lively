@@ -8,14 +8,14 @@
 
 <script>
 import SidebarMenu from "./components/SidebarMenu.vue";
-import ChatView from './assistant-chat/view/ChatView.vue';
+import ChatView from "./assistant-chat/view/ChatView.vue";
 
 export default {
   name: "App",
   components: {
     SidebarMenu,
-    ChatView
-},
+    ChatView,
+  },
 };
 </script>
 
@@ -30,22 +30,30 @@ body {
 }
 
 #layout {
+  --white: #ffffff;
   --paper: #fffcf2;
   --ink: #5a6798;
-  --inkLight: #a7a8c4;
-  --white: #ffffff;
-  --red: #ffcaca;
-  --blue: #8ae3f5;
-  --green: #b0ffcb;
-  --yellow: #fff6a5;
-  --redLight: #ffebeb;
-  --blueLight: #daf9ff;
-  --greenLight: #e1ffeb;
-  --yellowLight: #fffad1;
-  --redDark: #da8c8c;
-  --blueDark: #4b90be;
-  --greenDark: #55c47c;
-  --yellowDark: #e4da82;
+  --ink300: #a7a8c4;
+
+  --red300: #ffebeb;
+  --red400: #ffdbdb;
+  --red500: #ffcaca;
+  --red700: #da8c8c;
+
+  --yellow300: #fffad1;
+  --yellow400: #fff8bd;
+  --yellow500: #fff6a5;
+  --yellow700: #e4da82;
+
+  --green300: #e0ffeb;
+  --green400: #ccffde;
+  --green500: #b0ffcb;
+  --green700: #55c47c;
+
+  --blue300: #dbf9ff;
+  --blue400: #b1effc;
+  --blue500: #8ae3f5;
+  --blue700: #4b90be;
   --size00: 3px;
   --size0: 5px;
   --size1: 9px;
@@ -146,7 +154,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 
 input[type="radio"]:focus {
@@ -157,7 +165,7 @@ input[type="radio"]:focus {
 
 b {
   font-weight: 600;
-  color: var(--blueDark);
+  color: var(--blue700);
 }
 
 .button-ref {
@@ -179,12 +187,12 @@ b {
 }
 
 button:hover {
-  background-color: var(--greenLight);
+  background-color: var(--green300);
 }
 
 button:disabled {
-  border-color: var(--inkLight);
-  color: var(--inkLight);
+  border-color: var(--ink300);
+  color: var(--ink300);
 }
 
 label {
@@ -196,7 +204,7 @@ label {
   width: fit-content;
   padding: 2px 8px;
   border-bottom: 1px dashed var(--ink);
-  background-color: var(--blueLight);
+  background-color: var(--blue300);
 }
 
 label.horizontal {
@@ -226,7 +234,7 @@ label.horizontal {
   font-size: 16px;
   font-style: italic;
   font-weight: 400;
-  color: var(--redDark);
+  color: var(--red700);
   width: fit-content;
 }
 
@@ -237,7 +245,7 @@ label.horizontal {
   font-size: 16px;
   font-style: italic;
   font-weight: 400;
-  color: var(--greenDark);
+  color: var(--green700);
   width: fit-content;
 }
 
@@ -263,7 +271,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none !important;
-  border: 3px solid var(--blueDark);
+  border: 3px solid var(--blue700);
 }
 
 .textarea-container {

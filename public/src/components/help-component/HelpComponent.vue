@@ -111,7 +111,7 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
   font-size: 24px;
   font-weight: 800;
   margin: 0;
-  background-color: var(--yellowLight);
+  background-color: var(--yellow300);
 }
 .tooltip .text {
   display: flex;

@@ -21,7 +21,7 @@
 <script setup>
 import { defineEmits, defineProps } from "vue";
 
-const emit = defineEmits(["back","cancel"]);
+const emit = defineEmits(["back", "cancel"]);
 const props = defineProps({ header: String });
 
 const handleBack = () => {
@@ -30,7 +30,7 @@ const handleBack = () => {
 
 const handleCancel = () => {
   emit("cancel");
-}
+};
 </script>
 
 <style scoped>
@@ -56,8 +56,8 @@ h1 {
   background: linear-gradient(
     to top,
     transparent 25%,
-    var(--yellowLight) 25%,
-    var(--yellowLight) 75%,
+    var(--yellow300) 25%,
+    var(--yellow300) 75%,
     transparent 75%
   );
 }
@@ -71,5 +71,4 @@ button.cancel {
   font-size: 36px;
   font-weight: 200;
 }
-
 </style>

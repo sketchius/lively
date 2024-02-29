@@ -94,6 +94,6 @@ const nextDecade = () => {
 }
 
 .selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 </style>

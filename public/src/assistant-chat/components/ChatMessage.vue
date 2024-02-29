@@ -77,10 +77,10 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
   top: 20%;
   background: linear-gradient(
     to right,
-    var(--blueLight) 0%,
-    var(--greenLight) 33.334%,
-    var(--yellowLight) 66.667%,
-    var(--redLight) 100%
+    var(--blue300) 0%,
+    var(--green300) 33.334%,
+    var(--yellow300) 66.667%,
+    var(--red300) 100%
   );
   z-index: -1;
 }
@@ -92,7 +92,7 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
   height: 60%;
   left: calc(-0.5 * var(--size1));
   top: 20%;
-  background-color: var(--blueLight); 
+  background-color: var(--blue300);
   z-index: -1;
 }
 

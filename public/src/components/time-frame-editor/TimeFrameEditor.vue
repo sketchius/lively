@@ -227,7 +227,7 @@ output .date {
   padding: 5px;
   font-weight: 700;
   margin: 5px;
-  background-color: var(--greenLight);
+  background-color: var(--green300);
 }
 .container {
   display: flex;
@@ -288,6 +288,6 @@ output .date {
 }
 
 .tab.selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 </style>

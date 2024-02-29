@@ -23,9 +23,7 @@
           <section>
             <div class="label-group">
               <label for="title" class="picker-label">TITLE</label
-              ><HelpComponent
-              :helpId="'title'"
-              />
+              ><HelpComponent :helpId="'title'" />
             </div>
             <input type="text" name="title" id="title" v-model="title" />
           </section>
@@ -153,7 +151,7 @@
                     :data="['-3', '-2', '-1', '0', '+1', '+2', '+3']"
                     :marks="true"
                     :tooltip="'none'"
-                    :process-style="{ backgroundColor: 'var(--greenDark)' }"
+                    :process-style="{ backgroundColor: 'var(--green700)' }"
                     :step-style="{
                       width: '3px',
                       backgroundColor: 'var(--ink)',
@@ -482,7 +480,7 @@ form {
 }
 
 .category.selected {
-  background-color: var(--green);
+  background-color: var(--green500);
 }
 
 .category .importance {
