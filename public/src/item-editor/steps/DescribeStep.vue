@@ -281,9 +281,6 @@ form {
   grid-gap: var(--size2);
 }
 
-.textarea-container {
-  display: flex;
-}
 
 .buttons {
   display: flex;

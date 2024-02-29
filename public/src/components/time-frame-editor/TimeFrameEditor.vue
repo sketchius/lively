@@ -1,9 +1,15 @@
 <template>
   <div class="container">
-    <label for="picker" class="picker-label">TIME FRAME</label>
+    <div class="label-group">
+      <label for="picker" class="picker-label">TIME FRAME</label
+      ><HelpComponent
+        :title="'Time Frame'"
+        :text="`A flexible completion period for Actions. You can choose how strict the time frame needs to be. For instance, for an appointment that must happen on a certain day, you can use Scheduled. For a task like organizing your closet, you can choose Flexible to set a rough time frame. You can specify how narrow or wide the time frame is between day, week, month, and year. The Time Frame selections will help to determine which Actions are the most urgent.`"
+      />
+    </div>
     <output class="display">
-      <div class="type">{{ selectedTypeText }}:</div>
-      <div class="date">{{ date }}</div>
+      <div class="type">{{ timeFrame.typeDisplay }}:</div>
+      <div class="date">{{ timeFrame.date }}</div>
       <!-- dynamic display text -->
     </output>
     <div class="buttons">
@@ -13,7 +19,7 @@
           id="option1"
           value="Flexible"
           name="type"
-          v-model="selectedType"
+          v-model="timeFrame.type"
         />
         <label for="option1">Flexible</label>
         <caption>
@@ -25,7 +31,7 @@
           id="option2"
           value="Deadline"
           name="type"
-          v-model="selectedType"
+          v-model="timeFrame.type"
         />
         <label for="option2">Deadline</label>
         <caption>
@@ -37,7 +43,7 @@
           id="option2"
           value="Scheduled"
           name="type"
-          v-model="selectedType"
+          v-model="timeFrame.type"
         />
         <label for="option2">Scheduled</label>
         <caption>
@@ -47,28 +53,28 @@
       <div class="row">
         <div
           class="tab"
-          :class="{ selected: selectedInterval == 'Day' }"
+          :class="{ selected: timeFrame.interval == 'Day' }"
           @click="handleIntervalTabClick('Day')"
         >
           Day
         </div>
         <div
           class="tab"
-          :class="{ selected: selectedInterval == 'Week' }"
+          :class="{ selected: timeFrame.interval == 'Week' }"
           @click="handleIntervalTabClick('Week')"
         >
           Week
         </div>
         <div
           class="tab"
-          :class="{ selected: selectedInterval == 'Month' }"
+          :class="{ selected: timeFrame.interval == 'Month' }"
           @click="handleIntervalTabClick('Month')"
         >
           Month
         </div>
         <div
           class="tab"
-          :class="{ selected: selectedInterval == 'Year' }"
+          :class="{ selected: timeFrame.interval == 'Year' }"
           @click="handleIntervalTabClick('Year')"
         >
           Year
@@ -82,43 +88,47 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { reactive, computed, watch } from "vue";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 import DayPicker from "./picker-components/DayPicker.vue";
 import WeekPicker from "./picker-components/WeekPicker.vue";
 import MonthPicker from "./picker-components/MonthPicker.vue";
 import YearPicker from "./picker-components/YearPicker.vue";
 
-const selectedInterval = ref("Day");
-const selectedTypeText = ref("");
-const selectedType = ref("Flexible");
+import HelpComponent from "@/components/help-component/HelpComponent.vue";
+const emit = defineEmits(["update"]);
 
-const date = ref("null");
+const timeFrame = reactive({
+  date: undefined,
+  type: "Flexible",
+  typeDisplay: "",
+  interval: "Day",
+});
 
 const handleIntervalTabClick = (tab) => {
-  selectedInterval.value = tab;
+  console.log("Interval Click");
+  timeFrame.interval = tab;
   updateTypeDisplay();
 };
 
 const updateTypeDisplay = () => {
-  console.log(selectedType.value);
-  switch (selectedType.value) {
+  switch (timeFrame.type) {
     case "Flexible":
-      selectedTypeText.value = "Sometime around";
+      timeFrame.typeDisplay = "Sometime around";
       break;
     case "Deadline":
-      selectedTypeText.value = "By the end of";
+      timeFrame.typeDisplay = "By the end of";
       break;
     case "Scheduled":
-      switch (selectedInterval.value) {
+      switch (timeFrame.interval) {
         default:
         case "Day":
-          selectedTypeText.value = "On";
+          timeFrame.typeDisplay = "On";
           break;
         case "Week":
         case "Month":
         case "Year":
-          selectedTypeText.value = "During";
+          timeFrame.typeDisplay = "During";
           break;
       }
       break;
@@ -126,12 +136,13 @@ const updateTypeDisplay = () => {
 };
 
 const handlePickerUpdate = (updateData) => {
-  switch (selectedInterval.value) {
+  switch (timeFrame.interval) {
     default:
     case "Day": {
       const dateData = updateData.date;
       const formattedDate = format(dateData, "MMMM do, yyyy");
-      date.value = formattedDate;
+      timeFrame.date = formattedDate;
+
       break;
     }
     case "Week": {
@@ -140,7 +151,7 @@ const handlePickerUpdate = (updateData) => {
       const lastDayOfWeek = endOfWeek(dateData, { weekStartsOn: 0 });
 
       const formatDate = (dataData) => format(dataData, "MMM do");
-      date.value = `Week of ${formatDate(firstDayOfWeek)} - ${formatDate(
+      timeFrame.date = `Week of ${formatDate(firstDayOfWeek)} - ${formatDate(
         lastDayOfWeek
       )}`;
       break;
@@ -148,20 +159,26 @@ const handlePickerUpdate = (updateData) => {
     case "Month": {
       const dateData = updateData.date;
       const formattedDate = format(dateData, "MMMM, yyyy");
-      date.value = formattedDate;
+      timeFrame.date = formattedDate;
       break;
     }
     case "Year": {
       const dateData = updateData.date;
       const formattedDate = format(dateData, "yyyy");
-      date.value = formattedDate;
+      timeFrame.date = formattedDate;
       break;
     }
   }
+
+  emitTimeFrame();
+};
+
+const emitTimeFrame = () => {
+  emit("update", timeFrame);
 };
 
 const pickerComponent = computed(() => {
-  switch (selectedInterval.value) {
+  switch (timeFrame.interval) {
     default:
     case "Day":
       return DayPicker;
@@ -174,16 +191,20 @@ const pickerComponent = computed(() => {
   }
 });
 
-watch(selectedType, () => {
-  updateTypeDisplay();
-});
+watch(
+  () => timeFrame.type,
+  () => {
+    updateTypeDisplay();
+  }
+);
 
 updateTypeDisplay();
 </script>
 
 <style scoped>
-.picker-label {
- margin-top: 15px; 
+.label-group {
+  margin-top: 15px;
+  display: flex;
 }
 
 output {

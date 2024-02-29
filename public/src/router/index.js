@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "../views/HomeView.vue";
 import Tasks from "../views/TaskView.vue";
-// import Goals from "../views/GoalView.vue";
-import TimeframeEditor from "../components/timeframe-editor/TimeFrameEditor.vue";
+import Goals from "../views/GoalView.vue";
 import ItemEditor from "../item-editor/view/ItemEditor.vue";
 
 const routes = [
@@ -20,7 +19,7 @@ const routes = [
   {
     path: "/goals",
     name: "Goals",
-    component: TimeframeEditor,
+    component: Goals,
   },
   {
     path: "/item-editor",

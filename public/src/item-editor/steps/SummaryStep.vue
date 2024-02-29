@@ -21,11 +21,22 @@
       <div class="layout">
         <div class="column">
           <section>
-            <label for="title">TITLE</label>
+            <div class="label-group">
+              <label for="title" class="picker-label">TITLE</label
+              ><HelpComponent
+              :helpId="'title'"
+              />
+            </div>
             <input type="text" name="title" id="title" v-model="title" />
           </section>
           <section>
-            <label for="category">CATEGORY</label>
+            <div class="label-group">
+              <label for="category" class="picker-label">CATEGORY</label
+              ><HelpComponent
+                :title="'Category'"
+                :text="`The category designates what area of your life the Action belongs to. Categories are assigned a general importance value, and they help to organize and prioritize your Actions.`"
+              />
+            </div>
             <div class="categories">
               <div
                 class="category"
@@ -41,7 +52,13 @@
           </section>
 
           <section v-if="itemType == 'Goal'">
-            <label for="title">GOAL STEPS</label>
+            <div class="label-group">
+              <label for="sub-actions" class="picker-label">SUB-ACTIONS</label
+              ><HelpComponent
+                :title="'Sub-Actions'"
+                :text="`(Complex Actions Only) The set of Sub-Actions required to complete the main Action. When all of the Sub-Actions are completed, the main Action should also be considered complete.`"
+              />
+            </div>
             <div class="children-list">
               <draggable
                 v-model="children"
@@ -76,27 +93,51 @@
             </div>
           </section>
           <section v-if="itemType == 'Task'">
-            <label for="duration">TASK DURATION</label>
+            <div class="label-group">
+              <label for="duration" class="picker-label">DURATION</label
+              ><HelpComponent
+                :title="'Duration'"
+                :text="`(Simple Actions Only) An estimated amount of time needed to complete the Action. The Duration field helps assign tasks in relation to how much time is available.`"
+              />
+            </div>
             <div>{{ duration }} minutes</div>
           </section>
-          <TextArea
-            :label="'NOTES'"
-            v-model="notes"
-            :requirement="'optional'"
-            :rows="3"
-          />
+          <section>
+            <div class="label-group">
+              <label for="title" class="picker-label">NOTES</label
+              ><HelpComponent
+                :title="'Notes'"
+                :text="`A space for additional context or information to assist in completing the Action. Examples include phone numbers, addresses, strategies, and research findings.`"
+              />
+            </div>
+            <div class="textarea-container">
+              <textarea
+                v-model="notes"
+                :placeholder="`Additional information about the Action.`"
+                :name="'notes'"
+                :id="'notes'"
+                :rows="3"
+              ></textarea>
+            </div>
+          </section>
         </div>
         <div class="column">
           <section>
-            <label for="title">IMPORTANCE</label>
+            <div class="label-group">
+              <label for="picker" class="picker-label">IMPORTANCE</label
+              ><HelpComponent
+                :title="'Importance'"
+                :text="`How much the action aligns with your values and long-term goals. Urgency should not be factored into Importance. If you had all the time in the world, how important would this be? Categories are assigned an importance, and Actions automatically inherit the same Importance value as its category. You can use the modifier slider to make the Action more or less important than the general category.`"
+              />
+            </div>
             <div class="importance-container">
               <div class="value">
                 <div class="importance">
-                  {{ categoryImportance + modifier }}
+                  {{ categoryImportance + parseInt(modifier) }}
                 </div>
                 <div class="math">
-                  ({{ categoryImportance }}{{ modifier < 0 ? "" : "+"
-                  }}{{ modifier }})
+                  ({{ categoryImportance }}{{ parseInt(modifier) < 0 ? "" : "+"
+                  }}{{ parseInt(modifier) }})
                 </div>
               </div>
               <div class="flex-column">
@@ -109,7 +150,7 @@
                 <div class="modifier-label">Modifier</div>
                 <div class="slider-wrapper">
                   <vue-slider
-                    :data="[-3, -2, -1, 0, 1, 2, 3]"
+                    :data="['-3', '-2', '-1', '0', '+1', '+2', '+3']"
                     :marks="true"
                     :tooltip="'none'"
                     :process-style="{ backgroundColor: 'var(--greenDark)' }"
@@ -123,66 +164,8 @@
               </div>
             </div>
           </section>
-          <section>
-            <label for="title">TIME FRAME</label>
-            <div class="timeframe-display">Within {{ timeframe }} days</div>
-            <div class="timeframe-grid">
-              <div class="timeframe-grid-item two-col first">
-                <FormOption
-                  :data="'optionA'"
-                  :color="'yellow'"
-                  :selected="datePickerScheduleType == 'optionA'"
-                  @click-event="handleDatePickerScheduleClick"
-                  ><template #content>{{
-                    datePickerInterval == "day" ? `By` : `By the Start of`
-                  }}</template></FormOption
-                >
-              </div>
-              <div class="timeframe-grid-item two-col last">
-                <FormOption
-                  :data="'optionB'"
-                  :color="'yellow'"
-                  :selected="datePickerScheduleType == 'optionB'"
-                  @click-event="handleDatePickerScheduleClick"
-                  ><template #content>{{
-                    datePickerInterval == "day" ? `On` : `By the End of`
-                  }}</template></FormOption
-                >
-              </div>
-              <div class="timeframe-grid-item first">
-                <FormOption
-                  :data="'day'"
-                  :selected="datePickerInterval == 'day'"
-                  @click-event="handleDateIntervalClick"
-                  ><template #content>Day</template></FormOption
-                >
-              </div>
-              <div class="timeframe-grid-item middle">
-                <FormOption
-                  :data="'week'"
-                  :selected="datePickerInterval == 'week'"
-                  @click-event="handleDateIntervalClick"
-                  ><template #content>Week</template></FormOption
-                >
-              </div>
-              <div class="timeframe-grid-item middle">
-                <FormOption
-                  :data="'month'"
-                  :selected="datePickerInterval == 'month'"
-                  @click-event="handleDateIntervalClick"
-                  ><template #content>Month</template></FormOption
-                >
-              </div>
-              <div class="timeframe-grid-item last">
-                <FormOption
-                  :data="'year'"
-                  :selected="datePickerInterval == 'year'"
-                  @click-event="handleDateIntervalClick"
-                  ><template #content>Year</template></FormOption
-                >
-              </div>
-              <div class="picker"></div>
-            </div>
+          <section class="time-frame-slot">
+            <TimeFrameEditor @update="updateTimeFrame" />
           </section>
         </div>
       </div>
@@ -201,10 +184,12 @@ import { defineEmits, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import dataService from "@/services/dataService.js";
 import { createUID } from "@/util/uuid";
-import TextArea from "@/components/TextArea.vue";
-import FormOption from "@/components/FormOption.vue";
 import draggable from "vuedraggable";
 import assistantService from "@/services/assistantService";
+
+import TimeFrameEditor from "@/components/time-frame-editor/TimeFrameEditor.vue";
+
+import HelpComponent from "@/components/help-component/HelpComponent.vue";
 
 import VueSlider from "vue-slider-component";
 import "vue-slider-component/theme/default.css";
@@ -222,7 +207,6 @@ const itemType = ref(store.state.formData.type);
 
 const title = ref(store.state.formData.title || "");
 const duration = ref(store.state.formData.duration || "");
-const timeframe = ref(store.state.formData.timeframe || "");
 const category = ref(store.state.formData.category || "work");
 const auto = ref(store.state.formData.auto || false);
 const categories = [
@@ -241,9 +225,6 @@ categories.forEach((categoryItem) => {
     categoryImportance.value = categoryItem.importance;
   }
 });
-
-const datePickerScheduleType = ref("optionA");
-const datePickerInterval = ref("day");
 
 onMounted(async () => {
   emit("setTitle", `${itemType.value} Details`);
@@ -305,29 +286,12 @@ const addChild = () => {
 const selectCategory = (categoryData) => {
   category.value = categoryData.name;
   categoryImportance.value = categoryData.importance;
-}
-
-// const save = async () => {
-//     if (editing) {
-//       await dataService.updateGoal(goal.value.id, goal.value);
-//     } else {
-//       await dataService.createGoal(goal.value);
-//     }
-//     router.back();
-//   };
-
-const handleDatePickerScheduleClick = (data) => {
-  datePickerScheduleType.value = data.selection;
-};
-
-const handleDateIntervalClick = (data) => {
-  datePickerInterval.value = data.selection;
 };
 </script>
 
 <style scoped>
 .component {
-  max-width: 800px;
+  max-width: 1200px;
   display: flex;
   width: fit-content;
   flex-direction: column;
@@ -388,10 +352,6 @@ const handleDateIntervalClick = (data) => {
   border: 2px solid var(--ink);
   border-radius: 60px;
   font-weight: 600;
-}
-
-textarea {
-  width: 20px !important;
 }
 
 .math {
@@ -478,10 +438,7 @@ form {
 .two-col {
   grid-column: span 2;
 }
-.picker {
-  grid-column: span 4;
-  border: 1px solid var(--ink);
-  height: 250px;
+.time-frame-slot {
 }
 
 .schedule-type-selection,
@@ -537,5 +494,10 @@ form {
   border: 1px solid var(--ink);
   border-radius: 10px;
   font-weight: 600;
+}
+
+.label-group {
+  margin-top: 15px;
+  display: flex;
 }
 </style>
