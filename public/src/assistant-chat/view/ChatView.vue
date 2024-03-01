@@ -10,13 +10,14 @@
 import { onMounted, ref, nextTick } from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
-// import chatService from "@/services/chatService";
+import chatService from "../services/chatService.js";
 
 const messages = ref([
-  { role: "user", content: "Hello!", author:"You" },
+  { role: "user", content: "Hello!", author: "You" },
   {
     role: "assistant",
-    content: "Greetings, {{USER_NAME}}. How are you doing today?", author: "Lively"
+    content: "Greetings, {{USER_NAME}}. How are you doing today?",
+    author: "Lively",
   },
 ]);
 
@@ -46,21 +47,18 @@ const handleSendMessage = async (newMessage) => {
   messages.value.push({ role: "user", content: newMessage });
   scrollToBottom();
 
-  // try {
-  //   // Assume sendMessageToServer is a method that sends the message to the server and waits for a response
+  try {
+    const response = await chatService.sendMessage(newMessage);
+    const parsedResponse = JSON.parse(response.data);
 
-  //   const response = await chatService.sendMessage(newMessage);
-  //   const parsedResponse = JSON.parse(response.data);
-  //   // Add server (or ChatGPT) response to the conversation
-  //   messages.value.push({
-  //     role: "assistant",
-  //     content: parsedResponse.content,
-  //   });
-  //   scrollToBottom();
-  // } catch (error) {
-  //   // Handle any errors, e.g., display an error message
-  //   console.error("Error sending message:", error);
-  // }
+    messages.value.push({
+      role: "assistant",
+      content: parsedResponse.classification,
+    });
+    scrollToBottom();
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
 };
 </script>
 
@@ -73,14 +71,14 @@ h1 {
 }
 
 .chat-view {
-  padding: 10em;
   padding-top: 0;
   padding-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60ch;
-  max-width: 60ch;
+  min-width: 30ch;
+  width: 100%;
+  max-width: 45ch;
   margin: 0 auto;
   height: 90vh; /* Use full viewport height */
 }

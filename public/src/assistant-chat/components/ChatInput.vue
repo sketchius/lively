@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-input">
+  <div class="textarea-container">
     <textarea
       v-model="newMessage"
       @input="adjustHeight"
@@ -30,7 +30,7 @@ export default {
     adjustHeight() {
       const textarea = this.$refs.textarea;
       textarea.style.height = "1rem"; // Temporarily collapse the textarea to reset scrollHeight
-      textarea.style.height = textarea.scrollHeight + "px"; // Set height based on content
+      textarea.style.height = textarea.scrollHeight + 5 + "px"; // Set height based on content
 
       // Scroll the textarea to the top as it grows
       textarea.scrollTop = 0;
@@ -44,40 +44,36 @@ export default {
 </script>
 
 <style scoped>
-.chat-input {
-  display: flex; /* Use flexbox for layout */
-  width: 100%; /* Set the maximum width */
-  margin: 0 auto; /* Center the chat input */
-  height: 2em;
-  margin-top: 1rem;
-  justify-content: stretch;
-  height: fit-content;
-  border: 1px solid #ccc; /* You can change the border color */
-  border-radius: 10px; /* Adjust the radius for the desired roundness */
+.textarea-container {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border: 3px solid var(--ink);
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin-top: var(--size1);
 }
 
-.chat-input textarea {
-  padding: 10px;
-  padding-bottom: 1rem;
-  padding-left: 1rem;
-  flex-grow: 1;
-  margin-right: 10px;
+textarea {
+  width: 100%;
   overflow: hidden;
-  box-sizing: border-box;
-  min-height: 0.5rem;
-  appearance: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  resize: none; /* Prevent textarea from being resized by the user */
+  border: none;
+  margin-right: var(--size3);
+}
+
+.textarea-container:focus-within {
+  border: 3px solid var(--blue700);
+}
+
+textarea:focus {
   border: none;
 }
 
-.chat-input img {
-  width: 1.5rem;
-  margin-right: 1rem;
+img {
+  position: absolute;
+  right: var(--size1);
+  width: var(--size3);
   align-self: center;
   height: fit-content;
 }

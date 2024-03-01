@@ -83,6 +83,7 @@ body {
 
 textarea::placeholder {
   font-weight: 200;
+  color: var(--ink300);
 }
 
 h1 {
@@ -253,12 +254,12 @@ textarea {
   position: relative;
   font-family: "Inter", sans-serif;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
   width: 100%;
   border: 3px solid var(--ink);
   border-radius: 3px;
-  padding: 18px 20px;
+  padding: 12px 18px;
   background: transparent;
   resize: none;
   box-sizing: border-box;
@@ -282,10 +283,10 @@ textarea:focus {
   content: "";
   position: absolute;
   z-index: 0;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
   background: var(--white);
   pointer-events: none;
 }

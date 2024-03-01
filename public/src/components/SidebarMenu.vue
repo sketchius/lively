@@ -18,6 +18,9 @@ export default {
 </script>
 
 <style scoped>
+.sidebar {
+  width: 20ch;
+}
 .sidebar ul {
   list-style-type: none;
   padding: 0;

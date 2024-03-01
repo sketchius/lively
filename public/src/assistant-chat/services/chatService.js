@@ -1,4 +1,4 @@
-import apiClient from "./api";
+import apiClient from "@/services/api";
 
 export default {
   async sendMessage(message) {
