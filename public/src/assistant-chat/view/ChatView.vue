@@ -1,8 +1,12 @@
 <template>
   <div class="chat-view">
-    <h1 class="display-text">Assistant</h1>
+    <div class="spacer"></div>
+    <img :src="assistantAvatar" />
+    <h1 class="display-text">AI Assistant</h1>
     <MessageArea ref="messageAreaRef" :messages="messages" />
     <ChatInput @sendMessage="handleInput" />
+
+    <div class="spacer"></div>
   </div>
 </template>
 
@@ -11,6 +15,7 @@ import { onMounted, onUnmounted, ref, reactive, nextTick } from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
 import assistantController from "../controller/assistantController.js";
+import assistantAvatar from "../assets/assistant-avatar.svg";
 
 const messages = reactive([]);
 const timerIntervalId = ref(null);
@@ -138,9 +143,12 @@ h1 {
   margin: 0;
 }
 
+.spacer {
+  flex-shrink: 1;
+  flex-basis: 5vh;
+}
+
 .chat-view {
-  padding-top: 0;
-  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;

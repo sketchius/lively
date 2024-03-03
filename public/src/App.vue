@@ -1,7 +1,9 @@
 <template>
   <div id="layout">
-    <div class="horizontal-spacer"></div>
+    <div class="margin-spacer"></div>
+    <div class="padding-spacer"></div>
     <ChatView />
+    <div class="gap-spacer"></div>
     <div class="app-content">
       <SidebarMenu />
       <div class="vertical-spacer"></div>
@@ -9,7 +11,8 @@
         <router-view></router-view>
       </main>
     </div>
-    <div class="horizontal-spacer"></div>
+    <div class="padding-spacer"></div>
+    <div class="margin-spacer"></div>
   </div>
 </template>
 
@@ -38,25 +41,31 @@ body {
 
 #layout {
   --white: #ffffff;
+  --paper300: #fffefa;
   --paper: #fffcf2;
+  --paper700: #fff9da;
   --ink: #5a6798;
   --ink300: #a7a8c4;
 
+  --red100: #fff7f7;
   --red300: #ffebeb;
   --red400: #ffdbdb;
   --red500: #ffcaca;
   --red700: #da8c8c;
 
+  --yellow100: #fffde6;
   --yellow300: #fffad1;
   --yellow400: #fff8bd;
   --yellow500: #fff6a5;
   --yellow700: #e4da82;
 
+  --green100: #f1fff6;
   --green300: #e0ffeb;
   --green400: #ccffde;
   --green500: #b0ffcb;
   --green700: #55c47c;
 
+  --blue100: #f3fdff;
   --blue300: #dbf9ff;
   --blue400: #b1effc;
   --blue500: #8ae3f5;
@@ -78,10 +87,8 @@ body {
   justify-items: center;
   align-items: center;
   min-height: 100vh;
-  gap: var(--size4);
   display: flex;
-  padding: var(--size4);
-  padding-bottom: 0;
+  padding: 0;
   background-color: var(--paper);
   align-items: stretch;
 }
@@ -90,16 +97,33 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  border: 2px solid var(--ink);
+  border-top: none;
+  border-bottom: none;
+  padding: var(--size4);
 }
 
 main {
   justify-self: center;
 }
 
-.horizontal-spacer {
+.margin-spacer {
   flex-shrink: 1;
   flex-basis: 15vw;
+  background: linear-gradient(to bottom, var(--ink300) 10%, var(--paper) 10.0000001%);
+  background-size: 100% 8px;
 }
+
+.padding-spacer {
+  flex-shrink: 1;
+  flex-basis: 9.2vw;
+}
+
+.gap-spacer {
+  flex-shrink: 1;
+  flex-basis: 5vw;
+}
+
 
 .vertical-spacer {
   flex-shrink: 1;
