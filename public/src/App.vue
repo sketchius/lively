@@ -114,6 +114,8 @@ button.minor {
   padding: 4px 24px;
 }
 
+
+
 button.standard {
   background: none;
   border: 2px solid var(--ink);
@@ -132,6 +134,10 @@ button.major {
   font-size: 18px;
   font-weight: 600;
   padding: 4px 24px;
+}
+
+button.compact {
+  padding: 0px 8px;
 }
 
 button {

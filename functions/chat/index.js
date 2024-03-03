@@ -1,17 +1,34 @@
 import express from "express";
-import { handleMessage } from "./messageHandler.js";
 
 const chatApp = express();
 chatApp.use(express.json());
 
 import cors from "cors";
 import { getConversation } from "./conversationManager.js";
-import classification from './classification.js';
+import classification from "./classification.js";
+import { getOpenAIChatResponse } from "../external_apis/openai.js";
+import chatHandler from "./chatHandler.js";
+import notes from "./notes.js";
 chatApp.use(cors({ origin: true }));
 
-// Endpoint to send a message to the chatbot
 chatApp.post("/message", async (req, res) => {
-  // const response = await handleMessage(req.body);
+  const response = await chatHandler.generateChatResponse(req.body);
+  res.json(response);
+});
+
+chatApp.post("/conversation", async (req, res) => {
+  const response = await chatHandler.generateConversationResponse(
+    JSON.parse(req.body)
+  );
+  res.json(response);
+});
+
+chatApp.post("/identify-notes", async (req, res) => {
+  const response = await notes.identifyNotes(req.body);
+  res.json(response);
+});
+
+chatApp.post("/classification", async (req, res) => {
   const response = await classification.classifyInput(req.body);
   res.json(response);
 });

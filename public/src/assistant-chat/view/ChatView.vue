@@ -2,24 +2,21 @@
   <div class="chat-view">
     <h1 class="display-text">Assistant</h1>
     <MessageArea ref="messageAreaRef" :messages="messages" />
-    <ChatInput @sendMessage="handleSendMessage" />
+    <ChatInput @sendMessage="handleInput" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, onUnmounted, ref, reactive, nextTick } from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
-import chatService from "../services/chatService.js";
+import assistantController from "../controller/assistantController.js";
 
-const messages = ref([
-  { role: "user", content: "Hello!", author: "You" },
-  {
-    role: "assistant",
-    content: "Greetings, {{USER_NAME}}. How are you doing today?",
-    author: "Lively",
-  },
-]);
+const messages = reactive([]);
+const timerIntervalId = ref(null);
+
+let lastFrameTime = 0;
+const frameDelay = 26;
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -30,36 +27,107 @@ const scrollToBottom = () => {
   });
 };
 
+const handleInput = async (input) => {
+  // Add user message to the conversation
+  addMessage("user", input, "chat");
+  scrollToBottom();
+
+  await assistantController.processInput(messages, input, handleUIEvent);
+
+  // try {
+  //   const response = await chatService.sendMessage(input);
+  //   const parsedResponse = JSON.parse(response.data);
+
+  //   messages.push({
+  //     role: "assistant",
+  //     content: parsedResponse.classification,
+  //   });
+  //   scrollToBottom();
+  // } catch (error) {
+  //   console.error("Error sending message:", error);
+  // }
+};
+
+const handleUIEvent = async (data) => {
+  switch (data.event) {
+    case "loading":
+      addMessage("assistant", "loading", "loading");
+      break;
+    case "chat":
+      addMessage("assistant", data.message, "chat");
+      break;
+    case "create-notes": {
+      const actionData = {
+        title: `Create Note${data.notes.length > 1 ? "s" : ""}`,
+        items: data.notes,
+        subtext: `${data.notes.length} notes have been saved.`,
+      };
+      addMessage("assistant", actionData, "action");
+      break;
+    }
+  }
+};
+
+const addMessage = async (role, content, type) => {
+  if (messages.length > 0 && messages[messages.length - 1]?.role == role) {
+    const message = messages[messages.length - 1];
+    if (
+      message.blocks.length > 0 &&
+      message.blocks[message.blocks.length - 1].type == "loading"
+    ) {
+      message.blocks[message.blocks.length - 1] = {
+        type,
+        content,
+        animationFrame: 1,
+      };
+    } else {
+      message.blocks.push({ type, content, animationFrame: 1 });
+    }
+  } else {
+    const message = {
+      role,
+      blocks: [{ type, content, animationFrame: 1 }],
+      author: role === "assistant" ? "Lively" : "You",
+    };
+    messages.push(message);
+  }
+};
+
+const animateText = (timestamp) => {
+  const timeSinceLastFrame = timestamp - lastFrameTime;
+
+  if (timeSinceLastFrame > frameDelay) {
+    lastFrameTime = timestamp;
+    messages.forEach((message) => {
+      message.blocks.forEach((block) => {
+        console.log(block.animationFrame);
+        if (block.animationFrame < block.content.length) {
+          block.animationFrame++;
+        }
+      });
+    });
+  }
+  timerIntervalId.value = requestAnimationFrame(animateText);
+};
+
 onMounted(async () => {
   try {
     // const response = await chatService.getConversation();
     // if (response.data && response.data.length) {
-    //   messages.value = response.data;
+    //   messages = response.data;
     // }
+    addMessage("assistant", "Hello! What can I do for you today?", "push");
     scrollToBottom();
   } catch (error) {
     console.error("Error loading conversation:", error);
   }
+  timerIntervalId.value = requestAnimationFrame(animateText);
 });
 
-const handleSendMessage = async (newMessage) => {
-  // Add user message to the conversation
-  messages.value.push({ role: "user", content: newMessage });
-  scrollToBottom();
-
-  try {
-    const response = await chatService.sendMessage(newMessage);
-    const parsedResponse = JSON.parse(response.data);
-
-    messages.value.push({
-      role: "assistant",
-      content: parsedResponse.classification,
-    });
-    scrollToBottom();
-  } catch (error) {
-    console.error("Error sending message:", error);
-  }
-};
+onUnmounted(() => {
+  // Cancel the animation frame request when the component unmounts
+  cancelAnimationFrame(timerIntervalId.value);
+});
 </script>
 
 <style scoped>

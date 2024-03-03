@@ -12,28 +12,27 @@
 import ChatMessage from "./ChatMessage.vue";
 // import { computed } from 'vue';
 
-
-  const props = defineProps({
-    messages: Array
-  })
-
-  // const decoratedMessages = computed( () => {
-  //     return props.messages && props.messages.length > 0 ? [] : props.messages.map((message) => ({
-  //       ...message,
-  //       profilePicture: getProfilePicture(message.role),
-  //     }));
-  // });
-  // const getProfilePicture = (role) => {
-  //     const userImagePath = "../assets/images/profile/generic.png";
-  //     const assistantImagePath = require("../assets/images/profile/journal6.png");
-  //     return role === "user" ? userImagePath : assistantImagePath;
-  //   };
+const props = defineProps({
+  messages: Array,
+});
 
 
-  // const scrollToBottom = () => {
-  //     const container = this.$refs.messageArea;
-  //     container.scrollTop = container.scrollHeight;
-  //   };
+// const decoratedMessages = computed( () => {
+//     return props.messages && props.messages.length > 0 ? [] : props.messages.map((message) => ({
+//       ...message,
+//       profilePicture: getProfilePicture(message.role),
+//     }));
+// });
+// const getProfilePicture = (role) => {
+//     const userImagePath = "../assets/images/profile/generic.png";
+//     const assistantImagePath = require("../assets/images/profile/journal6.png");
+//     return role === "user" ? userImagePath : assistantImagePath;
+//   };
+
+// const scrollToBottom = () => {
+//     const container = this.$refs.messageArea;
+//     container.scrollTop = container.scrollHeight;
+//   };
 </script>
 
 <style scoped>
