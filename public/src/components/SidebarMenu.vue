@@ -1,14 +1,12 @@
 <template>
-  <div class="sidebar">
-    <ul>
-      <li><router-link to="/">Home</router-link></li>
-      <li><router-link to="/tasks">Tasks</router-link></li>
-      <li><router-link to="/objectives">Objectives</router-link></li>
-      <li><router-link to="/goals">Goals</router-link></li>
-      <li><router-link to="/habits">Habits</router-link></li>
-      <li><router-link to="/routines">Routines</router-link></li>
-    </ul>
-  </div>
+<nav class="menu">
+  <router-link to="/">Home</router-link>
+  <router-link to="/tasks">Tasks</router-link>
+  <router-link to="/objectives">Objectives</router-link>
+  <router-link to="/goals">Goals</router-link>
+  <router-link to="/habits">Habits</router-link>
+  <router-link to="/routines">Routines</router-link>
+</nav>
 </template>
 
 <script>
@@ -18,15 +16,12 @@ export default {
 </script>
 
 <style scoped>
-.sidebar {
-  width: 20ch;
-}
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
+.menu {
+  display: flex;
+  justify-content: space-around; /* or space-between, depending on the desired spacing */
+  align-items: center;
 }
 
-.sidebar ul li {
-  margin: 10px 0;
-}
+
+
 </style>

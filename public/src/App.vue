@@ -1,8 +1,15 @@
 <template>
   <div id="layout">
-    <SidebarMenu />
+    <div class="horizontal-spacer"></div>
     <ChatView />
-    <router-view></router-view>
+    <div class="app-content">
+      <SidebarMenu />
+      <div class="vertical-spacer"></div>
+      <main>
+        <router-view></router-view>
+      </main>
+    </div>
+    <div class="horizontal-spacer"></div>
   </div>
 </template>
 
@@ -71,11 +78,34 @@ body {
   justify-items: center;
   align-items: center;
   min-height: 100vh;
-
+  gap: var(--size4);
   display: flex;
-  padding: 2rem;
+  padding: var(--size4);
+  padding-bottom: 0;
   background-color: var(--paper);
+  align-items: stretch;
 }
+
+.app-content {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  justify-self: center;
+}
+
+.horizontal-spacer {
+  flex-shrink: 1;
+  flex-basis: 15vw;
+}
+
+.vertical-spacer {
+  flex-shrink: 1;
+  flex-basis: 10vh;
+}
+
 
 .display-text {
   font-family: "Saira", sans-serif;
