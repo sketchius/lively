@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 
-import { goalData } from "./data.js";
+import { goalData, noteData } from "./data.js";
 
 const dataApp = express();
 dataApp.use(express.json());
@@ -171,6 +171,64 @@ dataApp.put("/goals/:goalId/completion", async (req, res) => {
     const userId = getUserId();
     await goalData.updateGoalStatus(userId, req.params.goalId, req.body);
     res.send("Goal updated successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.post("/notes", async (req, res) => {
+  try {
+    const userId = getUserId();
+    const data = req.body;
+
+    const noteId = await noteData.createNote(userId, data);
+    res.json({ noteId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.get("/notes/:noteId", async (req, res) => {
+  try {
+    const userId = getUserId();
+    const note = await noteData.getNote(userId, req.params.noteId);
+    res.json(note);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.get("/notes", async (req, res) => {
+  try {
+    const userId = getUserId();
+    const notes = await noteData.listNotes(userId);
+
+    res.json(notes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.put("/notes/:noteId", async (req, res) => {
+  try {
+    const userId = getUserId();
+    const data = req.body;
+
+    await noteData.updateNote(userId, data);
+    res.status(200).send("Note updated.");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+});
+
+dataApp.delete("/notes/:noteId", async (req, res) => {
+  try {
+    const userId = getUserId();
+    await noteData.deleteNote(userId, req.params.noteId);
+    res.send("Note deleted successfully");
   } catch (error) {
     res.status(500).send(error.message);
   }

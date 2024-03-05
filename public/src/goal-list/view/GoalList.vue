@@ -1,26 +1,30 @@
 <template>
   <div class="container">
-    <button class="standard" @click="handleNewItem">New Item</button>
-    <div class="rows">
-      <div class="row headers">
-        <div class="title">Goal Title</div>
-        <div>Priority</div>
-        <div>Due Date</div>
-        <div>Scheduled</div>
-        <div>Tags</div>
+    <h1 class="display-text">|| Goals<HelpComponent :helpId="'goal'" /></h1>
+    <div class="list">
+      <div class="rows">
+        <div class="row headers display-text">
+          <div class="title">Goal Title</div>
+          <div>Category</div>
+          <div>Importance</div>
+          <div>Time Frame</div>
+        </div>
+        <GoalListItem
+          v-for="(goal, index) in goals"
+          :key="goal.id"
+          :goal="goal"
+          :depth="0"
+          :index="index"
+          :dist="0"
+          :top="true"
+          @set-collapsed="handleChildCollapse"
+          :collapsed="goalData[index].collapsed"
+        />
       </div>
-      <GoalListItem
-        v-for="(goal, index) in goals"
-        :key="goal.id"
-        :goal="goal"
-        :depth="0"
-        :index="index"
-        :dist="0"
-        :top="true"
-        @set-collapsed="handleChildCollapse"
-        :collapsed="goalData[index].collapsed"
-      />
+      <div class="list-spacer"></div>
     </div>
+
+    <button class="standard" @click="handleNewItem">New Goal</button>
   </div>
 </template>
 
@@ -30,6 +34,7 @@ import { useStore } from "vuex";
 import GoalListItem from "../components/GoalListItem.vue";
 
 import { useRouter } from "vue-router";
+import HelpComponent from "@/components/help-component/HelpComponent.vue";
 
 const router = useRouter();
 
@@ -94,36 +99,15 @@ watch(
   display: flex;
   flex-direction: column;
   grid-gap: var(--size1);
+  width: 100%;
 }
 
 .container button {
   align-self: flex-start;
 }
-.list-heading {
-  display: flex;
-  justify-content: space-between;
-}
-
-.goal-list {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  min-height: 80%;
-}
-
-.goal-card {
-  margin-bottom: 20px;
-  padding: 2rem;
-  border: 1px black solid;
-  border-radius: 8px;
-}
-
-.goal-item p {
-  margin: 0;
-}
 
 .title {
-  text-align: center;
+  padding-left: 72px;
   width: 100%;
 }
 
@@ -132,69 +116,39 @@ h3 {
   margin-right: auto;
 }
 
-.icon-button {
-  padding: 5px 10px;
-  color: rgb(67, 65, 80);
-  background-color: rgb(188, 193, 207);
-  border: 1px solid rgb(67, 65, 80);
-  border-radius: 104px;
-  cursor: pointer;
-}
-
-.objective-card {
-  max-width: 40ch;
-  padding: 0rem 1rem;
-  border: 1px black solid;
-  border-radius: 8px;
-}
-.task-item {
-  margin-left: 1.5rem;
-}
-
 .rows {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(min-content, 2.5fr) minmax(min-content, 1fr) minmax(
+      min-content,
+      1fr
+    ) minmax(min-content, 2.5fr);
   position: relative;
   flex-direction: column;
-  align-items: flex-end;
-  width: clamp(900px, 80vw, 1200px);
-  border: 3px solid #8592c1;
+  align-items: flex-start;
+  align-content: start;
+  width: 100%;
+  border: 4px solid var(--ink);
   border-radius: 10px;
-  padding-top: 10px;
+  padding-top: 5px;
   padding-bottom: 15px;
-}
-
-.goal {
-  border: 1px solid black;
-  border-radius: 10px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  padding: 5px 15px;
+  min-height: 150px;
 }
 
 .row {
   width: 100%;
-  display: grid;
-  grid-template-columns: 3fr 0.75fr 1fr 1fr 1fr;
+  display: contents;
   padding-bottom: 2px;
   font-weight: 600;
   font-size: 18px;
-  color: #5a6798;
-  border-bottom: 2px #b7bfdf solid;
+  color: var(--ink);
+  min-height: 30px;
 }
 
-.child {
-  margin-top: 10px;
+.row div {
+  border-bottom: 3px double var(--ink);
+  padding-right: 10px;
 }
 
-.indent {
-  margin-left: 15px;
-}
-
-.title-group {
-  display: flex;
-  gap: 0.5rem;
-  padding-right: 1rem;
-}
 .title {
   margin-right: auto;
 }

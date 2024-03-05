@@ -1,6 +1,6 @@
 <template>
   <div class="help-container">
-    <div @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" class="icon">
+    <div @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" class="icon display-text">
       ?
     </div>
     <div
@@ -69,18 +69,23 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
   display: inline-block;
   position: relative;
   color: var(--ink);
+  transform: translateY(-8px);
+  margin-left: 4px;
 }
 
 .help-container .icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
+  width: 13px;
   height: 18px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
+  border-radius: 4px;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-left-width: 2px;
+  border-right-width: 2px;
 }
 
 .help-container .tooltip {

@@ -1,21 +1,5 @@
 <template>
   <div class="component">
-    <div class="assistant-container">
-      <AssistantDialogue
-        :subtext="`These details are used to help you track, organize, and prioritize your agenda.`"
-      >
-        <template #message
-          ><div class="message">
-            <p>
-              The {{ `${itemType || "Item"}` }} fields have been filled in based
-              on your description. Feel free to edit them to meet your needs and
-              click the <span class="button-ref">SAVE</span> button when you are
-              finished.
-            </p>
-          </div></template
-        >
-      </AssistantDialogue>
-    </div>
 
     <form @submit.prevent="handleSave">
       <div class="layout">
@@ -176,7 +160,6 @@
 </template>
 
 <script setup>
-import AssistantDialogue from "@/components/AssistantDialogue.vue";
 import { useStore } from "vuex";
 import { defineEmits, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -244,7 +227,22 @@ onMounted(async () => {
   }
 });
 
+const updateTimeFrame = async (timeframe) => {
+  store.commit("setFormDataField", {
+      field: "timeFrame",
+      payload: timeframe,
+    });
+}
+
 const handleSave = async () => {
+  store.commit("setFormDataField", {
+      field: "title",
+      payload: title,
+    });
+  store.commit("setFormDataField", {
+      field: "importance",
+      payload: categoryImportance.value + parseInt(modifier.value),
+    });
   console.log("handleSave");
   await dataService.createGoal({ id: createUID(), ...store.state.formData });
   if (store.state.formData.type == "task") {
@@ -284,6 +282,10 @@ const addChild = () => {
 const selectCategory = (categoryData) => {
   category.value = categoryData.name;
   categoryImportance.value = categoryData.importance;
+  store.commit("setFormDataField", {
+      field: "category",
+      payload: category.value,
+    });
 };
 </script>
 
@@ -348,7 +350,7 @@ const selectCategory = (categoryData) => {
   align-items: center;
   justify-content: center;
   border: 2px solid var(--ink);
-  border-radius: 60px;
+  border-radius: 10px;
   font-weight: 600;
 }
 
@@ -489,9 +491,14 @@ form {
   height: 18px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--ink);
-  border-radius: 10px;
+  background-color: var(--yellow300);
+  border: 1px dotted var(--ink);
+  border-radius: 3px;
   font-weight: 600;
+}
+
+.category.selected .importance {
+  background-color: var(--yellow500);
 }
 
 .label-group {

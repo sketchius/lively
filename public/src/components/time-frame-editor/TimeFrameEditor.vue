@@ -174,7 +174,7 @@ const handlePickerUpdate = (updateData) => {
 };
 
 const emitTimeFrame = () => {
-  emit("update", timeFrame);
+  emit("update", { date: timeFrame.date, type: timeFrame.type, interval: timeFrame.interval, display: `${timeFrame.typeDisplay} ${timeFrame.date}` });
 };
 
 const pickerComponent = computed(() => {

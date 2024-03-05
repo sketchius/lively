@@ -13,7 +13,7 @@
         width="21"
         height="21"
         rx="3.5"
-        fill="white"
+        fill="none"
         stroke="#5A6798"
         stroke-width="3"
       />

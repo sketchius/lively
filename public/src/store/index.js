@@ -32,6 +32,9 @@ export default createStore({
     setTasks(state, tasks) {
       state.tasks = tasks;
     },
+    setNotes(state, notes) {
+      state.notes = notes;
+    },
 
     pushCommand(state, command) {
       state.commandStack.push(command);
@@ -62,6 +65,9 @@ export default createStore({
     },
     setTaskListNeedsRefresh(state, value) {
       state.taskListNeedsRefresh = value;
+    },
+    setNoteListNeedsRefresh(state, value) {
+      state.noteListNeedsRefresh = value;
     },
 
     updateEditorGoal(state, goalData) {
@@ -163,6 +169,12 @@ export default createStore({
       commit("setGoals", response.data);
       commit("setGoalListNeedsRefresh", false);
     },
+    
+    async fetchNotes({ commit }) {
+      const response = await dataService.listNotes();
+      commit("setNotes", response.data);
+      commit("setNoteListNeedsRefresh", false);
+    },
     async fetchObjectives({ commit }) {
       const response = await dataService.listObjectives();
       commit("setObjectives", response.data);
@@ -176,6 +188,10 @@ export default createStore({
     async createGoal({ commit }, goalData) {
       await dataService.createGoal(goalData);
       commit("setGoalListNeedsRefresh", true);
+    },
+    async createNote({ commit }, noteData) {
+      await dataService.createNote(noteData);
+      commit("setNoteListNeedsRefresh", true);
     },
     saveGoal({ commit, state }, goalData) {
       const action = state.editingGoal ? "updateGoal" : "createGoal";

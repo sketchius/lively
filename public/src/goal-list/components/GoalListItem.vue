@@ -20,31 +20,15 @@
         @click="handleCollapseButtonClick"
       ></div>
       <CheckboxInput :checked="checked" @click="handleCheckboxClick" />
-      <div
-        class="type-marker"
-        :class="{
-          compound: goal.type.includes('compound'),
-          task: goal.type.includes('task'),
-        }"
-      ></div>
       <div class="title-container">
         <div class="title">{{ goal.title }}</div>
       </div>
     </summary>
-    <div class="cell"><ImportanceTag :level="goal.importance" /></div>
+    <div class="cell category"><div class="tag">{{capitalize(goal.category)}}</div></div>
+    <div class="cell importance"><div class="tag">10</div></div>
     <div class="cell duedate">
-      Dist = {{ props.dist }}, Desc = {{ descendantCount }}
+      {{ goal.timeFrame.display }}
     </div>
-    <div class="cell scheduled">
-      {{
-        goal.type.includes("task")
-          ? goal.scheduled
-            ? new Date(goal.scheduled._seconds * 1000).toLocaleString()
-            : "Unscheduled"
-          : scheduledDescendantCount + "/" + descendantCount + " tasks"
-      }}
-    </div>
-    <div class="cell tags">Depth = {{ depth }}, Index = {{ index }}</div>
   </div>
   <template v-for="(subGoal, index) in goal.children" :key="subGoal.id">
     <GoalListItem
@@ -64,8 +48,7 @@
 
 <script setup>
 import { defineProps, defineEmits, ref, onMounted } from "vue";
-import CheckboxInput from "../components/CheckboxInput.vue";
-import ImportanceTag from "../components/ImportanceTag.vue";
+import CheckboxInput from '@/components/CheckboxInput.vue';
 
 const props = defineProps({
   goal: Object,
@@ -161,6 +144,10 @@ const handleCheckboxClick = () => {
   checked.value = !checked.value;
 };
 
+const capitalize = (string) => {
+  return `${string.slice(0,1).toUpperCase()}${string.slice(1)}`;
+}
+
 onMounted(() => {
   computeDists();
 });
@@ -180,31 +167,13 @@ summary {
 }
 
 .row {
-  display: grid;
+  display: contents;
+  width: 100%;
   position: relative;
-  grid-template-columns: 3fr 0.75fr 1fr 1fr 1fr;
   align-items: center;
   max-height: 35px;
-  width: 100%;
 }
 
-.type-marker {
-  width: 8px;
-  height: 18px;
-  min-width: 8px;
-  margin-left: 10px;
-  border: 3px solid #5a6798;
-  border-radius: 2px;
-  background-color: grey;
-}
-
-.type-marker.compound {
-  background-color: #4bc5df;
-}
-
-.type-marker.task {
-  background-color: #7fefa6;
-}
 
 .title-container {
   min-height: 30px;
@@ -213,7 +182,7 @@ summary {
   align-items: center;
   flex-grow: 1;
   flex-shrink: 1;
-  border-bottom: 1px #b7bfdf solid;
+  border-bottom: 1px solid var(--ink);
 }
 
 .title {
@@ -234,17 +203,17 @@ summary {
   min-width: 20px;
 }
 .collapsible-icon.collapsed {
-  background-image: url("../assets/images/icons/expand-icon.svg");
+  background-image: url("@/assets/images/icons/expand-icon.svg");
   background-size: 20px 20px;
 }
 
 .collapsible-icon.expanded {
-  background-image: url("../assets/images/icons/collapse-icon.svg");
+  background-image: url("@/assets/images/icons/collapse-icon.svg");
   background-size: 20px 20px;
 }
 
 .collapsible-icon.childless {
-  background-image: url("../assets/images/icons/childless-icon.svg");
+  background-image: url("@/assets/images/icons/childless-icon.svg");
   background-size: 12px 12px;
   background-repeat: no-repeat;
   background-position: center;
@@ -257,7 +226,7 @@ summary.child::before {
   top: calc(((30px * var(--dist)) * -1) + 15px);
   width: 25px;
   height: calc((30px * var(--dist)));
-  border: solid #8592c1;
+  border: solid var(--ink);
   border-width: 0 0 2px 2px;
   border-bottom-left-radius: 12px;
   z-index: 0;
@@ -279,15 +248,45 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   min-height: 30px;
-  border-bottom: 1px #b7bfdf solid;
+  border-bottom: 1px var(--ink) solid;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.duedate,
-.scheduled,
-.tags {
-  font-size: 14px;
+.importance .tag {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
 }
+
+.importance .tag::before {
+  content: "";
+  position: absolute;
+  border: 2px solid var(--ink);
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+
+.category .tag {
+  border: 1px solid var(--ink);
+  padding: 1px 4px;
+  margin-right: 4px;
+}
+
+.cell {
+  padding-right: 10px;
+}
+
 </style>

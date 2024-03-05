@@ -3,34 +3,29 @@
     <div class="margin-spacer"></div>
     <div class="padding-spacer"></div>
     <ChatView />
-    <div class="gap-spacer"></div>
+    <div class="padding-spacer"></div>
+    <div class="inner-padding-spacer border-left"></div>
     <div class="app-content">
-      <SidebarMenu />
+      <MenuBar />
       <div class="vertical-spacer"></div>
       <main>
         <router-view></router-view>
       </main>
     </div>
+    <div class="inner-padding-spacer border-right"></div>
     <div class="padding-spacer"></div>
     <div class="margin-spacer"></div>
   </div>
 </template>
 
-<script>
-import SidebarMenu from "./components/SidebarMenu.vue";
+<script setup>
+import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
 
-export default {
-  name: "App",
-  components: {
-    SidebarMenu,
-    ChatView,
-  },
-};
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Saira:wght@100;200;400;500;600;700;800&display=swap");
 
 body {
@@ -43,7 +38,7 @@ body {
   --white: #ffffff;
   --paper300: #fffefa;
   --paper: #fffcf2;
-  --paper700: #fff9da;
+  --paper700: hsl(42, 100%, 96%);
   --ink: #5a6798;
   --ink300: #a7a8c4;
 
@@ -94,16 +89,18 @@ body {
 }
 
 .app-content {
+  flex-basis: 70vw;
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--ink);
   border-top: none;
   border-bottom: none;
-  padding: var(--size4);
+  padding: var(--size4) 0;
+  background: var(--paper700);
 }
 
 main {
+  display: flex;
   justify-self: center;
 }
 
@@ -117,12 +114,30 @@ main {
 .padding-spacer {
   flex-shrink: 1;
   flex-basis: 9.2vw;
+  min-width: var(--size4);
+}
+
+.inner-padding-spacer {
+  min-width: var(--size5);
+  flex-shrink: 1;
+  flex-basis: 9.2vw;
+  background: var(--paper700);
 }
 
 .gap-spacer {
+  min-width: var(--size3);
   flex-shrink: 1;
-  flex-basis: 5vw;
+  flex-basis: 5.7vw;
 }
+
+.border-left {
+  border-left: 3px double var(--ink);
+}
+
+.border-right {
+  border-right: 3px double var(--ink);
+}
+
 
 
 .vertical-spacer {
@@ -130,7 +145,7 @@ main {
   flex-basis: 10vh;
 }
 
-
+button,
 .display-text {
   font-family: "Saira", sans-serif;
 }
@@ -197,8 +212,6 @@ button.compact {
 button {
   text-transform: uppercase;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 input[type="radio"] {

@@ -105,7 +105,6 @@ const animateText = (timestamp) => {
     lastFrameTime = timestamp;
     messages.forEach((message) => {
       message.blocks.forEach((block) => {
-        console.log(block.animationFrame);
         if (block.animationFrame < block.content.length) {
           block.animationFrame++;
         }
@@ -156,7 +155,7 @@ h1 {
   width: 100%;
   max-width: 45ch;
   margin: 0 auto;
-  height: 90vh; /* Use full viewport height */
+  height: 100vh;
 }
 
 .chat-input {

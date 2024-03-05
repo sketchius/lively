@@ -106,3 +106,33 @@ export const goalData = {
     await firestore.updateField(path, "complete", newStatus);
   },
 };
+
+export const noteData = {
+
+  async createNote(userId, noteData) {
+    const uid = noteData.id ? noteData.id : createUID();
+    const path = `users/${userId}/notes/${uid}`;
+    await firestore.create(path, noteData);
+    return uid;
+  },
+
+  async getNote(userId, noteId) {
+    const path = `users/${userId}/notes/${noteId}`;
+    return await firestore.read(path);
+  },
+
+  async listNotes(userId) {
+    const path = `users/${userId}/notes`;
+    return await firestore.list(path);
+  },
+
+  async updateNote(userId, noteId, noteData) {
+    const path = `users/${userId}/notes/${noteId}`;
+    await firestore.update(path, noteData);
+  },
+
+  async deleteNote(userId, noteId) {
+    const path = `users/${userId}/notes/${noteId}`;
+    await firestore.delete(path);
+  },
+};

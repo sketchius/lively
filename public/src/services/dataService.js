@@ -35,38 +35,6 @@ export default {
     return axios.delete(`${API_URL}/goals/${goalId}/plans/${planId}`);
   },
 
-  // Objectives
-  createObjective(objectiveData) {
-    return axios.post(`${API_URL}/objectives`, objectiveData);
-  },
-  getObjective(objectiveId) {
-    return axios.get(`${API_URL}/objectives/${objectiveId}`);
-  },
-  listObjectives() {
-    return axios.get(`${API_URL}/objectives`);
-  },
-  updateObjective(objectiveId, objectiveData) {
-    return axios.put(`${API_URL}/objectives/${objectiveId}`, objectiveData);
-  },
-  deleteObjective(objectiveId) {
-    return axios.delete(`${API_URL}/objectives/${objectiveId}`);
-  },
-  createObjectivePlan(objectiveId, planData) {
-    return axios.post(`${API_URL}/objectives/${objectiveId}/plans`, planData);
-  },
-  getObjectivePlan(objectiveId, planId) {
-    return axios.get(`${API_URL}/objectives/${objectiveId}/plans/${planId}`);
-  },
-  listObjectivePlans(objectiveId) {
-    return axios.get(`${API_URL}/objectives/${objectiveId}/plans`);
-  },
-  updateObjectivePlan(objectiveId, planId, planData) {
-    return axios.put(`${API_URL}/objectives/${objectiveId}/plans/${planId}`, planData);
-  },
-  deleteObjectivePlan(objectiveId, planId) {
-    return axios.delete(`${API_URL}/objectives/${objectiveId}/plans/${planId}`);
-  },
-
   // Tasks
   createTask(taskData) {
     return axios.post(`${API_URL}/tasks`, taskData);
@@ -82,5 +50,21 @@ export default {
   },
   deleteTask(taskId) {
     return axios.delete(`${API_URL}/tasks/${taskId}`);
-  }
+  },
+
+  createNote(noteData) {
+    return axios.post(`${API_URL}/notes`, noteData);
+  },
+  getNote(noteId) {
+    return axios.get(`${API_URL}/notes/${noteId}`);
+  },
+  listNotes() {
+    return axios.get(`${API_URL}/notes`);
+  },
+  updateNote(noteId, noteData) {
+    return axios.put(`${API_URL}/notes/${noteId}`, noteData);
+  },
+  deleteNote(noteId) {
+    return axios.delete(`${API_URL}/notes/${noteId}`);
+  },
 };
