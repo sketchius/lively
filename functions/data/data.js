@@ -107,6 +107,36 @@ export const goalData = {
   },
 };
 
+export const taskData = {
+
+  async createTask(userId, taskData) {
+    const uid = taskData.id ? taskData.id : createUID();
+    const path = `users/${userId}/tasks/${uid}`;
+    await firestore.create(path, taskData);
+    return uid;
+  },
+
+  async getTask(userId, taskId) {
+    const path = `users/${userId}/tasks/${taskId}`;
+    return await firestore.read(path);
+  },
+
+  async listTasks(userId) {
+    const path = `users/${userId}/tasks`;
+    return await firestore.list(path);
+  },
+
+  async updateTask(userId, taskId, taskData) {
+    const path = `users/${userId}/tasks/${taskId}`;
+    await firestore.update(path, taskData);
+  },
+
+  async deleteTask(userId, taskId) {
+    const path = `users/${userId}/tasks/${taskId}`;
+    await firestore.delete(path);
+  },
+};
+
 export const noteData = {
 
   async createNote(userId, noteData) {
