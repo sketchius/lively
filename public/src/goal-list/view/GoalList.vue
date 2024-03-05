@@ -50,7 +50,7 @@ const initializeGoalData = () => {
 };
 
 onMounted(() => {
-  store.dispatch("fetchTopLevelGoals");
+  store.dispatch("fetchGoals");
 });
 
 const handleChildCollapse = (data) => {
@@ -138,15 +138,16 @@ h3 {
   width: 100%;
   display: contents;
   padding-bottom: 2px;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 500;
+  font-size: 16px;
   color: var(--ink);
   min-height: 30px;
 }
 
 .row div {
   border-bottom: 3px double var(--ink);
-  padding-right: 10px;
+  padding-right: 18px;
+  font-weight: 600;
 }
 
 .title {

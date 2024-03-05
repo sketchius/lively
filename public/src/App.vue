@@ -90,6 +90,7 @@ body {
 
 .app-content {
   flex-basis: 70vw;
+  min-width: 80ch;
   min-height: 100%;
   display: flex;
   flex-direction: column;

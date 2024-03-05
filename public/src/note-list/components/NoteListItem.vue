@@ -42,6 +42,7 @@ summary {
   position: relative;
   align-items: center;
   min-height: 30px;
+  padding-left: var(--size2);
 }
 
 .row {

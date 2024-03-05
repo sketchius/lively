@@ -25,7 +25,7 @@
       </div>
     </summary>
     <div class="cell category"><div class="tag">{{capitalize(goal.category)}}</div></div>
-    <div class="cell importance"><div class="tag">10</div></div>
+    <div class="cell importance"><div class="tag">{{ goal.importance }}</div></div>
     <div class="cell duedate">
       {{ goal.timeFrame.display }}
     </div>
