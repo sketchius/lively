@@ -1,5 +1,4 @@
-import {db} from "./firebaseInit.js";
-
+import { db } from "./firebaseInit.js";
 
 async function deleteCollection(collectionPath) {
   const collectionRef = db.collection(collectionPath);
@@ -23,5 +22,4 @@ async function deleteDocument(docPath) {
   await docRef.delete();
 }
 
-
-export {deleteCollection};
+export { deleteCollection };

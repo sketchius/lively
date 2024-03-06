@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
 
-import {goalData, taskData, noteData} from "./data.js";
+import { goalData, taskData, noteData } from "./data.js";
 
 const dataApp = express();
 dataApp.use(express.json());
-dataApp.use(cors({origin: true}));
+dataApp.use(cors({ origin: true }));
 
 function getUserId(req) {
   console.log(`req.headers = `, req.headers);
@@ -21,7 +21,7 @@ dataApp.post("/goals", async (req, res) => {
     const data = req.body;
 
     const goalId = await goalData.createGoal(userId, data);
-    res.json({goalId});
+    res.json({ goalId });
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
@@ -65,8 +65,8 @@ dataApp.get("/goals", async (req, res) => {
           const objective = goal.objectives[j];
 
           objective.data = await objectiveData.getObjective(
-              userId,
-              objective.id,
+            userId,
+            objective.id
           );
           objective.data.new = false;
 
@@ -119,14 +119,14 @@ dataApp.put("/goals/:goalId", async (req, res) => {
         } else {
           objective.data.new = false;
           const objectiveId = await objectiveData.createObjective(
-              userId,
-              objective.data,
+            userId,
+            objective.data
           );
           objective.id = objectiveId;
           await objectiveData.updateObjective(
-              userId,
-              objective.id,
-              objective.data,
+            userId,
+            objective.id,
+            objective.data
           );
         }
       }
@@ -167,7 +167,7 @@ dataApp.post("/notes", async (req, res) => {
     const data = req.body;
 
     const noteId = await noteData.createNote(userId, data);
-    res.json({noteId});
+    res.json({ noteId });
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
@@ -219,14 +219,13 @@ dataApp.delete("/notes/:noteId", async (req, res) => {
   }
 });
 
-
 dataApp.post("/tasks", async (req, res) => {
   try {
     const userId = getUserId(req);
     const data = req.body;
 
     const taskId = await taskData.createTask(userId, data);
-    res.json({taskId});
+    res.json({ taskId });
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
@@ -278,4 +277,4 @@ dataApp.delete("/tasks/:taskId", async (req, res) => {
   }
 });
 
-export {dataApp};
+export { dataApp };

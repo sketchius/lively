@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 
-import {Pinecone} from "@pinecone-database/pinecone";
+import { Pinecone } from "@pinecone-database/pinecone";
 
 const pinecone = new Pinecone({
   apiKey: functions.config().pinecone.api_key,
@@ -8,7 +8,6 @@ const pinecone = new Pinecone({
 });
 
 const index = pinecone.index("agent-memory");
-
 
 async function upsertEmbeddingToPinecone(embedding, path, id) {
   const upsertData = {
@@ -60,7 +59,6 @@ async function deleteAllVectors() {
     console.error("Error searching for similar embeddings:", error);
   }
 }
-
 
 async function getVectorCount() {
   try {

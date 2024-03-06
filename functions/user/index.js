@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
-import {userData} from "./userData.js";
+import { userData } from "./userData.js";
 
 const userApp = express();
 userApp.use(express.json());
-userApp.use(cors({origin: true}));
+userApp.use(cors({ origin: true }));
 
 userApp.post("/demo", async (req, res) => {
   const result = await userData.create();
@@ -18,4 +18,4 @@ userApp.get("/demo", async (req, res) => {
   res.json(result);
 });
 
-export {userApp};
+export { userApp };

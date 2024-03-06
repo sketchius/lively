@@ -1,4 +1,4 @@
-import {getOpenAIChatResponse} from "../external_apis/openai.js";
+import { getOpenAIChatResponse } from "../external_apis/openai.js";
 
 export default {
   async generateChatResponse(input) {
@@ -11,8 +11,8 @@ export default {
     * Actions - Tasks or Goals. Always say Actions instead of tasks/goals, but once per conversation append '(tasks and goals)' to Actions so they remember what Actions are.
     * Notes - Pieces of information that the user needs to come back to later. You help the user clear their mind by capturing the info and helping them respond to it when they have time.`;
     const messages = [
-      {role: "system", content: systemMessage},
-      {role: "user", content: input},
+      { role: "system", content: systemMessage },
+      { role: "user", content: input },
     ];
 
     return await getOpenAIChatResponse(messages);
@@ -31,7 +31,7 @@ export default {
     * Actions - Tasks or Goals. Always say Actions instead of tasks/goals, but once per conversation append '(tasks / goals)' to Actions so they remember what Actions are.
     * Notes - Pieces of information that the user needs to come back to later. You help the user clear their mind by capturing the info and helping them respond to it when they have time.`;
     const messages = [
-      {role: "system", content: systemMessage},
+      { role: "system", content: systemMessage },
       ...conversationMessages,
     ];
 

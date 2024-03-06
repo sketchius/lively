@@ -1,11 +1,11 @@
-import {OpenAI} from "openai";
+import { OpenAI } from "openai";
 import * as functions from "firebase-functions";
 
 const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function(messages, expectJSON) {
+const getOpenAIChatResponse = async function (messages, expectJSON) {
   const requestOptions = {
     model: "gpt-3.5-turbo-0125",
     messages,
@@ -13,7 +13,7 @@ const getOpenAIChatResponse = async function(messages, expectJSON) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms),
+      setTimeout(() => reject(new Error("Timeout")), ms)
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -37,7 +37,7 @@ const getOpenAIChatResponse = async function(messages, expectJSON) {
   }
 };
 
-const getOpenAIChatResponseFunctionTest = async function(messages) {
+const getOpenAIChatResponseFunctionTest = async function (messages) {
   // Define your tools (functions the model can call)
   const tools = [
     {
@@ -62,9 +62,7 @@ const getOpenAIChatResponseFunctionTest = async function(messages) {
             description: "The message to send to the user.",
           },
         },
-        required: [
-          "message",
-        ],
+        required: ["message"],
       },
     },
     // You can define multiple functions here
@@ -79,7 +77,7 @@ const getOpenAIChatResponseFunctionTest = async function(messages) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms),
+      setTimeout(() => reject(new Error("Timeout")), ms)
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {

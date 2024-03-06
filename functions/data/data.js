@@ -1,5 +1,5 @@
-import {firestore} from "../firestore/firestore.js";
-import {createUID} from "../utils/uid.js";
+import { firestore } from "../firestore/firestore.js";
+import { createUID } from "../utils/uid.js";
 
 export const goalData = {
   async createGoal(userId, goalData) {
@@ -9,7 +9,6 @@ export const goalData = {
     return uid;
   },
 
-
   async createGoal(userId, goalData, parentId = null) {
     const linkedGoalData = {
       ...goalData,
@@ -17,14 +16,21 @@ export const goalData = {
       children: [],
     };
 
-    const goalId = await firestore.create(`users/${userId}/goals/${linkedGoalData.id}`, linkedGoalData);
+    const goalId = await firestore.create(
+      `users/${userId}/goals/${linkedGoalData.id}`,
+      linkedGoalData
+    );
 
     if (goalData.children && goalData.children.length > 0) {
-      const childIds = await Promise.all(goalData.children.map((childGoalData) =>
-        this.createGoal(userId, childGoalData, goalId),
-      ));
+      const childIds = await Promise.all(
+        goalData.children.map((childGoalData) =>
+          this.createGoal(userId, childGoalData, goalId)
+        )
+      );
 
-      await firestore.update(`users/${userId}/goals/${goalId}`, {children: childIds});
+      await firestore.update(`users/${userId}/goals/${goalId}`, {
+        children: childIds,
+      });
     }
 
     return goalId;
@@ -35,7 +41,7 @@ export const goalData = {
     const goal = await firestore.read(path);
     if (goal.children) {
       goal.children = await Promise.all(
-          goal.children.map((childId) => this.getGoal(userId, childId)),
+        goal.children.map((childId) => this.getGoal(userId, childId))
       );
     }
     return goal;
@@ -53,7 +59,7 @@ export const goalData = {
     for (const goal of goals) {
       if (goal.children) {
         goal.children = await Promise.all(
-            goal.children.map((childId) => this.getGoal(userId, childId)),
+          goal.children.map((childId) => this.getGoal(userId, childId))
         );
       }
     }
@@ -108,7 +114,6 @@ export const goalData = {
 };
 
 export const taskData = {
-
   async createTask(userId, taskData) {
     const uid = taskData.id ? taskData.id : createUID();
     const path = `users/${userId}/tasks/${uid}`;
@@ -138,7 +143,6 @@ export const taskData = {
 };
 
 export const noteData = {
-
   async createNote(userId, noteData) {
     const uid = noteData.id ? noteData.id : createUID();
     const path = `users/${userId}/notes/${uid}`;

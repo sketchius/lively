@@ -1,6 +1,5 @@
-import {firestore} from "../firestore/firestore.js";
-import {createUID} from "../utils/uid.js";
-
+import { firestore } from "../firestore/firestore.js";
+import { createUID } from "../utils/uid.js";
 
 export const userData = {
   async create() {
@@ -11,7 +10,7 @@ export const userData = {
     };
 
     await firestore.create(`users/${uid}`, userData);
-    return {uid};
+    return { uid };
   },
 
   async get(uid) {
