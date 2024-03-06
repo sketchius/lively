@@ -1,11 +1,11 @@
-import { OpenAI } from "openai";
+import {OpenAI} from "openai";
 import * as functions from "firebase-functions";
 
 const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function (messages, expectJSON) {
+const getOpenAIChatResponse = async function(messages, expectJSON) {
   const requestOptions = {
     model: "gpt-3.5-turbo-0125",
     messages,
@@ -13,7 +13,7 @@ const getOpenAIChatResponse = async function (messages, expectJSON) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms)
+      setTimeout(() => reject(new Error("Timeout")), ms),
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -30,13 +30,14 @@ const getOpenAIChatResponse = async function (messages, expectJSON) {
       }
     } catch (error) {
       console.log(`Attempt ${attempt}: `, error.message);
-      if (attempt === 3)
+      if (attempt === 3) {
         throw new Error("Failed to get response after 3 attempts");
+      }
     }
   }
 };
 
-const getOpenAIChatResponseFunctionTest = async function (messages) {
+const getOpenAIChatResponseFunctionTest = async function(messages) {
   // Define your tools (functions the model can call)
   const tools = [
     {
@@ -62,7 +63,7 @@ const getOpenAIChatResponseFunctionTest = async function (messages) {
           },
         },
         required: [
-          "message"
+          "message",
         ],
       },
     },
@@ -78,7 +79,7 @@ const getOpenAIChatResponseFunctionTest = async function (messages) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms)
+      setTimeout(() => reject(new Error("Timeout")), ms),
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -92,8 +93,9 @@ const getOpenAIChatResponseFunctionTest = async function (messages) {
       return openAIResponse.choices[0];
     } catch (error) {
       console.log(`Attempt ${attempt}: `, error.message);
-      if (attempt === 3)
+      if (attempt === 3) {
         throw new Error("Failed to get response after 3 attempts");
+      }
     }
   }
 };

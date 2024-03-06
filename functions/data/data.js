@@ -1,5 +1,5 @@
-import { firestore } from "../firestore/firestore.js";
-import { createUID } from "../utils/uid.js";
+import {firestore} from "../firestore/firestore.js";
+import {createUID} from "../utils/uid.js";
 
 export const goalData = {
   async createGoal(userId, goalData) {
@@ -11,22 +11,22 @@ export const goalData = {
 
 
   async createGoal(userId, goalData, parentId = null) {
-    let linkedGoalData = {
+    const linkedGoalData = {
       ...goalData,
       parent: parentId,
-      children: [] 
+      children: [],
     };
-  
+
     const goalId = await firestore.create(`users/${userId}/goals/${linkedGoalData.id}`, linkedGoalData);
-  
+
     if (goalData.children && goalData.children.length > 0) {
-      const childIds = await Promise.all(goalData.children.map(childGoalData =>
-        this.createGoal(userId, childGoalData, goalId)
+      const childIds = await Promise.all(goalData.children.map((childGoalData) =>
+        this.createGoal(userId, childGoalData, goalId),
       ));
-  
-      await firestore.update(`users/${userId}/goals/${goalId}`, { children: childIds });
+
+      await firestore.update(`users/${userId}/goals/${goalId}`, {children: childIds});
     }
-  
+
     return goalId;
   },
 
@@ -35,7 +35,7 @@ export const goalData = {
     const goal = await firestore.read(path);
     if (goal.children) {
       goal.children = await Promise.all(
-        goal.children.map((childId) => this.getGoal(userId, childId))
+          goal.children.map((childId) => this.getGoal(userId, childId)),
       );
     }
     return goal;
@@ -53,7 +53,7 @@ export const goalData = {
     for (const goal of goals) {
       if (goal.children) {
         goal.children = await Promise.all(
-          goal.children.map((childId) => this.getGoal(userId, childId))
+            goal.children.map((childId) => this.getGoal(userId, childId)),
         );
       }
     }

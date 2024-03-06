@@ -1,4 +1,4 @@
-import { getOpenAIChatResponse } from "../external_apis/index.js";
+import {getOpenAIChatResponse} from "../external_apis/index.js";
 
 const labelContent = async (text) => {
   const systemMessage = `# INPUT Autobiographical details.
@@ -42,7 +42,6 @@ const filterForRelevance = async (data, message) => {
 };
 
 const summarizePerson = async (content) => {
-
   const systemMessage = `# ROLE You are a specialized agent that summarizes information about a person based on a list of observations.
 
   # INPUT: A list of observations about the subject.
@@ -66,7 +65,7 @@ const summarizePerson = async (content) => {
   ];
 
   if (errorMessage) {
-    messages.push({ role: "user", content: errorMessage });
+    messages.push({role: "user", content: errorMessage});
   }
 
   let response;
@@ -81,7 +80,7 @@ const summarizePerson = async (content) => {
       attempt++;
       if (attempt >= maxAttempts) {
         throw new Error(
-          "Failed to parse JSON after multiple attempts" + error
+            "Failed to parse JSON after multiple attempts" + error,
         );
       }
       console.log("Error: " + error);
@@ -93,7 +92,6 @@ const summarizePerson = async (content) => {
 };
 
 const summarizePersonShort = async (content) => {
-
   const systemMessage = `# ROLE You are a specialized agent that summarizes information about a person with a focus on being able to refresh someone's memory about who they were talking about, assuming there might be other people with the same name.
 
   # INPUT: A list of observations about the subject.
@@ -117,7 +115,7 @@ const summarizePersonShort = async (content) => {
   ];
 
   if (errorMessage) {
-    messages.push({ role: "user", content: errorMessage });
+    messages.push({role: "user", content: errorMessage});
   }
 
   let response;
@@ -132,7 +130,7 @@ const summarizePersonShort = async (content) => {
       attempt++;
       if (attempt >= maxAttempts) {
         throw new Error(
-          "Failed to parse JSON after multiple attempts" + error
+            "Failed to parse JSON after multiple attempts" + error,
         );
       }
       console.log("Error: " + error);
@@ -145,7 +143,6 @@ const summarizePersonShort = async (content) => {
 
 
 const extractIdentifiers = async (content) => {
-
   if (content.length == 0) return [];
 
   const systemMessage = `# ROLE You are an agent that extracts identifiers/names for a person based on OBSERVATIONS about them.
@@ -168,9 +165,9 @@ const extractIdentifiers = async (content) => {
   Aunt
   Brother
   Friend
-  Coworker`
+  Coworker`;
 
-  const promptMessage = `# OBSERVATIONS: \n${content.join('\n')}`;
+  const promptMessage = `# OBSERVATIONS: \n${content.join("\n")}`;
 
   let errorMessage;
 
@@ -186,10 +183,10 @@ const extractIdentifiers = async (content) => {
   ];
 
   if (errorMessage) {
-    messages.push({ role: "user", content: errorMessage });
+    messages.push({role: "user", content: errorMessage});
   }
 
-  let response, identifiers;
+  let response; let identifiers;
   let attempt = 0;
   const maxAttempts = 3;
 
@@ -197,17 +194,17 @@ const extractIdentifiers = async (content) => {
     try {
       response = await getOpenAIChatResponse(messages);
       identifiers = JSON.parse(response.content);
-        if (!Array.isArray(identifiers)) {
-          throw new Error(
-            "Invalid format. Expected JSON array of strings."
-          );
-        }
+      if (!Array.isArray(identifiers)) {
+        throw new Error(
+            "Invalid format. Expected JSON array of strings.",
+        );
+      }
       break;
     } catch (error) {
       attempt++;
       if (attempt >= maxAttempts) {
         throw new Error(
-          "Failed to parse JSON after multiple attempts" + error
+            "Failed to parse JSON after multiple attempts" + error,
         );
       }
       console.log("Error: " + error);
@@ -218,4 +215,4 @@ const extractIdentifiers = async (content) => {
   return identifiers;
 };
 
-export { labelContent, filterForRelevance, summarizePerson, summarizePersonShort, extractIdentifiers };
+export {labelContent, filterForRelevance, summarizePerson, summarizePersonShort, extractIdentifiers};

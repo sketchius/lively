@@ -2,7 +2,7 @@ import {
   convertDatesFromRelativeToAbsolute,
   detectTemporalReferences,
 } from "../agents/dateAgent.js";
-import { observationAgent } from "../agents/observationAgent.js";
+import {observationAgent} from "../agents/observationAgent.js";
 import {
   getConversationById,
   createRecordForUser,
@@ -15,8 +15,8 @@ import {
   createEmbedding,
   upsertEmbeddingToPinecone,
 } from "../external_apis/index.js";
-import { createUID } from "../utils/index.js";
-import { semanticSimilaritySearch } from "../external_apis/index.js";
+import {createUID} from "../utils/index.js";
+import {semanticSimilaritySearch} from "../external_apis/index.js";
 import {
   extractIdentifiers,
   summarizePerson,
@@ -37,14 +37,14 @@ const executeObservations = async (userId, conversationId) => {
         const category = await observationAgent.categorize(observation);
         const result = await firestore.list(`users/test/${category.name}`);
         const existingObservations = result.map((observation) => {
-          return { id: observation.id, content: observation.content };
+          return {id: observation.id, content: observation.content};
         });
-        let auditResult = { code: "C", id: 0 };
+        let auditResult = {code: "C", id: 0};
         if (existingObservations.length != 0) {
           console.log("Auditing...");
           auditResult = await observationAgent.audit(
-            observation,
-            existingObservations
+              observation,
+              existingObservations,
           );
         }
 
@@ -58,9 +58,9 @@ const executeObservations = async (userId, conversationId) => {
           firestore.create(`users/test/${category.name}/${uid}`, data);
           const embedding = await createEmbedding(observation);
           upsertEmbeddingToPinecone(
-            embedding,
-            `users/test/${category.name}`,
-            uid
+              embedding,
+              `users/test/${category.name}`,
+              uid,
           );
         } else {
           // Handle A and B results.
@@ -76,7 +76,7 @@ const executeObservations = async (userId, conversationId) => {
       const categoryPromises = [];
       observationAgent.getCategories().forEach((category) => {
         categoryPromises.push(
-          firestore.list(`users/test/people/${personUID}/${category}`)
+            firestore.list(`users/test/people/${personUID}/${category}`),
         );
       });
       const allObservations = await Promise.all(categoryPromises);
@@ -84,22 +84,22 @@ const executeObservations = async (userId, conversationId) => {
 
       const newProfileObservations = [];
       const profileObservations = await firestore.list(
-        `users/test/people/${personUID}/Profile`
+          `users/test/people/${personUID}/Profile`,
       );
 
       let people = await firestore.list(`users/test/people/`);
       people = people.filter(
-        (person) =>
-          person.identifiers &&
+          (person) =>
+            person.identifiers &&
           person.identifiers.some((identifier) =>
-            identifier.includes(observationSubject.subject)
-          )
+            identifier.includes(observationSubject.subject),
+          ),
       );
 
       if (people.length > 0) {
         personUID = await observationAgent.matchPerson(
-          people,
-          observationSubject.observations
+            people,
+            observationSubject.observations,
         );
       }
 
@@ -116,28 +116,28 @@ const executeObservations = async (userId, conversationId) => {
       }
 
       observationSubject.observations.push(
-        `Person's name is ${observationSubject.subject}.`
+          `Person's name is ${observationSubject.subject}.`,
       );
 
       for (let j = 0; j < observationSubject.observations.length; j++) {
         const observation = observationSubject.observations[j];
         const category = await observationAgent.categorize(observation);
         const result = await firestore.list(
-          `users/test/people/${personUID}/${category.name}`
+            `users/test/people/${personUID}/${category.name}`,
         );
 
-        let auditResult = { code: "C", id: 0 };
+        let auditResult = {code: "C", id: 0};
 
         if (!newPerson) {
           const existingObservations = result.map((observation) => {
-            return { id: observation.id, content: observation.content };
+            return {id: observation.id, content: observation.content};
           });
 
           if (existingObservations.length != 0) {
             console.log("Auditing...");
             auditResult = await observationAgent.audit(
-              observation,
-              existingObservations
+                observation,
+                existingObservations,
             );
           }
         }
@@ -155,8 +155,8 @@ const executeObservations = async (userId, conversationId) => {
             content: observation,
           };
           firestore.create(
-            `users/test/people/${personUID}/${category.name}/${uid}`,
-            data
+              `users/test/people/${personUID}/${category.name}/${uid}`,
+              data,
           );
           const embedding = await createEmbedding(observation);
           upsertEmbeddingToPinecone(embedding, `users/test/people`, personUID);
@@ -170,7 +170,7 @@ const executeObservations = async (userId, conversationId) => {
       allObservations.unshift(...newObservations);
 
       const identifyingDescription = await summarizePersonShort(
-        allObservations
+          allObservations,
       );
       firestore.update(`users/test/people/${personUID}`, {
         identifyingDescription,
@@ -184,7 +184,7 @@ const executeObservations = async (userId, conversationId) => {
       if (updateIdentifiers) {
         profileObservations.push(...newProfileObservations);
         const updatedIdentifiers = await extractIdentifiers(
-          profileObservations
+            profileObservations,
         );
         firestore.update(`users/test/people/${personUID}`, {
           identifiers: updatedIdentifiers,
@@ -207,13 +207,13 @@ const searchObservations = async (userId, searchString, maxResults) => {
 
   if (matches && matches.length > 0) {
     const promises = matches
-      .filter((match) => {
-        return match.score > 0.82;
-      })
-      .map(async (match) => ({
-        content: await firestore.read(`${match.metadata.path}/${match.id}`),
-        observationId: match.id,
-      }));
+        .filter((match) => {
+          return match.score > 0.82;
+        })
+        .map(async (match) => ({
+          content: await firestore.read(`${match.metadata.path}/${match.id}`),
+          observationId: match.id,
+        }));
 
     return await Promise.all(promises);
   }
@@ -221,4 +221,4 @@ const searchObservations = async (userId, searchString, maxResults) => {
   return [];
 };
 
-export { executeObservations, searchObservations };
+export {executeObservations, searchObservations};

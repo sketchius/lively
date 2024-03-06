@@ -1,4 +1,4 @@
-import { getOpenAIChatResponse } from "../external_apis/openai.js";
+import {getOpenAIChatResponse} from "../external_apis/openai.js";
 
 export default {
   async classifyInput(input) {

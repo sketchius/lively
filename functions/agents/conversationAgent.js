@@ -4,10 +4,10 @@ import {
   ensureConversation,
   getConversation,
 } from "../chat/conversationManager.js";
-import { getOpenAIChatResponse } from "../external_apis/index.js";
-import { searchObservations } from "../processing/index.js";
-import { extractKeywords } from "./keywordAgent.js";
-import { filterForRelevance } from "./summaryAgent.js";
+import {getOpenAIChatResponse} from "../external_apis/index.js";
+import {searchObservations} from "../processing/index.js";
+import {extractKeywords} from "./keywordAgent.js";
+import {filterForRelevance} from "./summaryAgent.js";
 
 const generateChatResponse = async (userMessage, userId) => {
   await ensureConversation();
@@ -63,7 +63,7 @@ const generateChatResponse = async (userMessage, userId) => {
 
   const priorKnowledge = `# RECALLED MEMORIES
   ${JSON.stringify(
-    observations.map((observation) => observation.content.content)
+      observations.map((observation) => observation.content.content),
   )}`;
   console.log("priorKnowledge");
   console.log(priorKnowledge);
@@ -90,33 +90,33 @@ const generateChatResponse = async (userMessage, userId) => {
   const response = await getOpenAIChatResponse(messages);
 
   await addMessageToConversation(
-    "user",
-    userMessage,
-    {
-      isContext: false,
-    },
-    userMessateDateTime
+      "user",
+      userMessage,
+      {
+        isContext: false,
+      },
+      userMessateDateTime,
   );
   if (observations.length > 0) {
     await addMessageToConversation(
-      "assistant",
-      priorKnowledge,
-      {
-        isContext: true,
-      },
-      new Date(Date.now() - 1000)
+        "assistant",
+        priorKnowledge,
+        {
+          isContext: true,
+        },
+        new Date(Date.now() - 1000),
     );
   }
   await addMessageToConversation(
-    "assistant",
-    response.content,
-    {
-      isContext: false,
-    },
-    new Date()
+      "assistant",
+      response.content,
+      {
+        isContext: false,
+      },
+      new Date(),
   );
 
   return response.content;
 };
 
-export { generateChatResponse };
+export {generateChatResponse};

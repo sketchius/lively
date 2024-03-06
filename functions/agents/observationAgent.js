@@ -1,4 +1,4 @@
-import { getOpenAIChatResponse } from "../external_apis/index.js";
+import {getOpenAIChatResponse} from "../external_apis/index.js";
 
 export const categoryNames = [
   "Profile",
@@ -18,7 +18,9 @@ export const categoryNames = [
 
 
 export const observationAgent = {
-  getCategories() { return categoryNames},
+  getCategories() {
+    return categoryNames;
+  },
 
   async extract(conversation) {
     const logit_bias = {
@@ -55,18 +57,18 @@ export const observationAgent = {
   \t]`;
 
     const promptMessage = `#COMMAND: EXTRACT all AUTOBIOGRAPHICAL INFORMATION shared by the User in this conversation. ORGANIZE it by the PRIMARY SUBJECT of the FACT. Do not include observations about OTHER SUBJECTS in USER observations. Include observation about relationship to User for non-user subjects. Do NOT include references to, questions by, or commentary from the Assitant. OBSERVATION FORMAT: Singular statements in 3rd person perspective. CONVERSATION: \n${conversation
-      .map(
-        (conversationMessage) =>
-          `${conversationMessage.role}:  ${conversationMessage.content}`
-      )
-      .join("\n\n")}`;
+        .map(
+            (conversationMessage) =>
+              `${conversationMessage.role}:  ${conversationMessage.content}`,
+        )
+        .join("\n\n")}`;
 
     console.log(`${conversation
-      .map(
-        (conversationMessage) =>
-          `${conversationMessage.role}:  ${conversationMessage.content}`
-      )
-      .join("\n\n")}`);
+        .map(
+            (conversationMessage) =>
+              `${conversationMessage.role}:  ${conversationMessage.content}`,
+        )
+        .join("\n\n")}`);
 
     let errorMessage;
 
@@ -82,20 +84,20 @@ export const observationAgent = {
     ];
 
     if (errorMessage) {
-      messages.push({ role: "user", content: errorMessage });
+      messages.push({role: "user", content: errorMessage});
     }
 
-    let response, subjects;
+    let response; let subjects;
     let attempt = 0;
     const maxAttempts = 3;
 
     do {
       try {
-        response = await getOpenAIChatResponse(messages, { logit_bias });
+        response = await getOpenAIChatResponse(messages, {logit_bias});
         subjects = JSON.parse(response.content);
         if (!Array.isArray(subjects)) {
           throw new Error(
-            "Invalid format. Expected array of JSON object with subject, observations fields."
+              "Invalid format. Expected array of JSON object with subject, observations fields.",
           );
         }
         subjects.forEach((subject) => {
@@ -105,7 +107,7 @@ export const observationAgent = {
             !Array.isArray(subject.observations)
           ) {
             throw new Error(
-              "Invalid format. JSON objects must ALL have subject, observations fields. Observations must be an array of strings."
+                "Invalid format. JSON objects must ALL have subject, observations fields. Observations must be an array of strings.",
             );
           }
         });
@@ -114,7 +116,7 @@ export const observationAgent = {
         attempt++;
         if (attempt >= maxAttempts) {
           throw new Error(
-            "Failed to parse JSON after multiple attempts. Error: " + error
+              "Failed to parse JSON after multiple attempts. Error: " + error,
           );
         }
         console.log("Error: " + error);
@@ -170,7 +172,7 @@ export const observationAgent = {
     ];
 
     if (errorMessage) {
-      messages.push({ role: "user", content: errorMessage });
+      messages.push({role: "user", content: errorMessage});
     }
 
     let response;
@@ -180,17 +182,17 @@ export const observationAgent = {
 
     do {
       try {
-        response = await getOpenAIChatResponse(messages, { logit_bias });
+        response = await getOpenAIChatResponse(messages, {logit_bias});
         if (!/^\d+$/.test(response.content)) {
           throw new Error(
-            `Invalid format. Output must be an integer. Received <${response.content}>`
+              `Invalid format. Output must be an integer. Received <${response.content}>`,
           );
         }
         id = parseInt(response.content);
 
         if (id <= 0 || id > 20) {
           throw new Error(
-            `Index out of bounds. The given statement ID (${id}) was not an option.`
+              `Index out of bounds. The given statement ID (${id}) was not an option.`,
           );
         }
 
@@ -204,7 +206,6 @@ export const observationAgent = {
         errorMessage = "Error: " + error;
       }
     } while (true);
-
 
 
     return {
@@ -266,34 +267,34 @@ export const observationAgent = {
     ];
 
     if (errorMessage) {
-      messages.push({ role: "user", content: errorMessage });
+      messages.push({role: "user", content: errorMessage});
     }
 
-    let response, result;
+    let response; let result;
     let attempt = 0;
     const maxAttempts = 3;
 
     do {
       try {
-        response = await getOpenAIChatResponse(messages, { logit_bias });
+        response = await getOpenAIChatResponse(messages, {logit_bias});
 
         // console.log(`Audit response preprocessed: ${response.content}`);
         if (!/^[ABC]\d+$/.test(response.content)) {
           throw new Error(
-            "Invalid format. The input must start with 'A', 'B', or 'C' followed by an integer."
+              "Invalid format. The input must start with 'A', 'B', or 'C' followed by an integer.",
           );
         }
         const index = parseInt(response.content.slice(1));
         if (index <= 0 || index > existingObservations.length) {
           throw new Error(
-            `Index out of bounds. The given statement ID (${index}) was not an option.`
+              `Index out of bounds. The given statement ID (${index}) was not an option.`,
           );
         }
 
         const code = response.content.charAt(0);
-        const id = code.toUpperCase().includes("C")
-          ? -1
-          : existingObservations[index - 1].id;
+        const id = code.toUpperCase().includes("C") ?
+          -1 :
+          existingObservations[index - 1].id;
 
         result = {
           code,
@@ -314,10 +315,11 @@ export const observationAgent = {
     return result;
   },
 
-  getCategories() { return categoryNames},
+  getCategories() {
+    return categoryNames;
+  },
 
   async matchPerson(people, observations) {
-
     const systemMessage = `# ROLE
     Your job is match the description of NEW PERSON to one of the descriptions of EXISTING PERSONS.
     
@@ -328,10 +330,10 @@ export const observationAgent = {
     - Output ONLY integers.`;
 
     const promptMessage = `#COMMAND: Match the NEW PERSON with one of the EXITING PERSONS (or -1 if none match).
-    #NEW PERSON: \n${observations.join('\n')}
+    #NEW PERSON: \n${observations.join("\n")}
     #EXISTING PERSONS:
     ID\tDescription\n
-    ${people.map((person, index) => `${index + 1}\t${person.content}`).join('\n')}`;
+    ${people.map((person, index) => `${index + 1}\t${person.content}`).join("\n")}`;
 
     let errorMessage;
 
@@ -347,10 +349,10 @@ export const observationAgent = {
     ];
 
     if (errorMessage) {
-      messages.push({ role: "user", content: errorMessage });
+      messages.push({role: "user", content: errorMessage});
     }
 
-    let response, subjects;
+    let response; let subjects;
     let attempt = 0;
     const maxAttempts = 3;
     let matchId;
@@ -360,14 +362,14 @@ export const observationAgent = {
         response = await getOpenAIChatResponse(messages);
         if (!/^-?\d+$/.test(response.content)) {
           throw new Error(
-            `Invalid format. Output must be an integer. Received <${response.content}>`
+              `Invalid format. Output must be an integer. Received <${response.content}>`,
           );
         }
         matchId = parseInt(response.content);
 
         if (matchId == 0 || matchId > people.length || matchId < -1) {
           throw new Error(
-            `Index out of bounds. The given statement ID (${matchId}) was not an option.`
+              `Index out of bounds. The given statement ID (${matchId}) was not an option.`,
           );
         }
 
@@ -376,7 +378,7 @@ export const observationAgent = {
         attempt++;
         if (attempt >= maxAttempts) {
           throw new Error(
-            "Failed to parse JSON after multiple attempts. Error: " + error
+              "Failed to parse JSON after multiple attempts. Error: " + error,
           );
         }
         console.log("Error: " + error);

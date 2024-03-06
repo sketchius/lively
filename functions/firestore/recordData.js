@@ -1,4 +1,4 @@
-import { db } from "./firebaseInit.js";
+import {db} from "./firebaseInit.js";
 import admin from "./firebaseInit.js";
 
 // Function to create a new record for a user
@@ -42,10 +42,10 @@ async function getRecordForUser(userId, recordId) {
 
 // Function to update an observation in a user's record
 async function updateObservationInRecord(
-  userId,
-  recordId,
-  observationIndex,
-  updatedObservation
+    userId,
+    recordId,
+    observationIndex,
+    updatedObservation,
 ) {
   const userRef = db.collection("users").doc(userId);
   const recordRef = userRef.collection("records").doc(recordId);

@@ -9,7 +9,7 @@ import {
   createConversationForUser,
   addKeywordToConversation,
 } from "../firestore/index.js";
-import { executeObservations } from "../processing/index.js";
+import {executeObservations} from "../processing/index.js";
 
 const ensureConversation = async () => {
   if (!(await getCurrentConversationId("test"))) {
@@ -37,15 +37,15 @@ const clearConversation = async () => {
 
 const filterConversationKeywords = async (keywords) => {
   const existingKeywords = await getAllKeywordsForConversation(
-    "test",
-    await getCurrentConversationId("test")
+      "test",
+      await getCurrentConversationId("test"),
   );
   return keywords.filter(
-    (keyword) =>
-      !existingKeywords.some(
-        (existingKeyword) =>
-          existingKeyword.toLowerCase() === keyword.toLowerCase()
-      )
+      (keyword) =>
+        !existingKeywords.some(
+            (existingKeyword) =>
+              existingKeyword.toLowerCase() === keyword.toLowerCase(),
+        ),
   );
 };
 
@@ -60,15 +60,15 @@ const attemptToAddObservationReference = async (observationId) => {
   const conversationId = await getCurrentConversationId("test");
   if (
     !(await isObservationReferenceInConversation(
-      "test",
-      conversationId,
-      observationId
+        "test",
+        conversationId,
+        observationId,
     ))
   ) {
     await addObservationReferenceToConversation(
-      "test",
-      conversationId,
-      observationId
+        "test",
+        conversationId,
+        observationId,
     );
     return true;
   } else {

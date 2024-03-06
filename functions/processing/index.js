@@ -1,3 +1,3 @@
-export { executeObservations, searchObservations } from "./memoryManager.js";
+export {executeObservations, searchObservations} from "./memoryManager.js";
 
-export { summarizeConversation, calcAverageWordCount } from "./summarizer.js";
+export {summarizeConversation, calcAverageWordCount} from "./summarizer.js";

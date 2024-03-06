@@ -1,7 +1,6 @@
-import { getOpenAIChatResponse } from "../external_apis/index.js";
+import {getOpenAIChatResponse} from "../external_apis/index.js";
 
 const extractKeywords = async (text) => {
-
   const systemMessage = `# ROLE
   You are an AI that specializes in reading text and extracting keywords from the text.
   
@@ -32,13 +31,13 @@ const extractKeywords = async (text) => {
     },
   ];
 
-  let response, keywords;
+  let response; let keywords;
   let attempt = 0;
   const maxAttempts = 3;
 
   do {
     try {
-      response = await getOpenAIChatResponse(messages, { logit_bias });
+      response = await getOpenAIChatResponse(messages, {logit_bias});
 
       keywords = parseAndExtractArray(response.content);
       break;
@@ -73,4 +72,4 @@ function parseAndExtractArray(jsonString) {
   throw new Error("JSON does not contain a single array");
 }
 
-export { extractKeywords };
+export {extractKeywords};

@@ -4,12 +4,12 @@ const chatApp = express();
 chatApp.use(express.json());
 
 import cors from "cors";
-import { getConversation } from "./conversationManager.js";
+import {getConversation} from "./conversationManager.js";
 import classification from "./classification.js";
-import { getOpenAIChatResponse } from "../external_apis/openai.js";
+import {getOpenAIChatResponse} from "../external_apis/openai.js";
 import chatHandler from "./chatHandler.js";
 import notes from "./notes.js";
-chatApp.use(cors({ origin: true }));
+chatApp.use(cors({origin: true}));
 
 chatApp.post("/message", async (req, res) => {
   const response = await chatHandler.generateChatResponse(req.body);
@@ -18,18 +18,19 @@ chatApp.post("/message", async (req, res) => {
 
 chatApp.post("/conversation", async (req, res) => {
   const response = await chatHandler.generateConversationResponse(
-    JSON.parse(req.body)
+      req.body,
   );
   res.json(response);
 });
 
 chatApp.post("/identify-notes", async (req, res) => {
-  const response = await notes.identifyNotes(req.body);
+  const response = await notes.identifyNotes(req.body.message);
   res.json(response);
 });
 
 chatApp.post("/classification", async (req, res) => {
-  const response = await classification.classifyInput(req.body);
+  console.log(req.body);
+  const response = await classification.classifyInput(req.body.message);
   res.json(response);
 });
 
@@ -38,4 +39,4 @@ chatApp.get("/conversation", async (req, res) => {
   res.json(response);
 });
 
-export { chatApp };
+export {chatApp};

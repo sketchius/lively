@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 
-import { Pinecone } from "@pinecone-database/pinecone";
+import {Pinecone} from "@pinecone-database/pinecone";
 
 const pinecone = new Pinecone({
   apiKey: functions.config().pinecone.api_key,
@@ -11,13 +11,12 @@ const index = pinecone.index("agent-memory");
 
 
 async function upsertEmbeddingToPinecone(embedding, path, id) {
-
   const upsertData = {
     id: id,
     values: embedding,
     metadata: {
       upsertedAt: new Date().toISOString(),
-      path
+      path,
     },
   };
 
@@ -29,14 +28,12 @@ async function upsertEmbeddingToPinecone(embedding, path, id) {
 }
 
 async function semanticSimilaritySearch(embedding, topK) {
-
-
   try {
     const searchResults = await index.query({
       vector: embedding,
       topK,
       includeValues: false,
-      includeMetadata: true
+      includeMetadata: true,
     });
     return searchResults.matches;
   } catch (error) {
@@ -45,7 +42,6 @@ async function semanticSimilaritySearch(embedding, topK) {
 }
 
 async function deleteAllVectors() {
-
   const vector = [];
   for (let i = 0; i < 1536; i++) {
     vector.push(0.0);
@@ -82,5 +78,5 @@ export {
   upsertEmbeddingToPinecone,
   semanticSimilaritySearch,
   deleteAllVectors,
-  getVectorCount
+  getVectorCount,
 };
