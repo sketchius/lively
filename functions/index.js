@@ -3,8 +3,8 @@ import { chatApp } from "./chat/index.js";
 
 import "dotenv/config.js";
 import { dataApp } from "./data/index.js";
-
-import { assistantApp } from "./assistant/index.js"
+import { userApp } from "./user/index.js";
+import { assistantApp } from "./assistant/index.js";
 
 export const chat = functions
   .runWith({
@@ -18,8 +18,14 @@ export const data = functions
   })
   .https.onRequest(dataApp);
 
-  export const assistant = functions
+export const assistant = functions
   .runWith({
     timeoutSeconds: 300,
   })
   .https.onRequest(assistantApp);
+
+  export const user = functions
+  .runWith({
+    timeoutSeconds: 300,
+  })
+  .https.onRequest(userApp);

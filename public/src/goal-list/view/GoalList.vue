@@ -60,7 +60,8 @@ const handleChildCollapse = (data) => {
 };
 
 const handleNewItem = () => {
-  router.push({ name: `item-editor-1` });
+  store.commit("resetFormData");
+  router.push({ name: `item-editor-goal` });
 };
 
 watch(goalListNeedsRefresh, (newValue) => {

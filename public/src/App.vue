@@ -21,13 +21,13 @@
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
-
 </script>
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Saira:wght@100;200;400;500;600;700;800&display=swap");
 
+#app,
 body {
   margin: 0;
   padding: 0;
@@ -78,12 +78,12 @@ body {
   font-family: "Roboto", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   margin: 0;
+  padding: 0;
   width: 100vw;
   justify-items: center;
   align-items: center;
   min-height: 100vh;
   display: flex;
-  padding: 0;
   background-color: var(--paper);
   align-items: stretch;
 }
@@ -96,7 +96,8 @@ body {
   flex-direction: column;
   border-top: none;
   border-bottom: none;
-  padding: var(--size4) 0;
+  padding: 0;
+  padding-top: var(--size4);
   background: var(--paper700);
 }
 
@@ -108,7 +109,11 @@ main {
 .margin-spacer {
   flex-shrink: 1;
   flex-basis: 15vw;
-  background: linear-gradient(to bottom, var(--ink300) 10%, var(--paper) 10.0000001%);
+  background: linear-gradient(
+    to bottom,
+    var(--ink300) 10%,
+    var(--paper) 10.0000001%
+  );
   background-size: 100% 8px;
 }
 
@@ -138,8 +143,6 @@ main {
 .border-right {
   border-right: 3px double var(--ink);
 }
-
-
 
 .vertical-spacer {
   flex-shrink: 1;
@@ -183,8 +186,6 @@ button.minor {
   font-weight: 400;
   padding: 4px 24px;
 }
-
-
 
 button.standard {
   background: none;
@@ -363,21 +364,5 @@ textarea:focus {
   bottom: 8px;
   background: var(--white);
   pointer-events: none;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f5f5ff;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d0cde4;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #bcb6ec;
 }
 </style>

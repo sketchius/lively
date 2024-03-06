@@ -30,10 +30,10 @@ import { computed, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 import TaskListItem from "../components/TaskListItem.vue";
 
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import HelpComponent from "@/components/help-component/HelpComponent.vue";
 
-// const router = useRouter();
+const router = useRouter();
 
 const store = useStore();
 
@@ -45,8 +45,10 @@ onMounted(() => {
 });
 
 const handleNewItem = () => {
-  dispatchRandomTask();
-  // router.push({ name: `item-editor-1` });
+  // dispatchRandomTask();
+  
+  store.commit("resetFormData");
+  router.push({ name: `item-editor-task` });
 };
 
 watch(taskListNeedsRefresh, (newValue) => {
@@ -55,85 +57,85 @@ watch(taskListNeedsRefresh, (newValue) => {
   }
 });
 
-function dispatchRandomTask() {
-  const tasks = [
-    {
-      title: "Go to the grocery store",
-      importance: 5,
-      duration: 60,
-      timeFrame: { display: "By April 10th" },
-      category: "errand",
-    },
-    {
-      title: "Complete tax return",
-      importance: 9,
-      duration: 120,
-      timeFrame: { display: "By April 15th" },
-      category: "finance",
-    },
-    {
-      title: "Schedule dentist appointment",
-      importance: 6,
-      duration: 30,
-      timeFrame: { display: "Within a month" },
-      category: "health",
-    },
-    {
-      title: "Plan weekend getaway",
-      importance: 7,
-      duration: 240,
-      timeFrame: { display: "By May 1st" },
-      category: "leisure",
-    },
-    {
-      title: "Write project proposal",
-      importance: 8,
-      duration: 180,
-      timeFrame: { display: "By next Friday" },
-      category: "work",
-    },
-    {
-      title: "Organize garage",
-      importance: 4,
-      duration: 150,
-      timeFrame: { display: "By this weekend" },
-      category: "home",
-    },
-    {
-      title: "Prepare garden for spring",
-      importance: 5,
-      duration: 90,
-      timeFrame: { display: "By end of March" },
-      category: "gardening",
-    },
-    {
-      title: "Research new laptop models",
-      importance: 7,
-      duration: 70,
-      timeFrame: { display: "Within two weeks" },
-      category: "tech",
-    },
-    {
-      title: "Renew gym membership",
-      importance: 6,
-      duration: 20,
-      timeFrame: { display: "By next Wednesday" },
-      category: "fitness",
-    },
-    {
-      title: "Book veterinarian visit for the dog",
-      importance: 8,
-      duration: 60,
-      timeFrame: { display: "By April 20th" },
-      category: "pets",
-    },
-  ];
+// function dispatchRandomTask() {
+//   const tasks = [
+//     {
+//       title: "Go to the grocery store",
+//       importance: 5,
+//       duration: 60,
+//       timeFrame: { display: "By April 10th" },
+//       category: "errand",
+//     },
+//     {
+//       title: "Complete tax return",
+//       importance: 9,
+//       duration: 120,
+//       timeFrame: { display: "By April 15th" },
+//       category: "finance",
+//     },
+//     {
+//       title: "Schedule dentist appointment",
+//       importance: 6,
+//       duration: 30,
+//       timeFrame: { display: "Within a month" },
+//       category: "health",
+//     },
+//     {
+//       title: "Plan weekend getaway",
+//       importance: 7,
+//       duration: 240,
+//       timeFrame: { display: "By May 1st" },
+//       category: "leisure",
+//     },
+//     {
+//       title: "Write project proposal",
+//       importance: 8,
+//       duration: 180,
+//       timeFrame: { display: "By next Friday" },
+//       category: "work",
+//     },
+//     {
+//       title: "Organize garage",
+//       importance: 4,
+//       duration: 150,
+//       timeFrame: { display: "By this weekend" },
+//       category: "home",
+//     },
+//     {
+//       title: "Prepare garden for spring",
+//       importance: 5,
+//       duration: 90,
+//       timeFrame: { display: "By end of March" },
+//       category: "gardening",
+//     },
+//     {
+//       title: "Research new laptop models",
+//       importance: 7,
+//       duration: 70,
+//       timeFrame: { display: "Within two weeks" },
+//       category: "tech",
+//     },
+//     {
+//       title: "Renew gym membership",
+//       importance: 6,
+//       duration: 20,
+//       timeFrame: { display: "By next Wednesday" },
+//       category: "fitness",
+//     },
+//     {
+//       title: "Book veterinarian visit for the dog",
+//       importance: 8,
+//       duration: 60,
+//       timeFrame: { display: "By April 20th" },
+//       category: "pets",
+//     },
+//   ];
 
-  const randomIndex = Math.floor(Math.random() * tasks.length);
-  const task = tasks[randomIndex];
+//   const randomIndex = Math.floor(Math.random() * tasks.length);
+//   const task = tasks[randomIndex];
 
-  store.dispatch("createTask", task);
-}
+//   store.dispatch("createTask", task);
+// }
 </script>
 
 <style scoped>
@@ -161,10 +163,8 @@ h3 {
 .rows {
   display: grid;
   grid-template-columns:
-    minmax(min-content, 2.5fr) minmax(min-content, 1fr) minmax(
-      min-content,
-      1fr
-    ) minmax(min-content, 1fr)
+    minmax(min-content, 2.5fr) minmax(min-content, 1fr) minmax(min-content, 1fr)
+    minmax(min-content, 1fr)
     minmax(min-content, 2.5fr);
   position: relative;
   flex-direction: column;

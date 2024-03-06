@@ -12,11 +12,7 @@
     <div class="content">
       <div class="top-flex"></div>
       <div class="socket">
-        <StepHeader
-          :header="title"
-          @back="handleBack"
-          @cancel="handleCancel"
-        />
+        <StepHeader :header="title" @back="handleBack" @cancel="handleCancel" />
 
         <component
           :is="currentComponent"
@@ -36,8 +32,6 @@
 import StepHeader from "../components/StepHeader.vue";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import DescribeStep from "@/item-editor/steps/DescribeStep.vue";
-import TypeStep from "@/item-editor/steps/TypeStep.vue";
 import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
 import { useRouter, useRoute } from "vue-router";
 
@@ -45,29 +39,19 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
+const itemType = route.meta.itemType;
+
+store.commit("setFormDataField", {
+  field: "type",
+  payload: itemType,
+});
+
 const title = ref("");
 
 const cancelModalVisible = ref(false);
 
-
-const validateRoute = () => {
-  if (!store.state.formData.type) {
-    router.push({ name: `item-editor-1` });
-  }
-};
-
-validateRoute();
-
 const currentComponent = computed(() => {
-  switch (route.meta.editorStep) {
-    default:
-    case 1:
-      return TypeStep;
-    case 2:
-      return DescribeStep;
-    case 3:
-      return SummaryStep;
-  }
+  return SummaryStep;
 });
 
 const handleSetTitle = (data) => {
@@ -80,7 +64,7 @@ const handleCancel = () => {
   } else {
     handleDiscard();
   }
-}
+};
 
 const handleDiscard = () => {
   setCancelModalVisibility(false);
@@ -89,32 +73,16 @@ const handleDiscard = () => {
 };
 
 const handleBack = () => {
-  switch (route.meta.editorStep) {
-    default:
-    case 1:
-      handleCancel();
-      break;
-    case 2:
-      router.push({ name: `item-editor-1` });
-      break;
-    case 3:
-      router.push({ name: `item-editor-2` });
-      break;
-  }
+  router.go(-1);
 };
 
 const handleSubmit = () => {
-  switch (route.meta.editorStep) {
-    case 1:
-      router.push({ name: `item-editor-2` });
-      break;
-
-    case 2:
-      router.push({ name: `item-editor-3` });
-      break;
-
-    case 3:
+  switch (route.meta.itemType) {
+    case "Goal":
       router.push({ name: `Goals` });
+      break;
+    case "Task":
+      router.push({ name: `Tasks` });
       break;
   }
 };
@@ -167,6 +135,7 @@ const setCancelModalVisibility = (visible) => {
   justify-content: center;
   align-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .top-flex {

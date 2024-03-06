@@ -1,6 +1,5 @@
 <template>
   <div class="component">
-
     <form @submit.prevent="handleSave">
       <div class="layout">
         <div class="column">
@@ -161,8 +160,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { defineEmits, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { defineEmits, ref, onMounted, computed } from "vue";
 import dataService from "@/services/dataService.js";
 import { createUID } from "@/util/uuid";
 import draggable from "vuedraggable";
@@ -178,13 +176,12 @@ import "vue-slider-component/theme/default.css";
 const emit = defineEmits(["setTitle", "submit", "back"]);
 
 const store = useStore();
-const router = useRouter();
 
 const drag = ref("false");
 const addingChild = ref(false);
 const children = ref(store.state.formData.children || []);
 
-const itemType = ref(store.state.formData.type);
+const itemType = computed(() => store.state.formData.type);
 
 const title = ref(store.state.formData.title || "");
 const duration = ref(store.state.formData.duration || "");
@@ -225,39 +222,41 @@ onMounted(async () => {
     });
     children.value = steps;
   }
+  itemType.value = store.state.formData.type;
 });
 
 const updateTimeFrame = async (timeframe) => {
   store.commit("setFormDataField", {
-      field: "timeFrame",
-      payload: timeframe,
-    });
-}
+    field: "timeFrame",
+    payload: timeframe,
+  });
+};
 
 const handleSave = async () => {
   store.commit("setFormDataField", {
-      field: "title",
-      payload: title,
-    });
+    field: "title",
+    payload: title,
+  });
   store.commit("setFormDataField", {
-      field: "importance",
-      payload: categoryImportance.value + parseInt(modifier.value),
-    });
-  console.log("handleSave");
-  await dataService.createGoal({ id: createUID(), ...store.state.formData });
-  if (store.state.formData.type == "task") {
-    router.push({ name: `Goals` });
-    store.commit("resetFormData");
-  } else {
-    if (store.state.formData.type == "goal") {
-      store.commit("setFormDataField", {
-        field: "done",
-        payload: true,
+    field: "importance",
+    payload: categoryImportance.value + parseInt(modifier.value),
+  });
+  switch (itemType.value) {
+    case "Goal":
+      await dataService.createGoal({
+        id: createUID(),
+        ...store.state.formData,
       });
-    }
+      break;
+    case "Task":
+      await dataService.createTask({
+        id: createUID(),
+        ...store.state.formData,
+      });
+      break;
   }
 
-  emit("submit", "summary");
+  emit("submit");
 };
 
 const handleInput = (event) => {
@@ -283,9 +282,9 @@ const selectCategory = (categoryData) => {
   category.value = categoryData.name;
   categoryImportance.value = categoryData.importance;
   store.commit("setFormDataField", {
-      field: "category",
-      payload: category.value,
-    });
+    field: "category",
+    payload: category.value,
+  });
 };
 </script>
 

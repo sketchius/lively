@@ -30,7 +30,20 @@ const routes = [
   {
     path: "/item-editor",
     component: ItemEditor,
-    name: "item-editor-undefined",
+    name: "item-editor-task",
+    meta: {itemType: 'Task'}
+  },
+  {
+    path: "/item-editor/task",
+    component: ItemEditor,
+    name: "item-editor-task",
+    meta: {itemType: 'Task'}
+  },
+  {
+    path: "/item-editor/goal",
+    component: ItemEditor,
+    name: "item-editor-goal",
+    meta: {itemType: 'Goal'}
   },
 ];
 
