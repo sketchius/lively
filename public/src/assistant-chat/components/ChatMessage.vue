@@ -17,25 +17,26 @@
           </div>
         </div>
         <div v-for="block in message.blocks" v-bind:key="block" class="block">
-          <div v-if="block.type == 'loading'" class="loader-container">
-            <div class="loader"></div>
-            <div class="loader"></div>
-            <div class="loader"></div>
-          </div>
-          <div v-else-if="block.type == 'action'" class="action">
+          <div v-if="block.type == 'action'" class="action">
             <h3 class="display-text">
-              <div class="action-title-container">
-                <div class="action-label display-text">
-                  <img class="action-icon" :src="actionIcon" alt="" /><span
-                    class="title"
-                    >USED AI FUNCTION</span
-                  >
-                </div>
-                {{ block.content.title }}
+              <div class="action-label display-text">
+                <img class="action-icon" :src="actionIcon" alt="" /><span
+                  class="title"
+                >
+                  {{ block.title }}</span
+                >
               </div>
-              <button class="minor compact">UNDO</button>
+
+              <button class="minor compact">
+                {{ block.loading ? "CANCEL" : "UNDO" }}
+              </button>
             </h3>
-            <ul class="items">
+            <div v-if="block.loading" class="loader-container">
+              <div class="loader"></div>
+              <div class="loader"></div>
+              <div class="loader"></div>
+            </div>
+            <!-- <ol class="items" v-else>
               <li
                 v-for="item in block.content.items"
                 v-bind:key="item"
@@ -44,25 +45,45 @@
                 {{ item }}
                 <button class="icon"><img :src="editIcon" alt="Edit" /></button>
               </li>
-            </ul>
-            <div class="subtext" v-if="block.content.subtext">
-              {{ block.content.subtext }}
+            </ol> -->
+            <div class="action-message" v-if="block.content">
+              {{
+                message.role === "user"
+                  ? block.content
+                  : block.content?.slice(0, block.animationFrame || 1)
+              }}
+              <div
+                class="text-animation-container"
+                v-if="
+                  message.role === 'assistant' &&
+                  block.animationFrame < block.content.length - 1
+                "
+              >
+                <div class="text-animation-icon"></div>
+              </div>
             </div>
           </div>
           <div v-else>
-            {{
-              message.role === "user"
-                ? block.content
-                : block.content?.slice(0, block.animationFrame || 1)
-            }}
-            <div
-              class="text-animation-container"
-              v-if="
-                message.role === 'assistant' &&
-                block.animationFrame < block.content.length - 1
-              "
-            >
-              <div class="text-animation-icon"></div>
+            <div v-if="block.loading" class="loader-container">
+              <div class="loader"></div>
+              <div class="loader"></div>
+              <div class="loader"></div>
+            </div>
+            <div v-else-if="block.content">
+              {{
+                message.role === "user"
+                  ? block.content
+                  : block.content?.slice(0, block.animationFrame || 1)
+              }}
+              <div
+                class="text-animation-container"
+                v-if="
+                  message.role === 'assistant' &&
+                  block.animationFrame < block.content.length - 1
+                "
+              >
+                <div class="text-animation-icon"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -76,8 +97,6 @@ import { defineProps } from "vue";
 import userIcon from "../assets/user.svg";
 import assistantIcon from "../assets/assistant.svg";
 import actionIcon from "../assets/action.svg";
-import editIcon from "../assets/edit.svg";
-
 const props = defineProps({
   message: {
     type: Object,
@@ -148,6 +167,14 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
 
 .message-layout.user .border {
   background-color: var(--blue400);
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline-block;
 }
 
 .author {
@@ -288,11 +315,7 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
 }
 .action {
   padding: var(--size0);
-  padding-bottom: var(--size1);
-  border: 3px double var(--ink);
-
-  padding-left: 0;
-  padding-right: 0;
+  border: 1px dashed var(--ink);
 }
 
 .action-title-container {
@@ -306,13 +329,9 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
   gap: 2px;
 }
 
-.title {
-  border-bottom: 1px dashed var(--ink);
-}
-
 .action-icon {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 h3 {
@@ -320,7 +339,11 @@ h3 {
   display: flex;
   align-items: center;
   gap: var(--size0);
-  padding: 0 var(--size1);
+}
+
+.title {
+  font-size: 16px;
+  line-height: 16px;
 }
 
 h3 button {
@@ -331,11 +354,8 @@ h3 button {
   list-style-type: none;
   display: flex;
   flex-direction: column;
-  border-top: 1px dotted var(--ink);
   margin: 0;
   padding-left: 0;
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
 }
 
 .action .item {
@@ -351,6 +371,12 @@ h3 button {
 
 .action .item:last-child {
   border-bottom: none;
+}
+
+.action-message {
+  font-size: 14px;
+  font-weight: 400;
+  padding-left: 20px;
 }
 
 button.icon {

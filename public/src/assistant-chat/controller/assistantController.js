@@ -1,17 +1,17 @@
 // import { useRouter } from "vue-router";
-// import { useStore } from "vuex";
 import chatService from "../services/chatService.js";
 
 // const router = useRouter();
-// const store = useStore();
 
 export default {
-  async processInput(messages, input, updateUI) {
+  async processInput(messages, input, store, updateUI) {
     updateUI({ event: "loading" });
 
     const result = await chatService.classifyMessage(input);
 
-    const classification = JSON.parse(result.data).classification;
+    console.log("result = ", result.data);
+
+    const classification = result.data.classification;
 
     // updateUI({ event: "classify", message: classification });
 
@@ -25,19 +25,34 @@ export default {
       case "take_notes":
         {
           updateUI({
-            event: "chat",
-            message: "Using my note-taking function:",
+            title: `TAKE NOTES`,
+            event: "create-notes",
+            loading: true,
+          });
+          const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+
+          const resultPromise = chatService.identifyNotes(input);
+
+          const [result] = await Promise.all([resultPromise, minWait]);
+
+          const notesData = result.data.notes;
+
+          const notes = Array.isArray(notesData) ? notesData : [notesData];
+
+          console.log("NOTES: ", notesData);
+
+          updateUI({
+            title: `TAKE NOTES`,
+            message: `Created ${notes.length} new notes.`,
+            event: "create-notes",
+            loading: false,
           });
 
           updateUI({ event: "loading" });
 
-          const result = await chatService.identifyNotes(input);
-
-          const notes = JSON.parse(result.data).notes;
-
-          updateUI({ event: "create-notes", notes });
-
-          updateUI({ event: "loading" });
+          notes.forEach((note) => {
+            store.dispatch("createNote", { title: note });
+          });
 
           const shapedMessages = shapeMessagesForAPI(messages);
 

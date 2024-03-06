@@ -17,6 +17,10 @@ import ChatInput from "../components/ChatInput.vue";
 import assistantController from "../controller/assistantController.js";
 import assistantAvatar from "../assets/assistant-avatar.svg";
 
+import { useStore } from "vuex";
+
+const store = useStore();
+
 const messages = reactive([]);
 const timerIntervalId = ref(null);
 
@@ -34,10 +38,10 @@ const scrollToBottom = () => {
 
 const handleInput = async (input) => {
   // Add user message to the conversation
-  addMessage("user", input, "chat");
+  addMessage("user", { content: input }, "chat");
   scrollToBottom();
 
-  await assistantController.processInput(messages, input, handleUIEvent);
+  await assistantController.processInput(messages, input, store, handleUIEvent);
 
   // try {
   //   const response = await chatService.sendMessage(input);
@@ -55,43 +59,42 @@ const handleInput = async (input) => {
 
 const handleUIEvent = async (data) => {
   switch (data.event) {
-    case "loading":
-      addMessage("assistant", "loading", "loading");
+    case "chat": {
+      const blockData = { content: data.message, loading: data.loading };
+      addMessage("assistant", blockData, "chat");
       break;
-    case "chat":
-      addMessage("assistant", data.message, "chat");
-      break;
+    }
     case "create-notes": {
-      const actionData = {
-        title: `Create Note${data.notes.length > 1 ? "s" : ""}`,
-        items: data.notes,
-        subtext: `${data.notes.length} notes have been saved.`,
+      const blockData = {
+        title: data.title,
+        content: data.message,
+        loading: data.loading,
       };
-      addMessage("assistant", actionData, "action");
+      addMessage("assistant", blockData, "action");
       break;
     }
   }
 };
 
-const addMessage = async (role, content, type) => {
+const addMessage = async (role, data, type) => {
   if (messages.length > 0 && messages[messages.length - 1]?.role == role) {
     const message = messages[messages.length - 1];
     if (
       message.blocks.length > 0 &&
-      message.blocks[message.blocks.length - 1].type == "loading"
+      message.blocks[message.blocks.length - 1].loading
     ) {
       message.blocks[message.blocks.length - 1] = {
-        type,
-        content,
+        ...data,
         animationFrame: 1,
+        type,
       };
     } else {
-      message.blocks.push({ type, content, animationFrame: 1 });
+      message.blocks.push({ ...data, animationFrame: 1, type });
     }
   } else {
     const message = {
       role,
-      blocks: [{ type, content, animationFrame: 1 }],
+      blocks: [{ ...data, animationFrame: 1, type }],
       author: role === "assistant" ? "Lively" : "You",
     };
     messages.push(message);
@@ -105,7 +108,7 @@ const animateText = (timestamp) => {
     lastFrameTime = timestamp;
     messages.forEach((message) => {
       message.blocks.forEach((block) => {
-        if (block.animationFrame < block.content.length) {
+        if (block.content && block.animationFrame < block.content.length) {
           block.animationFrame++;
         }
       });
@@ -120,7 +123,11 @@ onMounted(async () => {
     // if (response.data && response.data.length) {
     //   messages = response.data;
     // }
-    addMessage("assistant", "Hello! What can I do for you today?", "push");
+    addMessage(
+      "assistant",
+      { content: "Hello! What can I do for you today?" },
+      "chat"
+    );
     scrollToBottom();
   } catch (error) {
     console.error("Error loading conversation:", error);
