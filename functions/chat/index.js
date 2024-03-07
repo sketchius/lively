@@ -4,7 +4,6 @@ const chatApp = express();
 chatApp.use(express.json());
 
 import cors from "cors";
-import { getConversation } from "./conversationManager.js";
 import classification from "./classification.js";
 import { getOpenAIChatResponse } from "../external_apis/openai.js";
 import chatHandler from "./chatHandler.js";

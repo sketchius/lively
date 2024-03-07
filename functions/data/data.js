@@ -18,14 +18,14 @@ export const goalData = {
 
     const goalId = await firestore.create(
       `users/${userId}/goals/${linkedGoalData.id}`,
-      linkedGoalData
+      linkedGoalData,
     );
 
     if (goalData.children && goalData.children.length > 0) {
       const childIds = await Promise.all(
         goalData.children.map((childGoalData) =>
-          this.createGoal(userId, childGoalData, goalId)
-        )
+          this.createGoal(userId, childGoalData, goalId),
+        ),
       );
 
       await firestore.update(`users/${userId}/goals/${goalId}`, {
@@ -41,7 +41,7 @@ export const goalData = {
     const goal = await firestore.read(path);
     if (goal.children) {
       goal.children = await Promise.all(
-        goal.children.map((childId) => this.getGoal(userId, childId))
+        goal.children.map((childId) => this.getGoal(userId, childId)),
       );
     }
     return goal;
@@ -59,7 +59,7 @@ export const goalData = {
     for (const goal of goals) {
       if (goal.children) {
         goal.children = await Promise.all(
-          goal.children.map((childId) => this.getGoal(userId, childId))
+          goal.children.map((childId) => this.getGoal(userId, childId)),
         );
       }
     }

@@ -7,11 +7,16 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  extends: ["eslint:recommended", "google"],
+  extends: [
+    'plugin:vue/essential',
+    'prettier',
+    'plugin:prettier/recommended'
+  ],
+  plugins: [
+    'prettier'
+  ],
   rules: {
-    "no-restricted-globals": ["error", "name", "length"],
-    "prefer-arrow-callback": "error",
-    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    'prettier/prettier': 'error'
   },
   overrides: [
     {

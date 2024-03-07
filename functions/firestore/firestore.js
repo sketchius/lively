@@ -53,7 +53,7 @@ export const firestore = {
 
     const currentArray = docSnap.data()[arrayFieldName] || [];
     const updatedArray = currentArray.filter(
-      (element) => JSON.stringify(element) !== JSON.stringify(elementToRemove)
+      (element) => JSON.stringify(element) !== JSON.stringify(elementToRemove),
     );
 
     await ref.update({ [arrayFieldName]: updatedArray });
@@ -70,7 +70,7 @@ export const firestore = {
         await this.removeFromArrayField(
           `users/${userId}/goals/${doc.id}`,
           "objectives",
-          { id: objectiveId }
+          { id: objectiveId },
         );
       });
     }
@@ -87,7 +87,7 @@ export const firestore = {
         await this.removeFromArrayField(
           `users/${userId}/objectives/${doc.id}`,
           "tasks",
-          { id: taskId }
+          { id: taskId },
         );
       });
     }

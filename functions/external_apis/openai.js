@@ -13,7 +13,7 @@ const getOpenAIChatResponse = async function (messages, expectJSON) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms)
+      setTimeout(() => reject(new Error("Timeout")), ms),
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -77,7 +77,7 @@ const getOpenAIChatResponseFunctionTest = async function (messages) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms)
+      setTimeout(() => reject(new Error("Timeout")), ms),
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {

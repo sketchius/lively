@@ -66,7 +66,7 @@ dataApp.get("/goals", async (req, res) => {
 
           objective.data = await objectiveData.getObjective(
             userId,
-            objective.id
+            objective.id,
           );
           objective.data.new = false;
 
@@ -120,13 +120,13 @@ dataApp.put("/goals/:goalId", async (req, res) => {
           objective.data.new = false;
           const objectiveId = await objectiveData.createObjective(
             userId,
-            objective.data
+            objective.data,
           );
           objective.id = objectiveId;
           await objectiveData.updateObjective(
             userId,
             objective.id,
-            objective.data
+            objective.data,
           );
         }
       }

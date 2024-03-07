@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import { chatApp } from "./chat/index.js";
 
-import "dotenv/config.js";
 import { dataApp } from "./data/index.js";
 import { userApp } from "./user/index.js";
 import { assistantApp } from "./assistant/index.js";
