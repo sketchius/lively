@@ -14,7 +14,9 @@ function getUserId(req) {
 }
 
 // Goal routes
-dataApp.post("/goals", async (req, res) => {
+
+
+dataApp.post("/data/goals", async (req, res) => {
   try {
     console.log(`req.body = `, req.body);
     const userId = getUserId(req);
@@ -28,7 +30,7 @@ dataApp.post("/goals", async (req, res) => {
   }
 });
 
-dataApp.get("/goals/top", async (req, res) => {
+dataApp.get("/data/goals/top", async (req, res) => {
   try {
     const userId = getUserId(req);
     const goals = await goalData.listTopLevelGoals(userId);
@@ -40,7 +42,7 @@ dataApp.get("/goals/top", async (req, res) => {
   }
 });
 
-dataApp.get("/goals/:goalId", async (req, res) => {
+dataApp.get("/data/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const goal = await goalData.getGoal(userId, req.params.goalId);
@@ -50,7 +52,7 @@ dataApp.get("/goals/:goalId", async (req, res) => {
   }
 });
 
-dataApp.get("/goals", async (req, res) => {
+dataApp.get("/data/goals", async (req, res) => {
   try {
     const userId = getUserId(req);
     const goals = await goalData.listGoals(userId);
@@ -92,7 +94,7 @@ dataApp.get("/goals", async (req, res) => {
   }
 });
 
-dataApp.put("/goals/:goalId", async (req, res) => {
+dataApp.put("/data/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const data = req.body;
@@ -140,7 +142,7 @@ dataApp.put("/goals/:goalId", async (req, res) => {
   }
 });
 
-dataApp.delete("/goals/:goalId", async (req, res) => {
+dataApp.delete("/data/goals/:goalId", async (req, res) => {
   try {
     const userId = getUserId(req);
     await goalData.deleteGoal(userId, req.params.goalId);
@@ -150,7 +152,7 @@ dataApp.delete("/goals/:goalId", async (req, res) => {
   }
 });
 
-dataApp.put("/goals/:goalId/completion", async (req, res) => {
+dataApp.put("/data/goals/:goalId/completion", async (req, res) => {
   try {
     const userId = getUserId(req);
     await goalData.updateGoalStatus(userId, req.params.goalId, req.body);
@@ -160,12 +162,13 @@ dataApp.put("/goals/:goalId/completion", async (req, res) => {
   }
 });
 
-dataApp.post("/notes", async (req, res) => {
+dataApp.post("/data/notes", async (req, res) => {
   try {
     console.log(`req.body = `, req.body);
     const userId = getUserId(req);
     const data = req.body;
 
+    res.set('Access-Control-Allow-Origin', '*');
     const noteId = await noteData.createNote(userId, data);
     res.json({ noteId });
   } catch (error) {
@@ -174,7 +177,7 @@ dataApp.post("/notes", async (req, res) => {
   }
 });
 
-dataApp.get("/notes/:noteId", async (req, res) => {
+dataApp.get("/data/notes/:noteId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const note = await noteData.getNote(userId, req.params.noteId);
@@ -184,11 +187,12 @@ dataApp.get("/notes/:noteId", async (req, res) => {
   }
 });
 
-dataApp.get("/notes", async (req, res) => {
+dataApp.get("/data/notes", async (req, res) => {
   try {
     const userId = getUserId(req);
     const notes = await noteData.listNotes(userId);
 
+    res.set('Access-Control-Allow-Origin', '*');
     res.json(notes);
   } catch (error) {
     console.log(error);
@@ -196,7 +200,7 @@ dataApp.get("/notes", async (req, res) => {
   }
 });
 
-dataApp.put("/notes/:noteId", async (req, res) => {
+dataApp.put("/data/notes/:noteId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const data = req.body;
@@ -209,7 +213,7 @@ dataApp.put("/notes/:noteId", async (req, res) => {
   }
 });
 
-dataApp.delete("/notes/:noteId", async (req, res) => {
+dataApp.delete("/data/notes/:noteId", async (req, res) => {
   try {
     const userId = getUserId(req);
     await noteData.deleteNote(userId, req.params.noteId);
@@ -219,7 +223,7 @@ dataApp.delete("/notes/:noteId", async (req, res) => {
   }
 });
 
-dataApp.post("/tasks", async (req, res) => {
+dataApp.post("/data/tasks", async (req, res) => {
   try {
     const userId = getUserId(req);
     const data = req.body;
@@ -232,7 +236,7 @@ dataApp.post("/tasks", async (req, res) => {
   }
 });
 
-dataApp.get("/tasks/:taskId", async (req, res) => {
+dataApp.get("/data/tasks/:taskId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const task = await taskData.getTask(userId, req.params.taskId);
@@ -242,7 +246,7 @@ dataApp.get("/tasks/:taskId", async (req, res) => {
   }
 });
 
-dataApp.get("/tasks", async (req, res) => {
+dataApp.get("/data/tasks", async (req, res) => {
   try {
     const userId = getUserId(req);
     const tasks = await taskData.listTasks(userId);
@@ -254,7 +258,7 @@ dataApp.get("/tasks", async (req, res) => {
   }
 });
 
-dataApp.put("/tasks/:taskId", async (req, res) => {
+dataApp.put("/data/tasks/:taskId", async (req, res) => {
   try {
     const userId = getUserId(req);
     const data = req.body;
@@ -267,7 +271,7 @@ dataApp.put("/tasks/:taskId", async (req, res) => {
   }
 });
 
-dataApp.delete("/tasks/:taskId", async (req, res) => {
+dataApp.delete("/data/tasks/:taskId", async (req, res) => {
   try {
     const userId = getUserId(req);
     await taskData.deleteTask(userId, req.params.taskId);

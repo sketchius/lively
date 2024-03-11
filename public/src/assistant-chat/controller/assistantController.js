@@ -81,6 +81,36 @@ export default {
       }
     }
   },
+
+  async processEvent(event, updateUI) {
+    switch (event.type) {
+      case "create-account":
+        updateUI({
+          event: "chat",
+          data: {
+            contentType: "text",
+            contentTag: "h2",
+          },
+          message: "Welcome!",
+        });
+        updateUI({
+          event: "chat",
+          data: {
+            contentType: "text",
+          },
+          message:
+            "I'm Lively, your AI companion designed to simplify your life. With me, you'll effortlessly manage tasks and achieve your goals through smart, prioritized to-do lists tailored just for you.",
+        });
+        updateUI({
+          event: "chat",
+          data: {
+            contentType: "break",
+          },
+          message: "",
+        });
+        break;
+    }
+  },
 };
 
 function stripQuotes(str) {

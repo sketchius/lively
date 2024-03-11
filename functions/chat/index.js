@@ -10,28 +10,29 @@ import chatHandler from "./chatHandler.js";
 import notes from "./notes.js";
 chatApp.use(cors({ origin: true }));
 
-chatApp.post("/message", async (req, res) => {
+chatApp.post("/chat/message", async (req, res) => {
   const response = await chatHandler.generateChatResponse(req.body);
+  response.set('Access-Control-Allow-Origin', '*');
   res.json(response);
 });
 
-chatApp.post("/conversation", async (req, res) => {
+chatApp.post("/chat/conversation", async (req, res) => {
   const response = await chatHandler.generateConversationResponse(req.body);
   res.json(response);
 });
 
-chatApp.post("/identify-notes", async (req, res) => {
+chatApp.post("/chat/identify-notes", async (req, res) => {
   const response = await notes.identifyNotes(req.body.message);
   res.json(response);
 });
 
-chatApp.post("/classification", async (req, res) => {
+chatApp.post("/chat/classification", async (req, res) => {
   console.log(req.body);
   const response = await classification.classifyInput(req.body.message);
   res.json(response);
 });
 
-chatApp.get("/conversation", async (req, res) => {
+chatApp.get("/chat/conversation", async (req, res) => {
   const response = await getConversation(true);
   res.json(response);
 });

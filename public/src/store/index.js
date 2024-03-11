@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import dataService from "@/services/dataService";
 
-export default createStore({
+const store = createStore({
   state() {
     return {
       goals: [],
@@ -11,6 +11,8 @@ export default createStore({
       taskListNeedsRefresh: false,
       noteListNeedsRefresh: false,
       formData: {},
+      user: {},
+      assistantEvent: null,
     };
   },
   getters: {
@@ -28,7 +30,6 @@ export default createStore({
     setNotes(state, notes) {
       state.notes = notes;
     },
-
 
     setGoalListNeedsRefresh(state, value) {
       state.goalListNeedsRefresh = value;
@@ -49,11 +50,21 @@ export default createStore({
     resetFormData(state) {
       state.formData = {};
     },
+    setUser(state, user) {
+      state.user = user;
+    },
+
+    setAssistantEventData(state, payload) {
+      state.assistantEvent = payload;
+    },
+    clearAssistantEventData(state) {
+      state.assistantEvent = null;
+    },
   },
   actions: {
     async fetchGoals({ commit }) {
-      const response = await dataService.listGoals();
-      commit("setGoals", response.data);
+      //const response = await dataService.listGoals();
+      //commit("setGoals", response.data);
       commit("setGoalListNeedsRefresh", false);
     },
     async fetchTasks({ commit }) {
@@ -80,3 +91,5 @@ export default createStore({
     },
   },
 });
+
+export default store;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:5001/lively-ai/us-central1/user';
+const API_URL = 'user';
 
 export default {
   getDemoUID() {
@@ -23,14 +23,15 @@ export default {
     }
   },
 
+  
+
   async fetchDemoUID() {
     let uid = this.getDemoUID();
-    console.log('Got uid: ', uid);
-    if (!uid) {
-      
-    console.log('Didnt get uid');
+    if (!uid || uid == null || uid == 'undefined') {
+      console.log('Didnt get uid');
       return await this.createDemoUser(); 
     }
+    console.log('Got uid: ', uid);
     return uid; 
   },
 
@@ -60,4 +61,13 @@ export default {
       throw error;
     }
   },
+
+  getAgreed() {
+    return localStorage.getItem('demoTermsAgreed');
+  },
+
+  setAgreed(value) {
+    localStorage.setItem('demoTermsAgreed', value);
+  },
+
 };

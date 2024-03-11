@@ -50,7 +50,7 @@ const initializeGoalData = () => {
 };
 
 onMounted(() => {
-  store.dispatch("fetchGoals");
+  //store.dispatch("fetchGoals");
 });
 
 const handleChildCollapse = (data) => {
@@ -66,7 +66,7 @@ const handleNewItem = () => {
 
 watch(goalListNeedsRefresh, (newValue) => {
   if (newValue) {
-    store.dispatch("fetchGoals");
+    //store.dispatch("fetchGoals");
   }
 });
 
@@ -119,10 +119,9 @@ h3 {
 
 .rows {
   display: grid;
-  grid-template-columns: minmax(min-content, 2.5fr) minmax(min-content, 1fr) minmax(
-      min-content,
-      1fr
-    ) minmax(min-content, 2.5fr);
+  grid-template-columns:
+    minmax(min-content, 2.5fr) minmax(min-content, 1fr) minmax(min-content, 1fr)
+    minmax(min-content, 2.5fr);
   position: relative;
   flex-direction: column;
   align-items: flex-start;

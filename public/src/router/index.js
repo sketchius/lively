@@ -5,6 +5,7 @@ import Tasks from "../task-list/view/TaskList.vue";
 import Notes from "../note-list/view/NoteList.vue";
 import Goals from "../goal-list/view/GoalList.vue";
 import ItemEditor from "../item-editor/view/ItemEditor.vue";
+import LoginPage from '@/login/view/LoginPage.vue';
 
 const routes = [
   {
@@ -44,6 +45,24 @@ const routes = [
     component: ItemEditor,
     name: "item-editor-goal",
     meta: {itemType: 'Goal'}
+  },
+  {
+    path: "/login",
+    component: LoginPage,
+    name: "login",
+    meta: {component: "Login", interfaceHidden: true}
+  },
+  {
+    path: "/demo-terms",
+    component: LoginPage,
+    name: "demo-terms",
+    meta: {component: "DemoTerms", interfaceHidden: true}
+  },
+  {
+    path: "/create-account",
+    component: LoginPage,
+    name: "create-account",
+    meta: {component: "CreateAccount", interfaceHidden: true}
   },
 ];
 

@@ -1,9 +1,9 @@
 import axios from "axios";
-import userService from './userService';
+import store from "@/store";
 
 const apiClient = axios.create({
-  baseURL: `http://127.0.0.1:5001/lively-ai/us-central1`,
-  withCredentials: false,
+  baseURL: `/`,
+  withCredentials: true,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -11,11 +11,11 @@ const apiClient = axios.create({
 });
 
 const getAuthHeaders = async () => {
-  const uid = await userService.fetchDemoUID();
-  console.log(`getAuthHeaders: uid = ${uid}`);
+  const uid = store.state.user.demoUID;
+  const token = store.state.user.accessToken;
   if (uid) {
-    console.log('returning UID');
-    return { "x-demo-uid": uid };
+    console.log("returning UID");
+    return { "x-demo-uid": uid, Authorization: `BEARER ${token}` };
   }
   return {};
 };

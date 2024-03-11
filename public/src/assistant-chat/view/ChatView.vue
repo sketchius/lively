@@ -11,7 +11,15 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, reactive, nextTick } from "vue";
+import {
+  onMounted,
+  onUnmounted,
+  ref,
+  reactive,
+  nextTick,
+  watch,
+  computed,
+} from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
 import assistantController from "../controller/assistantController.js";
@@ -24,8 +32,10 @@ const store = useStore();
 const messages = reactive([]);
 const timerIntervalId = ref(null);
 
+const assistantEvent = computed(() => store.state.assistantEvent);
+
 let lastFrameTime = 0;
-const frameDelay = 26;
+const frameDelay = 29;
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -35,6 +45,24 @@ const scrollToBottom = () => {
     }
   });
 };
+
+const handleAssistantEvent = async () => {
+  if (assistantEvent.value) {
+    assistantController.processEvent(assistantEvent.value, handleUIEvent);
+  }
+  store.commit("clearAssistantEvent");
+};
+
+watch(
+  assistantEvent,
+  (newValue) => {
+    if (newValue !== null) {
+      console.log("watch");
+      handleAssistantEvent();
+    }
+  },
+  { immediate: false }
+);
 
 const handleInput = async (input) => {
   // Add user message to the conversation
@@ -57,18 +85,23 @@ const handleInput = async (input) => {
   // }
 };
 
-const handleUIEvent = async (data) => {
-  switch (data.event) {
+const handleUIEvent = async (payload) => {
+  switch (payload.event) {
     case "chat": {
-      const blockData = { content: data.message, loading: data.loading };
+      const blockData = {
+        content: payload.message,
+        loading: payload.loading,
+        data: payload.data,
+      };
       addMessage("assistant", blockData, "chat");
       break;
     }
     case "create-notes": {
       const blockData = {
-        title: data.title,
-        content: data.message,
-        loading: data.loading,
+        title: payload.title,
+        content: payload.message,
+        loading: payload.loading,
+        data: payload.data,
       };
       addMessage("assistant", blockData, "action");
       break;
@@ -85,16 +118,16 @@ const addMessage = async (role, data, type) => {
     ) {
       message.blocks[message.blocks.length - 1] = {
         ...data,
-        animationFrame: 1,
+        animationFrame: 0,
         type,
       };
     } else {
-      message.blocks.push({ ...data, animationFrame: 1, type });
+      message.blocks.push({ ...data, animationFrame: 0, type });
     }
   } else {
     const message = {
       role,
-      blocks: [{ ...data, animationFrame: 1, type }],
+      blocks: [{ ...data, animationFrame: 0, type }],
       author: role === "assistant" ? "Lively" : "You",
     };
     messages.push(message);
@@ -107,14 +140,38 @@ const animateText = (timestamp) => {
   if (timeSinceLastFrame > frameDelay) {
     lastFrameTime = timestamp;
     messages.forEach((message) => {
-      message.blocks.forEach((block) => {
-        if (block.content && block.animationFrame < block.content.length) {
-          block.animationFrame++;
+      for (let i = 0; i < message.blocks.length; i++) {
+        const block = message.blocks[i];
+        const previousBlock = i > 0 ? message.blocks[i - 1] : null;
+        const isLastBlock = i == message.blocks.length - 1;
+        if (
+          block.content &&
+          block.animationFrame < block.content.length &&
+          (!previousBlock || previousBlock.animationFinished)
+        ) {
+          const rate = Math.max(
+            1,
+            Math.min(
+              i == 0 ? block.animationFrame / 3 : 99,
+              isLastBlock
+                ? (block.content.length - block.animationFrame) / 3
+                : 99,
+              3
+            )
+          );
+          block.animationFrame = block.animationFrame + rate;
         }
-      });
+        if (
+          block.animationFrame >= block.content.length &&
+          (!previousBlock || previousBlock.animationFinished)
+        ) {
+          block.animationFinished = true;
+        }
+      }
     });
   }
   timerIntervalId.value = requestAnimationFrame(animateText);
+  scrollToBottom();
 };
 
 onMounted(async () => {
@@ -123,14 +180,11 @@ onMounted(async () => {
     // if (response.data && response.data.length) {
     //   messages = response.data;
     // }
-    addMessage(
-      "assistant",
-      { content: "Hello! What can I do for you today?" },
-      "chat"
-    );
-    scrollToBottom();
   } catch (error) {
     console.error("Error loading conversation:", error);
+  }
+  if (assistantEvent.value !== null) {
+    handleAssistantEvent();
   }
   timerIntervalId.value = requestAnimationFrame(animateText);
 });
@@ -158,9 +212,9 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 30ch;
+  min-width: 45ch;
   width: 100%;
-  max-width: 45ch;
+  max-width: 60ch;
   margin: 0 auto;
   height: 100vh;
 }

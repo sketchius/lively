@@ -8,9 +8,6 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
     }
   ],
@@ -27,9 +24,30 @@
     ],
     "rewrites": [
       {
+        "source": "/data/**",
+        "function": "data"
+      },
+      {
+        "source": "/assistant/**",
+        "function": "assistant"
+      },
+      {
+        "source": "/user/**",
+        "function": "user"
+      }, 
+      {
+        "source": "/chat/**",
+        "function": "chat"
+      },
+      {
+        "source": "/user",
+        "function": "user"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
+      
     ]
   }
 }

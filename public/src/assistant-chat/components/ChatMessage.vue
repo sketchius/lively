@@ -16,7 +16,7 @@
             {{ message.author }}
           </div>
         </div>
-        <div v-for="block in message.blocks" v-bind:key="block" class="block">
+        <template v-for="block in message.blocks" v-bind:key="block">
           <div v-if="block.type == 'action'" class="action">
             <h3 class="display-text">
               <div class="action-label display-text">
@@ -50,43 +50,70 @@
               {{
                 message.role === "user"
                   ? block.content
-                  : block.content?.slice(0, block.animationFrame || 1)
+                  : block.content?.slice(0, block.animationFrame || 0)
               }}
               <div
                 class="text-animation-container"
                 v-if="
                   message.role === 'assistant' &&
-                  block.animationFrame < block.content.length - 1
+                  block.animationFrame < block.content.length - 1 &&
+                  block.animationFrame > 0
                 "
               >
                 <div class="text-animation-icon"></div>
               </div>
             </div>
           </div>
-          <div v-else>
+          <template v-else>
             <div v-if="block.loading" class="loader-container">
               <div class="loader"></div>
               <div class="loader"></div>
               <div class="loader"></div>
             </div>
-            <div v-else-if="block.content">
-              {{
-                message.role === "user"
-                  ? block.content
-                  : block.content?.slice(0, block.animationFrame || 1)
-              }}
+            <component
+              v-else
+              class="message-content"
+              :class="block.data.contentClass"
+              :is="block.data.contentTag || 'div'"
+            >
+              <template v-if="block.data.contentType == 'text'">
+                {{
+                  message.role === "user"
+                    ? block.content
+                    : block.content?.slice(0, block.animationFrame || 0)
+                }}
+              </template>
+              <RouterLink
+                v-else-if="block.data.contentType == 'link'"
+                :to="block.data.link"
+              >
+                {{
+                  message.role === "user"
+                    ? block.content
+                    : block.content?.slice(0, block.animationFrame || 0)
+                }}</RouterLink
+              >
+              <div
+                class="break"
+                v-else-if="
+                  block.data.contentType == 'break' && block.animationFinished
+                "
+              >
+                <br />
+              </div>
               <div
                 class="text-animation-container"
                 v-if="
                   message.role === 'assistant' &&
-                  block.animationFrame < block.content.length - 1
+                  block.animationFrame < block.content.length - 1 &&
+                  block.animationFrame > 0
                 "
               >
                 <div class="text-animation-icon"></div>
               </div>
-            </div>
-          </div>
-        </div>
+            </component>
+          </template>
+        </template>
       </div>
     </div>
   </div>
@@ -97,6 +124,7 @@ import { defineProps } from "vue";
 import userIcon from "../assets/user.svg";
 import assistantIcon from "../assets/assistant.svg";
 import actionIcon from "../assets/action.svg";
+import { RouterLink } from "vue-router";
 const props = defineProps({
   message: {
     type: Object,
@@ -130,7 +158,6 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
 }
 
 .message-container {
-  display: flex;
   flex-direction: column;
   gap: var(--size0);
   align-items: flex-start;
@@ -141,6 +168,36 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
   border-bottom-left-radius: 0;
   padding: var(--size1) var(--size2);
   padding-bottom: var(--size2);
+}
+
+.break {
+  line-height: 50%;
+}
+
+.block,
+.message-content {
+  display: inline;
+  font-size: 14px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.warning {
+  color: var(--yellow700);
+}
+
+h2 {
+  display: block !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  text-align: left;
+  margin: 5px 0;
 }
 
 .border {
@@ -181,6 +238,8 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
   display: flex;
   align-items: center;
   gap: var(--size1);
+  width: fit-content;
+  border-bottom: 1px dashed var(--ink);
 }
 
 .author .name {
@@ -295,11 +354,12 @@ const iconSrc = props.message.role === "user" ? userIcon : assistantIcon;
 }
 
 .text-animation-icon {
-  width: 8px;
-  height: 8px;
+  width: 16px;
+  height: 4px;
   border: 2px solid var(--ink);
   background-color: var(--blue500);
-  animation: textAnimation 2s infinite;
+  transform: scale(1.2) translateY(-1px) translateX(5px);
+  animation: textAnimation 1s infinite;
 }
 
 .loader:nth-child(2) {
@@ -374,6 +434,7 @@ h3 button {
 }
 
 .action-message {
+  display: inline;
   font-size: 14px;
   font-weight: 400;
   padding-left: 20px;

@@ -1,26 +1,76 @@
 <template>
-  <div id="layout">
-    <div class="margin-spacer"></div>
-    <div class="padding-spacer"></div>
-    <ChatView />
-    <div class="padding-spacer"></div>
-    <div class="inner-padding-spacer border-left"></div>
-    <div class="app-content">
-      <MenuBar />
-      <div class="vertical-spacer"></div>
-      <main>
-        <router-view></router-view>
-      </main>
+  <div class="frame">
+    <div class="banner" v-if="currentUser && currentUser.isDemoUser">
+      Warning: You are using demo access. Please avoid entering any private or
+      sensitive information. You can
+      <RouterLink to="create-account">create an account</RouterLink> or
+      <RouterLink to="login">log in</RouterLink> for secure access.
     </div>
-    <div class="inner-padding-spacer border-right"></div>
-    <div class="padding-spacer"></div>
-    <div class="margin-spacer"></div>
+    <div id="layout">
+      <div class="margin-spacer"></div>
+      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
+      <ChatView v-if="!route.meta.interfaceHidden" />
+      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
+      <div class="inner-padding-spacer border-left"></div>
+      <div class="app-content">
+        <MenuBar v-if="!route.meta.interfaceHidden" />
+        <div class="vertical-spacer"></div>
+        <main>
+          <router-view></router-view>
+        </main>
+        <div class="vertical-spacer-bottom"></div>
+      </div>
+      <div class="inner-padding-spacer border-right"></div>
+      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
+      <div class="margin-spacer"></div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
+import { signInAsDemoUser, observeAuthState } from "@/services/authService";
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import userService from "./services/userService";
+
+const route = useRoute();
+const router = useRouter();
+
+const store = useStore();
+
+const currentUser = ref(undefined);
+
+if (userService.getDemoUID()) {
+  signInAsDemoUser();
+} else {
+  router.push("/login");
+}
+
+onMounted(() => {
+  observeAuthState(async (authState) => {
+    if (authState) {
+      let demoUID;
+      if (authState.isDemoUser) {
+        demoUID = await userService.getDemoUID();
+      }
+      store.commit("setUser", {
+        ...authState.user,
+        isDemoUser: authState.isDemoUser,
+        demoUID,
+      });
+      currentUser.value = {
+        ...authState.user,
+        isDemoUser: authState.isDemoUser,
+        demoUID,
+      };
+    } else {
+      store.commit({});
+    }
+  });
+});
 </script>
 
 <style>
@@ -32,9 +82,6 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-}
-
-#layout {
   --white: #ffffff;
   --paper300: #fffefa;
   --paper: #fffcf2;
@@ -52,7 +99,7 @@ body {
   --yellow300: #fffad1;
   --yellow400: #fff8bd;
   --yellow500: #fff6a5;
-  --yellow700: #e4da82;
+  --yellow700: #948b3b;
 
   --green100: #f1fff6;
   --green300: #e0ffeb;
@@ -77,6 +124,24 @@ body {
   color: var(--ink);
   font-family: "Roboto", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.frame .banner {
+  text-align: center;
+  background-color: var(--yellow100);
+  border-bottom: 2px solid var(--ink);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--yellow700);
+  padding: 2px 0;
+}
+
+#layout {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -97,11 +162,11 @@ body {
   border-top: none;
   border-bottom: none;
   padding: 0;
-  padding-top: var(--size4);
   background: var(--paper700);
 }
 
 main {
+  flex-grow: 1;
   display: flex;
   justify-self: center;
 }
@@ -114,6 +179,7 @@ main {
     var(--ink300) 10%,
     var(--paper) 10.0000001%
   );
+  background-position: 0px 4px;
   background-size: 100% 8px;
 }
 
@@ -149,6 +215,11 @@ main {
   flex-basis: 10vh;
 }
 
+.vertical-spacer-bottom {
+  flex-shrink: 1;
+  flex-basis: 13vh;
+}
+
 button,
 .display-text {
   font-family: "Saira", sans-serif;
@@ -175,6 +246,25 @@ h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+}
+
+a {
+  color: var(--blue700);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  color: var(--blue700);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--blue700);
+}
+
+a:active {
+  color: var(--green700);
 }
 
 button.minor {
@@ -272,14 +362,17 @@ button:disabled {
 }
 
 label {
+  font-family: "Saira", sans-serif;
   display: block;
-  margin-left: var(--size2);
-  margin-bottom: var(--size1);
   font-size: 16px;
   font-weight: 700;
   width: fit-content;
-  padding: 2px 8px;
-  border-bottom: 1px dashed var(--ink);
+  line-height: 20px;
+  padding: 0 8px;
+  border: 1px dashed var(--ink);
+  border-top-right-radius: 4px;
+  border-bottom: none;
+  padding-top: 2px;
   background-color: var(--blue300);
 }
 
