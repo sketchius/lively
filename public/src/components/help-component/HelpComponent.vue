@@ -1,6 +1,10 @@
 <template>
-  <div class="help-container">
-    <div @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" class="icon display-text">
+  <div class="help-container" v-if="helpData">
+    <div
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+      class="icon display-text"
+    >
       ?
     </div>
     <div
@@ -69,7 +73,6 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
   display: inline-block;
   position: relative;
   color: var(--ink);
-  transform: translateY(-8px);
   margin-left: 4px;
 }
 
@@ -84,8 +87,11 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
   border-radius: 4px;
   color: var(--ink);
   border: 1px solid var(--ink);
-  border-left-width: 2px;
-  border-right-width: 2px;
+  box-sizing: border-box;
+}
+
+.help-container .icon:hover {
+  background-color: var(--yellow500);
 }
 
 .help-container .tooltip {

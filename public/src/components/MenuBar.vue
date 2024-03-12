@@ -30,4 +30,8 @@ export default {
 .menu-item:visited {
   color: var(--ink);
 }
+
+.menu-item:hover {
+  text-decoration: underline;
+}
 </style>
