@@ -6,6 +6,7 @@ import Notes from "../note-list/view/NoteList.vue";
 import Goals from "../goal-list/view/GoalList.vue";
 import ItemEditor from "../item-editor/view/ItemEditor.vue";
 import LoginPage from '@/login/view/LoginPage.vue';
+import UserGuide from '@/user-guide/view/UserGuide.vue';
 
 const routes = [
   {
@@ -63,6 +64,13 @@ const routes = [
     component: LoginPage,
     name: "create-account",
     meta: {component: "CreateAccount", interfaceHidden: true}
+  },
+
+  
+  {
+    path: "/user-guide/capabilities",
+    component: UserGuide,
+    meta: {component: "Capabilities"}
   },
 ];
 

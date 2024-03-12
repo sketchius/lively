@@ -169,6 +169,8 @@ main {
   flex-grow: 1;
   display: flex;
   justify-self: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .margin-spacer {
@@ -181,6 +183,10 @@ main {
   );
   background-position: 0px 4px;
   background-size: 100% 8px;
+}
+
+ul {
+  list-style-type: square;
 }
 
 .padding-spacer {
@@ -221,6 +227,9 @@ main {
 }
 
 button,
+h1,
+h2,
+h3,
 .display-text {
   font-family: "Saira", sans-serif;
 }
