@@ -5,9 +5,9 @@ const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function (messages, expectJSON) {
+const getOpenAIChatResponse = async function (messages, expectJSON, model = "gpt-3.5-turbo-0125" ) {
   const requestOptions = {
-    model: "gpt-3.5-turbo-0125",
+    model: model,
     messages,
   };
 
