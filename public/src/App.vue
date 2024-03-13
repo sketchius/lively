@@ -3,8 +3,10 @@
     <div class="banner" v-if="currentUser && currentUser.isDemoUser">
       Warning: You are using demo access. Please avoid entering any private or
       sensitive information. You can
-      <RouterLink to="create-account">create an account</RouterLink> or
-      <RouterLink to="login">log in</RouterLink> for secure access.
+      <RouterLink :to="{ path: '/create-account' }"
+        >create an account</RouterLink
+      >
+      or <RouterLink to="login">log in</RouterLink> for secure access.
     </div>
     <div id="layout">
       <div class="margin-spacer"></div>
@@ -30,27 +32,30 @@
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
-import { signInAsDemoUser, observeAuthState } from "@/services/authService";
+import {  observeAuthState } from "@/services/authService";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import userService from "./services/userService";
 
 const route = useRoute();
-const router = useRouter();
+// const router = useRouter();
 
 const store = useStore();
 
 const currentUser = ref(undefined);
 
-if (userService.getDemoUID()) {
-  signInAsDemoUser();
-} else {
-  router.push("/login");
-}
+// if (!currentUser.value) {
+//   if (userService.getDemoUID()) {
+//     signInAsDemoUser();
+//   } else {
+//     // router.push("/login");
+//   }
+// }
 
 onMounted(() => {
   observeAuthState(async (authState) => {
+    console.log("auth state changed");
     if (authState) {
       let demoUID;
       if (authState.isDemoUser) {

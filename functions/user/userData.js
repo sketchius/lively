@@ -2,11 +2,11 @@ import { firestore } from "../firestore/firestore.js";
 import { createUID } from "../utils/uid.js";
 
 export const userData = {
-  async create() {
-    const uid = createUID();
+  async create(specifiedUid, accountType) {
+    const uid = specifiedUid || createUID();
     const userData = {
-      uid,
       createdAt: new Date(),
+      accountType
     };
 
     await firestore.create(`users/${uid}`, userData);

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import admin from 'firebase-admin';
 
 import { goalData, taskData, noteData } from "./data.js";
 
@@ -7,10 +8,21 @@ const dataApp = express();
 dataApp.use(express.json());
 dataApp.use(cors({ origin: true }));
 
-function getUserId(req) {
-  console.log(`req.headers = `, req.headers);
-  const uid = req.headers["x-demo-uid"];
-  return uid || "test";
+async function getUserId(req) {
+  const demoUid = req.headers["x-demo-uid"];
+  if (demoUid) {
+    return demoUid;
+  } else {
+    const authHeader = req.headers["authorization"] || req.headers["Authorization"];
+    console.log("authHeader = " + authHeader);
+    const token = authHeader.split(' ')[1];
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      return decodedToken.uid;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 // Goal routes
@@ -19,7 +31,7 @@ function getUserId(req) {
 dataApp.post("/data/goals", async (req, res) => {
   try {
     console.log(`req.body = `, req.body);
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     const goalId = await goalData.createGoal(userId, data);
@@ -32,7 +44,7 @@ dataApp.post("/data/goals", async (req, res) => {
 
 dataApp.get("/data/goals/top", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const goals = await goalData.listTopLevelGoals(userId);
 
     res.json(goals);
@@ -44,7 +56,7 @@ dataApp.get("/data/goals/top", async (req, res) => {
 
 dataApp.get("/data/goals/:goalId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const goal = await goalData.getGoal(userId, req.params.goalId);
     res.json(goal);
   } catch (error) {
@@ -54,7 +66,7 @@ dataApp.get("/data/goals/:goalId", async (req, res) => {
 
 dataApp.get("/data/goals", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const goals = await goalData.listGoals(userId);
 
     for (let i = 0; i < goals.length; i++) {
@@ -96,7 +108,7 @@ dataApp.get("/data/goals", async (req, res) => {
 
 dataApp.put("/data/goals/:goalId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     for (let i = 0; i < data.objectives.length; i++) {
@@ -144,7 +156,7 @@ dataApp.put("/data/goals/:goalId", async (req, res) => {
 
 dataApp.delete("/data/goals/:goalId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     await goalData.deleteGoal(userId, req.params.goalId);
     res.send("Goal deleted successfully");
   } catch (error) {
@@ -154,7 +166,7 @@ dataApp.delete("/data/goals/:goalId", async (req, res) => {
 
 dataApp.put("/data/goals/:goalId/completion", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     await goalData.updateGoalStatus(userId, req.params.goalId, req.body);
     res.send("Goal updated successfully");
   } catch (error) {
@@ -165,7 +177,7 @@ dataApp.put("/data/goals/:goalId/completion", async (req, res) => {
 dataApp.post("/data/notes", async (req, res) => {
   try {
     console.log(`req.body = `, req.body);
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     res.set('Access-Control-Allow-Origin', '*');
@@ -179,7 +191,7 @@ dataApp.post("/data/notes", async (req, res) => {
 
 dataApp.get("/data/notes/:noteId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const note = await noteData.getNote(userId, req.params.noteId);
     res.json(note);
   } catch (error) {
@@ -189,7 +201,7 @@ dataApp.get("/data/notes/:noteId", async (req, res) => {
 
 dataApp.get("/data/notes", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const notes = await noteData.listNotes(userId);
 
     res.set('Access-Control-Allow-Origin', '*');
@@ -202,7 +214,7 @@ dataApp.get("/data/notes", async (req, res) => {
 
 dataApp.put("/data/notes/:noteId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     await noteData.updateNote(userId, data);
@@ -215,7 +227,7 @@ dataApp.put("/data/notes/:noteId", async (req, res) => {
 
 dataApp.delete("/data/notes/:noteId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     await noteData.deleteNote(userId, req.params.noteId);
     res.send("Note deleted successfully");
   } catch (error) {
@@ -225,7 +237,7 @@ dataApp.delete("/data/notes/:noteId", async (req, res) => {
 
 dataApp.post("/data/tasks", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     const taskId = await taskData.createTask(userId, data);
@@ -238,7 +250,7 @@ dataApp.post("/data/tasks", async (req, res) => {
 
 dataApp.get("/data/tasks/:taskId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const task = await taskData.getTask(userId, req.params.taskId);
     res.json(task);
   } catch (error) {
@@ -248,7 +260,7 @@ dataApp.get("/data/tasks/:taskId", async (req, res) => {
 
 dataApp.get("/data/tasks", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const tasks = await taskData.listTasks(userId);
 
     res.json(tasks);
@@ -260,7 +272,7 @@ dataApp.get("/data/tasks", async (req, res) => {
 
 dataApp.put("/data/tasks/:taskId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     const data = req.body;
 
     await taskData.updateTask(userId, data);
@@ -273,7 +285,7 @@ dataApp.put("/data/tasks/:taskId", async (req, res) => {
 
 dataApp.delete("/data/tasks/:taskId", async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = await getUserId(req);
     await taskData.deleteTask(userId, req.params.taskId);
     res.send("Task deleted successfully");
   } catch (error) {

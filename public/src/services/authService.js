@@ -1,9 +1,23 @@
-import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 
 const auth = getAuth();
 
 export const signInAsDemoUser = () => {
   return signInAnonymously(auth);
+};
+
+export const register = async (email, password) => {
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  return userCredential.user.uid;
 };
 
 export const observeAuthState = (onUserChanged) => {

@@ -17,7 +17,7 @@ const getAuthHeaders = async () => {
     console.log("returning UID");
     return { "x-demo-uid": uid, Authorization: `BEARER ${token}` };
   }
-  return {};
+  return { Authorization: `BEARER ${token}` };
 };
 
 const apiService = {

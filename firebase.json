@@ -40,10 +40,6 @@
         "function": "chat"
       },
       {
-        "source": "/user",
-        "function": "user"
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
