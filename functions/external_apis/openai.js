@@ -27,11 +27,11 @@ const getOpenAIChatResponse = async function (
         openai.chat.completions.create(requestOptions),
         timeout(60000), // 10 seconds timeout
       ]);
-      switch (expectJSON) {
+      switch (outputType) {
         case "json":
           return JSON.parse(openAIResponse.choices[0].message.content);
         case "xml":
-          return parseXML(openAIResponse.choices[0].message.content);
+          return await parseXML(openAIResponse.choices[0].message.content);
         default:
         case "text":
           return openAIResponse.choices[0].message.content;
@@ -46,16 +46,31 @@ const getOpenAIChatResponse = async function (
 };
 
 const parseXML = (content) => {
-  const parser = new xml2js.Parser();
-  const xml = `<root>${content}</root>`;
+  return new Promise((resolve, reject) => {
+    const parser = new xml2js.Parser({
+      explicitChildren: true,
+      preserveChildrenOrder: true,
+      charsAsChildren: true,
+    });
 
-  parser.parseString(xml, (err, result) => {
-    if (err) {
-      console.error("Error parsing XML:", err);
-      return;
-    }
+    const xml = `<root>${content}</root>`;
 
-    return result.root;
+    parser.parseString(xml, (err, result) => {
+      if (err) {
+        console.error("Error parsing XML:", err);
+        reject(err); 
+      } else {
+        if (result?.root?.$$) {
+          const elements = result.root.$$.map((element) => ({
+            tag: element['#name'],
+            content: element._ || 'N/A'
+          }));
+          resolve(elements);
+        } else {
+          resolve([]);
+        }
+      }
+    });
   });
 };
 
