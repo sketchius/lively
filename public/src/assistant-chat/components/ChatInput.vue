@@ -51,6 +51,7 @@ export default {
   width: 100%;
   border: 3px solid var(--ink);
   box-sizing: border-box;
+  min-height: 50px;
   border-radius: 4px;
   margin-top: var(--size1);
 }

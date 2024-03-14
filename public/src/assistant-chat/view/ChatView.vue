@@ -3,7 +3,7 @@
     <div class="spacer"></div>
     <img :src="assistantAvatar" />
     <h1 class="display-text">AI Assistant</h1>
-    <MessageArea ref="messageAreaRef" :messages="messages" />
+    <MessageArea :messages="messages" :animationCounter="animationCounter"/>
     <ChatInput @sendMessage="handleInput" />
 
     <div class="spacer"></div>
@@ -11,15 +11,7 @@
 </template>
 
 <script setup>
-import {
-  onMounted,
-  onUnmounted,
-  ref,
-  reactive,
-  nextTick,
-  watch,
-  computed,
-} from "vue";
+import { onMounted, onUnmounted, ref, reactive, watch, computed } from "vue";
 import MessageArea from "../components/MessageArea.vue";
 import ChatInput from "../components/ChatInput.vue";
 import assistantController from "../controller/assistantController.js";
@@ -34,19 +26,13 @@ const router = useRouter();
 const messages = reactive([]);
 const timerIntervalId = ref(null);
 
+const animationCounter = ref(0);
+
 const assistantEvent = computed(() => store.state.assistantEvent);
 
 let lastFrameTime = 0;
 const frameDelay = 29;
 
-const scrollToBottom = () => {
-  nextTick(() => {
-    const messageAreaRef = ref(null);
-    if (messageAreaRef.value) {
-      messageAreaRef.value.scrollToBottom();
-    }
-  });
-};
 
 const handleAssistantEvent = async () => {
   if (assistantEvent.value) {
@@ -73,7 +59,6 @@ const handleInput = async (input) => {
     { content: input, loading: false, data: { contentType: "text" } },
     "chat"
   );
-  scrollToBottom();
 
   await assistantController.processInput(
     messages,
@@ -141,6 +126,7 @@ const addMessage = async (role, data, type) => {
 
 const animateText = (timestamp) => {
   const timeSinceLastFrame = timestamp - lastFrameTime;
+  let animating = false;
 
   if (timeSinceLastFrame > frameDelay) {
     lastFrameTime = timestamp;
@@ -165,6 +151,7 @@ const animateText = (timestamp) => {
             )
           );
           block.animationFrame = block.animationFrame + rate;
+          animating = true;
         }
         if (
           block.animationFrame >= block.content.length &&
@@ -175,8 +162,11 @@ const animateText = (timestamp) => {
       }
     });
   }
+
+  if (animating) {
+    animationCounter.value++;
+  }
   timerIntervalId.value = requestAnimationFrame(animateText);
-  scrollToBottom();
 };
 
 onMounted(async () => {

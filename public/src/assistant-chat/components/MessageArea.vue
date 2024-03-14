@@ -1,5 +1,5 @@
 <template>
-  <div class="message-area" ref="messageArea">
+  <div class="message-area" ref="messageAreaRef">
     <ChatMessage
       v-for="(message, index) in props.messages"
       :key="index"
@@ -9,31 +9,33 @@
 </template>
 
 <script setup>
-import ChatMessage from "./ChatMessage.vue";
-// import { computed } from 'vue';
+import { ref, watch, nextTick } from 'vue';
+import ChatMessage from './ChatMessage.vue';
 
 const props = defineProps({
   messages: Array,
+  animationCounter: Number
 });
 
+const messageAreaRef = ref(null);
 
-// const decoratedMessages = computed( () => {
-//     return props.messages && props.messages.length > 0 ? [] : props.messages.map((message) => ({
-//       ...message,
-//       profilePicture: getProfilePicture(message.role),
-//     }));
-// });
-// const getProfilePicture = (role) => {
-//     const userImagePath = "../assets/images/profile/generic.png";
-//     const assistantImagePath = require("../assets/images/profile/journal6.png");
-//     return role === "user" ? userImagePath : assistantImagePath;
-//   };
+watch(() => props.messages, () => {
+  nextTick(() => {
+    if (messageAreaRef.value) {
+      messageAreaRef.value.scrollTop = messageAreaRef.value.scrollHeight;
+    }
+  });
+}, { deep: true });
 
-// const scrollToBottom = () => {
-//     const container = this.$refs.messageArea;
-//     container.scrollTop = container.scrollHeight;
-//   };
+watch(() => props.animationCounter, () => {
+  nextTick(() => {
+    if (messageAreaRef.value) {
+      messageAreaRef.value.scrollTop = messageAreaRef.value.scrollHeight;
+    }
+  });
+});
 </script>
+
 
 <style scoped>
 .message-area {
