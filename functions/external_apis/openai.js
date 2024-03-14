@@ -1,11 +1,16 @@
 import { OpenAI } from "openai";
 import * as functions from "firebase-functions";
+import xml2js from "xml2js";
 
 const openai = new OpenAI({
   apiKey: functions.config().openai.api_key,
 });
 
-const getOpenAIChatResponse = async function (messages, expectJSON, model = "gpt-3.5-turbo-0125" ) {
+const getOpenAIChatResponse = async function (
+  messages,
+  outputType = "text",
+  model = "gpt-3.5-turbo-0125"
+) {
   const requestOptions = {
     model: model,
     messages,
@@ -13,7 +18,7 @@ const getOpenAIChatResponse = async function (messages, expectJSON, model = "gpt
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms),
+      setTimeout(() => reject(new Error("Timeout")), ms)
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -22,11 +27,14 @@ const getOpenAIChatResponse = async function (messages, expectJSON, model = "gpt
         openai.chat.completions.create(requestOptions),
         timeout(60000), // 10 seconds timeout
       ]);
-      if (expectJSON) {
-        const json = JSON.parse(openAIResponse.choices[0].message.content);
-        return json;
-      } else {
-        return openAIResponse.choices[0].message.content;
+      switch (expectJSON) {
+        case "json":
+          return JSON.parse(openAIResponse.choices[0].message.content);
+        case "xml":
+          return parseXML(openAIResponse.choices[0].message.content);
+        default:
+        case "text":
+          return openAIResponse.choices[0].message.content;
       }
     } catch (error) {
       console.log(`Attempt ${attempt}: `, error.message);
@@ -35,6 +43,20 @@ const getOpenAIChatResponse = async function (messages, expectJSON, model = "gpt
       }
     }
   }
+};
+
+const parseXML = (content) => {
+  const parser = new xml2js.Parser();
+  const xml = `<root>${content}</root>`;
+
+  parser.parseString(xml, (err, result) => {
+    if (err) {
+      console.error("Error parsing XML:", err);
+      return;
+    }
+
+    return result.root;
+  });
 };
 
 const getOpenAIChatResponseFunctionTest = async function (messages) {
@@ -77,7 +99,7 @@ const getOpenAIChatResponseFunctionTest = async function (messages) {
 
   const timeout = (ms) =>
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms),
+      setTimeout(() => reject(new Error("Timeout")), ms)
     );
 
   for (let attempt = 1; attempt <= 3; attempt++) {

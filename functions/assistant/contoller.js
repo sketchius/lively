@@ -23,7 +23,7 @@ export const assistantController = {
       },
     ];
 
-    return await getOpenAIChatResponse(messages, true);
+    return await getOpenAIChatResponse(messages,'json');
   },
 
   async getGoalStepsFromDescription(description) {
@@ -43,6 +43,6 @@ export const assistantController = {
       },
     ];
 
-    return await getOpenAIChatResponse(messages, true);
+    return await getOpenAIChatResponse(messages,'json');
   },
 };

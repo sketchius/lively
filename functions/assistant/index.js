@@ -24,10 +24,10 @@ assistantApp.post("/chat/text-to-item/steps", async (req, res) => {
   res.json(result);
 });
 
-assistantApp.post("/chat/test", async (req, res) => {
+assistantApp.post("/chat/general", async (req, res) => {
   const messages = [{ role: "user", content: req.body }];
 
-  const result = await getOpenAIChatResponseFunctionTest(messages);
+  const result = await getOpenAIChatResponseFunctionTest(messages, 'text');
 
   res.status(200).send(result);
 });

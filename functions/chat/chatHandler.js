@@ -15,7 +15,7 @@ export default {
       { role: "user", content: input },
     ];
 
-    return await getOpenAIChatResponse(messages);
+    return await getOpenAIChatResponse(messages, 'text');
   },
 
   async generateConversationResponse(conversationMessages) {
@@ -35,6 +35,6 @@ export default {
       ...conversationMessages,
     ];
 
-    return await getOpenAIChatResponse(messages);
+    return await getOpenAIChatResponse(messages, 'text');
   },
 };

@@ -27,7 +27,7 @@ export default {
       },
     ];
 
-    return await getOpenAIChatResponse(messages, true);
+    return await getOpenAIChatResponse(messages, 'json');
   },
 };
 
