@@ -16,7 +16,7 @@
             {{ message.author }}
           </div>
         </div>
-        <template v-for="block in message.blocks" v-bind:key="block">
+        <template v-for="(block, index) in message.blocks" v-bind:key="block">
           <div v-if="block.type == 'action'" class="action">
             <h3 class="display-text">
               <div class="action-label display-text">
@@ -73,14 +73,15 @@
             <component
               v-else
               class="message-content"
-              :class="block.data.contentClass"
-              :is="block.data.contentTag || 'div'"
+              :class="{...block.data.contentClass, 'action': block.data.isAction}"
+              :is="(block.data && block.data.contentTag) || 'div'"
             >
               <template v-if="block.data.contentType == 'text'">
+                <img class="action-icon" v-if="block.data.isAction" :src="actionIcon" alt="" />
                 {{
                   message.role === "user"
-                    ? block.content
-                    : block.content?.slice(0, block.animationFrame || 0)
+                    ? block.content 
+                    : block.animationFrame == 0 ? '\u00A0' : block.content?.slice(0, block.animationFrame || 0)
                 }}
               </template>
               <RouterLink
@@ -90,13 +91,13 @@
                 {{
                   message.role === "user"
                     ? block.content
-                    : block.content?.slice(0, block.animationFrame || 0)
+                    : block.animationFrame == 0 ? '\u00A0' : block.content?.slice(0, block.animationFrame || 0)
                 }}</RouterLink
               >
               <div
                 class="break"
                 v-else-if="
-                  block.data.contentType == 'break' && block.animationFinished
+                  block.data.contentType == 'break' && block.animationFinished && index != message.blocks.length-1
                 "
               >
                 <br />
@@ -197,7 +198,7 @@ h2 {
   font-size: 16px !important;
   font-weight: 600 !important;
   text-align: left;
-  margin: 5px 0;
+  margin: 0;
 }
 
 .border {
@@ -240,6 +241,7 @@ h2 {
   gap: var(--size1);
   width: fit-content;
   border-bottom: 1px dashed var(--ink);
+  margin-bottom: var(--size0);
 }
 
 .author .name {
@@ -249,6 +251,8 @@ h2 {
   font-weight: 700;
   font-size: 14px;
 }
+
+
 
 .assistant .author .name::before {
   position: absolute;
@@ -373,25 +377,17 @@ h2 {
 .block:has(.action) {
   width: 100%;
 }
-.action {
-  padding: var(--size0);
-  border: 1px dashed var(--ink);
-}
 
-.action-title-container {
-  display: flex;
-  flex-direction: column;
-}
-.action .action-label {
-  display: flex;
-  font-size: 12px;
-  align-items: center;
-  gap: 2px;
+.action {
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px dotted var(--ink);
+  padding: 0 var(--size1);
 }
 
 .action-icon {
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
 }
 
 h3 {
@@ -410,13 +406,6 @@ h3 button {
   margin-left: auto;
 }
 
-.action .items {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding-left: 0;
-}
 
 .action .item {
   display: flex;

@@ -1,19 +1,22 @@
 <template>
-  <div
-
-    class="row"
-    :class="{ top: props.top, bottom: props.bottom }"
-  >
-    <summary
-    >
+  <div class="row" :class="{ top: props.top, bottom: props.bottom }">
+    <summary>
       <CheckboxInput :checked="checked" @click="handleCheckboxClick" />
       <div class="title-container">
         <div class="title">{{ task.title }}</div>
       </div>
     </summary>
-    <div class="cell category"><div class="tag">{{capitalize(task.category)}}</div></div>
-    <div class="cell importance"><div class="tag">{{ task.importance }}</div></div>
-    <div class="cell duraction"><div class="tag">{{ task.duration }} min</div></div>
+    <div class="cell category">
+      <div class="tag">{{ capitalize(task.category) }}</div>
+    </div>
+    <div class="cell importance">
+      <div class="tag">
+        {{ getCategoryImportance(task.category) + task.importanceModifier }}
+      </div>
+    </div>
+    <div class="cell duraction">
+      <div class="tag">{{ task.duration }} min</div>
+    </div>
     <div class="cell duedate">
       {{ task.timeFrame.display }}
     </div>
@@ -21,8 +24,8 @@
 </template>
 
 <script setup>
-import { defineProps,  ref,  } from "vue";
-import CheckboxInput from '@/components/CheckboxInput.vue';
+import { defineProps, ref } from "vue";
+import CheckboxInput from "@/components/CheckboxInput.vue";
 
 const props = defineProps({
   task: Object,
@@ -32,6 +35,21 @@ const props = defineProps({
   collapsed: Boolean,
 });
 
+const categories = [
+  { name: "work", importance: 8 },
+  { name: "household", importance: 6 },
+  { name: "errand", importance: 6 },
+  { name: "life management", importance: 7 },
+  { name: "personal", importance: 3 },
+];
+
+const getCategoryImportance = (category) => {
+  const item = categories.find((item) => item.name === category);
+  if (item) {
+    return item.importance;
+  }
+  return 0;
+};
 
 const checked = ref(props.task.complete);
 
@@ -40,9 +58,8 @@ const handleCheckboxClick = () => {
 };
 
 const capitalize = (string) => {
-  return `${string.slice(0,1).toUpperCase()}${string.slice(1)}`;
-}
-
+  return `${string.slice(0, 1).toUpperCase()}${string.slice(1)}`;
+};
 </script>
 
 <style scoped>
@@ -67,7 +84,6 @@ summary {
   max-height: 35px;
 }
 
-
 .title-container {
   min-height: 30px;
   min-width: 5px;
@@ -81,15 +97,13 @@ summary {
 .title {
   margin-left: 5px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 14px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   color: #5a6798;
   width: 90%;
 }
-
-
 
 input[type="checkbox"] {
   margin-left: 10px;
@@ -100,6 +114,7 @@ input[type="checkbox"] {
 }
 
 .cell {
+  font-size: 14px;
   display: flex;
   align-items: center;
   min-height: 30px;
@@ -143,5 +158,4 @@ input[type="checkbox"] {
 .cell {
   padding-right: 10px;
 }
-
 </style>

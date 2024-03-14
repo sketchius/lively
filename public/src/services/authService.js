@@ -2,6 +2,7 @@ import {
   getAuth,
   signInAnonymously,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 
@@ -13,6 +14,15 @@ export const signInAsDemoUser = () => {
 
 export const register = async (email, password) => {
   const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  return userCredential.user.uid;
+};
+
+export const logIn = async (email, password) => {
+  const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
     password

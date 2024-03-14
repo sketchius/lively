@@ -1,83 +1,207 @@
-// import { useRouter } from "vue-router";
 import chatService from "../services/chatService.js";
 
-// const router = useRouter();
+const loading = {
+  role: "assistant",
+  data: {
+    contentType: "text",
+  },
+  message: "",
+  loading: true,
+};
 
 export default {
-  async processInput(messages, input, store, updateUI) {
-    updateUI({ event: "loading" });
+  async processInput(messages, input, store, router, updateUI) {
+    updateUI(loading);
 
     const result = await chatService.classifyMessage(input);
 
     console.log("result = ", result.data);
 
-    const classification = result.data.classification;
+    const classifications = [...new Set(result.data.classifications)];
 
-    // updateUI({ event: "classify", message: classification });
-
-    switch (classification) {
-      case "show_all_actions":
-        break;
-      case "show_all_notes":
-        break;
-      case "show_todo_list":
-        break;
-      case "take_notes":
-        {
+    for (let i = 0; i < classifications.length; i++) {
+      const classification = classifications[i];
+      switch (classification) {
+        case "show_all_tasks":
           updateUI({
-            title: `TAKE NOTES`,
-            event: "create-notes",
-            loading: true,
+            role: "assistant",
+            data: {
+              contentType: "text",
+              isAction: true,
+            },
+            message: "Switching View to Task List.",
+            break: true,
           });
-          const minWait = new Promise((resolve) => setTimeout(resolve, 500));
-
-          const resultPromise = chatService.identifyNotes(input);
-
-          const [result] = await Promise.all([resultPromise, minWait]);
-
-          const notesData = result.data.notes;
-
-          const notes = Array.isArray(notesData) ? notesData : [notesData];
-
-          console.log("NOTES: ", notesData);
-
+          router.push({ name: "Tasks" });
+          break;
+        case "show_all_goals":
           updateUI({
-            title: `TAKE NOTES`,
-            message: `Created ${notes.length} new notes.`,
-            event: "create-notes",
-            loading: false,
+            role: "assistant",
+            data: {
+              contentType: "text",
+              isAction: true,
+            },
+            message: "Switching View to Goal List.",
+            break: true,
           });
-
-          updateUI({ event: "loading" });
-
-          notes.forEach((note) => {
-            store.dispatch("createNote", { title: note });
+          router.push({ name: "Goals" });
+          break;
+        case "show_all_notes":
+          updateUI({
+            role: "assistant",
+            data: {
+              contentType: "text",
+              isAction: true,
+            },
+            message: "Switching View to Note List.",
+            break: true,
           });
+          router.push({ name: "Notes" });
+          break;
+        case "show_todo_list":
+          updateUI({
+            role: "assistant",
+            data: {
+              contentType: "text",
+            },
+            message: "Sorry, the To-Do List is not yet implemented.",
+            break: true,
+          });
+          break;
+        case "save_note":
+          {
+            const minWait = new Promise((resolve) => setTimeout(resolve, 500));
 
-          const shapedMessages = shapeMessagesForAPI(messages);
+            const resultPromise = chatService.identifyNotes(input);
 
-          const chatResponse = await chatService.sendConversation(
-            shapedMessages
-          );
+            const [result] = await Promise.all([resultPromise, minWait]);
 
-          const assistantMessage = stripQuotes(chatResponse.data);
+            const notesData = result.data.notes;
 
-          updateUI({ event: "chat", message: assistantMessage });
+            const notes = Array.isArray(notesData) ? notesData : [notesData];
+
+            notes.forEach((note) => {
+              store.dispatch("createNote", { title: note });
+            });
+
+            updateUI({
+              role: "assistant",
+              data: {
+                contentType: "text",
+                isAction: true,
+              },
+              message: `Created ${notes.length} new note${
+                notes.length > 1 ? "s" : ""
+              }.`,
+              break: true,
+            });
+
+            router.push({ name: "Notes" });
+
+            // const shapedMessages = shapeMessagesForAPI(messages);
+
+            // const chatResponse = await chatService.sendConversation(
+            //   shapedMessages
+            // );
+
+            // const assistantMessage = stripQuotes(chatResponse.data);
+
+            // updateUI({ role: "assistant", message: assistantMessage });
+          }
+          break;
+        case "create_task":
+          {
+            const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+
+            const resultPromise = chatService.parseTask(input);
+
+            const [result] = await Promise.all([resultPromise, minWait]);
+
+            const rawTaskData = result.data;
+
+            let typeDisplay = '';
+            switch (rawTaskData.timeframe_type) {
+              case "Flexible":
+                typeDisplay = "Around";
+                break;
+              case "Deadline":
+                typeDisplay = "By";
+                break;
+              case "Scheduled":
+                switch (rawTaskData.timeframe_inteval) {
+                  default:
+                  case "Day":
+                    typeDisplay = "On";
+                    break;
+                  case "Week":
+                  case "Month":
+                  case "Year":
+                    typeDisplay = "During";
+                    break;
+                }
+                break;
+            }
+
+
+            const taskData = {
+              type: "Task",
+              title: rawTaskData.title,
+              category: rawTaskData.category,
+              duration: rawTaskData.duration,
+              timeFrame: {
+                interval: rawTaskData.timeframe_interval,
+                type: rawTaskData.timeframe_type,
+                date: rawTaskData.timeframe_date,
+                display: `${typeDisplay} ${rawTaskData.timeframe_date}`
+              },
+              importanceModifier: rawTaskData.importance_modifier
+            };
+
+            store.dispatch("createTask", taskData);
+
+            updateUI({
+              role: "assistant",
+              data: {
+                contentType: "text",
+                isAction: true,
+              },
+              message: `Created 1 new Task.`,
+              break: true,
+            });
+
+            router.push({ name: "Tasks" });
+
+            // const shapedMessages = shapeMessagesForAPI(messages);
+
+            // const chatResponse = await chatService.sendConversation(
+            //   shapedMessages
+            // );
+
+            // const assistantMessage = stripQuotes(chatResponse.data);
+
+            // updateUI({ role: "assistant", message: assistantMessage });
+          }
+          break;
+        case "create_goal":
+          updateUI({
+            role: "assistant",
+            data: {
+              contentType: "text",
+            },
+            message: "Sorry, I am not able to create Goals yet.",
+            break: true,
+          });
+          break;
+        case "feature_help":
+          break;
+        case "none": {
+          const response = await chatService.sendMessage(input);
+
+          const message = stripQuotes(response.data);
+
+          updateUI({ role: "assistant", message });
+          break;
         }
-        break;
-      case "create_actions":
-        break;
-      case "modify_actions":
-        break;
-      case "feature_help":
-        break;
-      case "none": {
-        const response = await chatService.sendMessage(input);
-
-        const message = stripQuotes(response.data);
-
-        updateUI({ event: "chat", message });
-        break;
       }
     }
   },
@@ -86,7 +210,7 @@ export default {
     switch (event.type) {
       case "create-account":
         updateUI({
-          event: "chat",
+          role: "assistant",
           data: {
             contentType: "text",
             contentTag: "h2",
@@ -94,20 +218,54 @@ export default {
           message: "Welcome!",
         });
         updateUI({
-          event: "chat",
+          role: "assistant",
           data: {
             contentType: "text",
           },
           message:
             "I'm Lively, your AI companion designed to simplify your life. With me, you'll effortlessly manage tasks and achieve your goals through smart, prioritized to-do lists tailored just for you.",
+          break: true,
+        });
+        break;
+      case "log-in":
+        updateUI({
+          role: "assistant",
+          data: {
+            contentType: "text",
+            contentTag: "h2",
+          },
+          message: "Welcome Back!",
         });
         updateUI({
-          event: "chat",
+          role: "assistant",
           data: {
-            contentType: "break",
+            contentType: "text",
           },
-          message: "",
+          message: "How can I help you today?",
+          break: true,
         });
+        break;
+        
+      case "new-task":
+        updateUI({
+          role: "user",
+          data: {
+            contentType: "text",
+            isAction: true,
+          },
+          message: `Start New Task`,
+          break: true,
+        });
+        updateUI(loading);
+        await new Promise((resolve) => setTimeout(resolve, 750));
+      updateUI({
+        role: "assistant",
+        data: {
+          contentType: "text",
+        },
+        message: "Ok, let's create a new Task! Please describe what you need to do. Include any relevant details like when you'd like to accomplish it, how long you think it will take, and how important it is.",
+        break: true,
+      });
         break;
     }
   },
@@ -117,28 +275,28 @@ function stripQuotes(str) {
   return str.replace(/^"|"$/g, "");
 }
 
-function shapeMessagesForAPI(messages) {
-  console.log("START OF shapeMessagesForAPI messages = ", messages);
-  const shapedMessages = messages.map((message) => {
-    const shapedMessage = { role: message.role };
-    shapedMessage.content = message.blocks.reduce((content, block) => {
-      switch (block.type) {
-        default:
-        case "chat":
-          content += block.content;
-          break;
-        case "loading":
-          break;
-        case "action":
-          content += block.content.subtext;
-          break;
-      }
+// function shapeMessagesForAPI(messages) {
+//   console.log("START OF shapeMessagesForAPI messages = ", messages);
+//   const shapedMessages = messages.map((message) => {
+//     const shapedMessage = { role: message.role };
+//     shapedMessage.content = message.blocks.reduce((content, block) => {
+//       switch (block.type) {
+//         default:
+//         case "chat":
+//           content += block.content;
+//           break;
+//         case "loading":
+//           break;
+//         case "action":
+//           content += block.content.subtext;
+//           break;
+//       }
 
-      return content;
-    }, "");
+//       return content;
+//     }, "");
 
-    return shapedMessage;
-  });
-  console.log("END OF shapeMessagesForAPI shapedMessages = ", shapedMessages);
-  return shapedMessages;
-}
+//     return shapedMessage;
+//   });
+//   console.log("END OF shapeMessagesForAPI shapedMessages = ", shapedMessages);
+//   return shapedMessages;
+// }

@@ -32,30 +32,31 @@
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
-import {  observeAuthState } from "@/services/authService";
+import { signInAsDemoUser, observeAuthState } from "@/services/authService";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import userService from "./services/userService";
 
 const route = useRoute();
-// const router = useRouter();
+const router = useRouter();
 
 const store = useStore();
 
-const currentUser = ref(undefined);
+const currentUser = ref(store.state.user);
 
-// if (!currentUser.value) {
-//   if (userService.getDemoUID()) {
-//     signInAsDemoUser();
-//   } else {
-//     // router.push("/login");
-//   }
-// }
+if (!currentUser.value.uid) {
+  if (userService.getDemoUID()) {
+    signInAsDemoUser();
+  } else {
+    router.push("/login");
+  }
+}
 
 onMounted(() => {
   observeAuthState(async (authState) => {
     console.log("auth state changed");
+    console.log(authState.user);
     if (authState) {
       let demoUID;
       if (authState.isDemoUser) {
@@ -160,7 +161,7 @@ body {
 
 .app-content {
   flex-basis: 70vw;
-  min-width: 80ch;
+  min-width: 90ch;
   min-height: 100%;
   display: flex;
   flex-direction: column;

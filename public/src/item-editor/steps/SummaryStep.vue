@@ -194,7 +194,7 @@ const categories = [
   { name: "life management", importance: 7 },
   { name: "fun", importance: 3 },
 ];
-const modifier = ref(0);
+const modifier = ref(store.state.formData.importanceModifier);
 
 const categoryImportance = ref("");
 
@@ -236,6 +236,10 @@ const handleSave = async () => {
   store.commit("setFormDataField", {
     field: "title",
     payload: title,
+  });
+  store.commit("setFormDataField", {
+    field: "importanceModifier",
+    payload: modifier
   });
   store.commit("setFormDataField", {
     field: "importance",

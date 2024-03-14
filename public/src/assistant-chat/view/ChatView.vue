@@ -26,8 +26,10 @@ import assistantController from "../controller/assistantController.js";
 import assistantAvatar from "../assets/assistant-avatar.svg";
 
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 const store = useStore();
+const router = useRouter();
 
 const messages = reactive([]);
 const timerIntervalId = ref(null);
@@ -66,10 +68,20 @@ watch(
 
 const handleInput = async (input) => {
   // Add user message to the conversation
-  addMessage("user", { content: input }, "chat");
+  addMessage(
+    "user",
+    { content: input, loading: false, data: { contentType: "text" } },
+    "chat"
+  );
   scrollToBottom();
 
-  await assistantController.processInput(messages, input, store, handleUIEvent);
+  await assistantController.processInput(
+    messages,
+    input,
+    store,
+    router,
+    handleUIEvent
+  );
 
   // try {
   //   const response = await chatService.sendMessage(input);
@@ -86,26 +98,19 @@ const handleInput = async (input) => {
 };
 
 const handleUIEvent = async (payload) => {
-  switch (payload.event) {
-    case "chat": {
-      const blockData = {
-        content: payload.message,
-        loading: payload.loading,
-        data: payload.data,
-      };
-      addMessage("assistant", blockData, "chat");
-      break;
-    }
-    case "create-notes": {
-      const blockData = {
-        title: payload.title,
-        content: payload.message,
-        loading: payload.loading,
-        data: payload.data,
-      };
-      addMessage("assistant", blockData, "action");
-      break;
-    }
+  console.log(payload);
+  const blockData = {
+    content: payload.message || "",
+    loading: payload.loading || false,
+    data: payload.data || {},
+  };
+  addMessage(payload.role, blockData, "chat");
+  if (payload.break) {
+    addMessage(
+      payload.role,
+      { content: "", loading: false, data: { contentType: "break" } },
+      "chat"
+    );
   }
 };
 

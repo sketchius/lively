@@ -1,7 +1,7 @@
 <template>
   <div class="flex-container">
     <div class="layout">
-      <form @submit.prevent="signIn">
+      <form @submit.prevent="">
         <h2>Have an Account?</h2>
 
         <div class="input-group">
@@ -25,9 +25,16 @@
             required
           />
         </div>
+        <caption class="error">
+          {{
+            errorMessage
+          }}
+        </caption>
 
         <div class="buttons">
-          <button type="submit" class="standard">Log In</button>
+          <button type="submit" @click="handleLogIn" class="standard">
+            Log In
+          </button>
           <button type="submit" class="standard">Sign In With Google</button>
           <button type="submit" class="minor">Forgot Password</button>
         </div>
@@ -72,9 +79,12 @@
 </template>
 
 <script setup>
+import { logIn } from "@/services/authService";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+
+const errorMessage = ref("");
 
 const store = useStore();
 
@@ -85,7 +95,40 @@ const demoUser = store.state.user?.isDemoUser;
 const email = ref("");
 const password = ref("");
 
-const signIn = () => {};
+const handleLogIn = async () => {
+  try {
+    await logIn(email.value, password.value);
+    store.commit("setAssistantEventData", {
+      type: "log-in",
+    });
+    router.push("/");
+  } catch (error) {
+    console.log("Error: ");
+    console.log(error);
+    errorMessage.value = getErrorMessage(error.code);
+  }
+};
+
+function getErrorMessage(code) {
+  switch (code) {
+    case "auth/wrong-password":
+      return "The password is invalid or the user does not have a password.";
+    case "auth/user-not-found":
+      return "No user found with this email address.";
+    case "auth/user-disabled":
+      return "This user account has been disabled by an administrator.";
+    case "auth/invalid-email":
+      return "The email address is not valid.";
+    case "auth/too-many-requests":
+      return "We have blocked all requests from this device due to unusual activity. Try again later.";
+    case "auth/network-request-failed":
+      return "A network error (such as timeout, interrupted connection, or unreachable host) has occurred.";
+    case "auth/account-exists-with-different-credential":
+      return "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.";
+    default:
+      return "An unexpected error occurred. Please try again.";
+  }
+}
 
 const handleTryDemoAccess = () => {
   router.push({ name: `demo-terms` });
@@ -139,10 +182,16 @@ input {
   gap: var(--size3);
 }
 .buttons {
-  margin-top: var(--size1);
   display: flex;
   flex-direction: column;
   gap: var(--size0);
+}
+.error {
+  margin: 0;
+  text-align: left;
+  font-size: 12px;
+  min-height: 14px;
+  color: var(--red700);
 }
 button {
   width: 100%;

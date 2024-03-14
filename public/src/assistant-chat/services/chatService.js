@@ -17,6 +17,10 @@ export default {
     return apiService.post("/chat/identify-notes", {message});
   },
 
+  async parseTask(message) {
+    return apiService.post("/chat/parse-task", {message});
+  },
+
   async getConversation() {
     return apiService.get("/chat/conversation");
   },

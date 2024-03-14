@@ -30,10 +30,10 @@ import { computed, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 import TaskListItem from "../components/TaskListItem.vue";
 
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 import HelpComponent from "@/components/help-component/HelpComponent.vue";
 
-const router = useRouter();
+// const router = useRouter();
 
 const store = useStore();
 
@@ -46,9 +46,9 @@ onMounted(() => {
 
 const handleNewItem = () => {
   // dispatchRandomTask();
-  
-  store.commit("resetFormData");
-  router.push({ name: `item-editor-task` });
+  store.commit("setAssistantEventData", { type: "new-task" });
+  // store.commit("resetFormData");
+  // router.push({ name: `item-editor-task` });
 };
 
 watch(taskListNeedsRefresh, (newValue) => {
@@ -192,6 +192,7 @@ h3 {
   border-bottom: 3px double var(--ink);
   padding-right: 18px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .title {

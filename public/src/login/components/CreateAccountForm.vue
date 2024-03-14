@@ -72,9 +72,9 @@ import { ref } from "vue";
 import { register } from "@/services/authService";
 import userService from "@/services/userService";
 import { useRouter } from "vue-router";
-// import { useStore } from "vuex";
+import { useStore } from "vuex";
 
-// const store = useStore();
+const store = useStore();
 const router = useRouter();
 
 const email = ref("");
@@ -99,13 +99,15 @@ const createAccount = async () => {
   ) {
     try {
       const uid = await register(email.value, password.value);
-      console.log("registered user. uid = ", uid);
       await userService.createUser(uid);
       userService.removeDemoUser();
-      router.push('/notes');
+
+      store.commit("setAssistantEventData", {
+        type: "create-account",
+        accountType: "free",
+      });
+      router.push("/notes");
     } catch (error) {
-      console.log("Error Creating Account:");
-      console.log(error);
       switch (error.code) {
         case "auth/invalid-email":
           errorMessage.value = "The email address is not valid.";

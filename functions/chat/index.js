@@ -8,6 +8,7 @@ import classification from "./classification.js";
 import { getOpenAIChatResponse } from "../external_apis/openai.js";
 import chatHandler from "./chatHandler.js";
 import notes from "./notes.js";
+import tasks from './tasks.js';
 chatApp.use(cors({ origin: true }));
 
 chatApp.post("/chat/message", async (req, res) => {
@@ -23,6 +24,11 @@ chatApp.post("/chat/conversation", async (req, res) => {
 
 chatApp.post("/chat/identify-notes", async (req, res) => {
   const response = await notes.identifyNotes(req.body.message);
+  res.json(response);
+});
+
+chatApp.post("/chat/parse-task", async (req, res) => {
+  const response = await tasks.parseTask(req.body.message);
   res.json(response);
 });
 
