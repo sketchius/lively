@@ -59,6 +59,7 @@ const nextYear = () => {
   align-items: center;
   width: 100%;
   box-sizing: border-box;
+  border-bottom: 2px solid var(--ink);
 }
 
 .controls {

@@ -1,6 +1,11 @@
 <template>
   <div class="component">
-    <form @submit.prevent="handleSave">
+    <TimeFrameEditor
+      v-if="showTimeFrameEditor"
+      @save="updateTimeFrame"
+      @cancel="setTimeFrameEditorVisibility(false)"
+    />
+    <form v-if="!showTimeFrameEditor" @submit.prevent="handleSave">
       <div class="layout">
         <section>
           <div class="label-group">
@@ -132,7 +137,12 @@
           </div>
           <div class="time-frame-container">
             <output class="time-frame-display">{{ timeFrame.display }}</output
-            ><button class="standard compact">Edit</button>
+            ><button
+              class="standard compact"
+              @click="setTimeFrameEditorVisibility(true)"
+            >
+              Edit
+            </button>
           </div>
         </section>
         <section v-if="itemType == 'Goal'">
@@ -193,6 +203,7 @@ import { createUID } from "@/util/uuid";
 import draggable from "vuedraggable";
 import assistantService from "@/services/assistantService";
 import { format } from "date-fns";
+import TimeFrameEditor from "./TimeFrameEditor.vue";
 
 import HelpComponent from "@/components/help-component/HelpComponent.vue";
 
@@ -225,6 +236,8 @@ const currentDate = format(new Date(), "MMMM do, yyyy");
 
 const detailsTextarea = ref(null);
 
+const showTimeFrameEditor = ref(false);
+
 const timeFrame = ref(
   store.state.formData.timeFrame || {
     date: currentDate,
@@ -248,7 +261,7 @@ categories.forEach((categoryItem) => {
 });
 
 onMounted(async () => {
-  emit("setTitle", `New ${itemType.value}`);
+  emit("setTitle", `New Goal`);
   resizeDetailsTextarea();
 
   modifier.value = store.state.formData.importanceModifier || "0";
@@ -271,12 +284,18 @@ onMounted(async () => {
   itemType.value = store.state.formData.type;
 });
 
-// const updateTimeFrame = async (timeframe) => {
-//   store.commit("setFormDataField", {
-//     field: "timeFrame",
-//     payload: timeframe,
-//   });
-// };
+const updateTimeFrame = async (newTimeFrame) => {
+  store.commit("setFormDataField", {
+    field: "timeFrame",
+    payload: newTimeFrame,
+  });
+  timeFrame.value = newTimeFrame;
+  setTimeFrameEditorVisibility(false);
+};
+
+const setTimeFrameEditorVisibility = (value) => {
+  showTimeFrameEditor.value = value;
+};
 
 const handleSave = async () => {
   store.commit("setFormDataField", {

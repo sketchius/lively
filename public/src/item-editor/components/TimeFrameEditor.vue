@@ -1,18 +1,12 @@
 <template>
   <div class="container">
-    <div class="label-group">
-      <label for="picker" class="picker-label">TIME FRAME</label
-      ><HelpComponent
-        :title="'Time Frame'"
-        :text="`A flexible completion period for Actions. You can choose how strict the time frame needs to be. For instance, for an appointment that must happen on a certain day, you can use Scheduled. For a task like organizing your closet, you can choose Flexible to set a rough time frame. You can specify how narrow or wide the time frame is between day, week, month, and year. The Time Frame selections will help to determine which Actions are the most urgent.`"
-      />
-    </div>
+    <h2>TIME FRAME</h2>
     <output class="display">
-      <div class="type">{{ timeFrame.typeDisplay }}:</div>
+      <div class="type">{{ timeFrame.typeDisplay }}</div>
       <div class="date">{{ timeFrame.date }}</div>
       <!-- dynamic display text -->
     </output>
-    <div class="buttons">
+    <div class="ratio-buttons">
       <div class="radio">
         <input
           type="radio"
@@ -84,19 +78,22 @@
     <div class="picker">
       <component :is="pickerComponent" @update="handlePickerUpdate"></component>
     </div>
+    <div class="buttons">
+      <button class="minor" @click="handleCancel">Cancel</button
+      ><button class="standard" @click="handleSave">Save</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { reactive, computed, watch } from "vue";
 import { format, startOfWeek, endOfWeek } from "date-fns";
-import DayPicker from "./picker-components/DayPicker.vue";
-import WeekPicker from "./picker-components/WeekPicker.vue";
-import MonthPicker from "./picker-components/MonthPicker.vue";
-import YearPicker from "./picker-components/YearPicker.vue";
+import DayPicker from "./DayPicker.vue";
+import WeekPicker from "./WeekPicker.vue";
+import MonthPicker from "./MonthPicker.vue";
+import YearPicker from "./YearPicker.vue";
 
-import HelpComponent from "@/components/help-component/HelpComponent.vue";
-const emit = defineEmits(["update"]);
+const emit = defineEmits(["cancel", "save"]);
 
 const timeFrame = reactive({
   date: undefined,
@@ -170,12 +167,20 @@ const handlePickerUpdate = (updateData) => {
     }
   }
 
-  emitTimeFrame();
 };
 
-const emitTimeFrame = () => {
-  emit("update", { date: timeFrame.date, type: timeFrame.type, interval: timeFrame.interval, display: `${timeFrame.typeDisplay} ${timeFrame.date}` });
-};
+const handleCancel = () => {
+  emit("cancel");
+}
+
+const handleSave = () => {
+  emit("save", {
+    date: timeFrame.date,
+    type: timeFrame.type,
+    interval: timeFrame.interval,
+    display: `${timeFrame.typeDisplay} ${timeFrame.date}`,
+  });
+}
 
 const pickerComponent = computed(() => {
   switch (timeFrame.interval) {
@@ -207,27 +212,31 @@ updateTypeDisplay();
   display: flex;
 }
 
+h2 {
+  margin: 0;
+  margin-left: var(--size2);
+  margin-top: var(--size2);
+  text-align: left;
+}
+
 output {
   width: fit-content;
   font-size: 24px;
-  padding: 5px;
+  padding: 5px 15px;
   margin-left: 10px;
-  /* background-color: var(--white); */
+  display: flex;
+  gap: var(--size1);
+  align-items: baseline;
+  border: 3px double var(--ink);
 }
 
 output .type {
   font-size: 18px;
-  text-transform: uppercase;
-  margin-left: 10px;
   font-weight: 400;
 }
 
 output .date {
   font-size: 22px;
-  padding: 5px;
-  font-weight: 700;
-  margin: 5px;
-  background-color: var(--green300);
 }
 .container {
   display: flex;
@@ -237,7 +246,7 @@ output .date {
   border: 4px solid var(--ink);
 }
 
-.buttons {
+.ratio-buttons {
   display: flex;
   flex-direction: column;
   grid-gap: 2px;
@@ -290,4 +299,13 @@ output .date {
 .tab.selected {
   background-color: var(--green500);
 }
+
+.buttons {
+  display: flex;
+  max-height: 40px;
+  margin: var(--size1);
+  gap: var(--size0);
+  justify-content: flex-end;
+}
 </style>
+./DayPicker.vue./WeekPicker.vue./MonthPicker.vue./YearPicker.vue

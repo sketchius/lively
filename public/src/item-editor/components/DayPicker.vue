@@ -18,19 +18,11 @@
       <div class="day header">FRI</div>
       <div class="day header">SAT</div>
     </div>
-    <div
-      class="week"
-      :class="{
-        selected: week.some(
-          (day) => day.date == selectedDay && day.monthOffset == 0
-        ),
-      }"
-      v-for="week in weeks"
-      :key="week"
-    >
+    <div class="week" v-for="week in weeks" :key="week">
       <div
         class="day"
         :class="{
+          selected: day.date == selectedDay && day.monthOffset == 0,
           'in-month': day.monthOffset == 0,
         }"
         @click="handleDayClick(day)"
@@ -143,15 +135,15 @@ const previousYear = () => {
 
 const handleDayClick = (day) => {
   selectedDay.value = day.date;
-  emit("update", {
-    type: "datePickerDate",
-    date: new Date(year.value, monthId.value, day.date),
-  });
   if (day.monthOffset == 1) {
     nextMonth();
   } else if (day.monthOffset == -1) {
     previousMonth();
   }
+  emit("update", {
+    type: "datePickerDate",
+    date: new Date(year.value, monthId.value, day.date),
+  });
 };
 
 initializeMonthAndYear();
@@ -164,6 +156,7 @@ initializeMonthAndYear();
   width: 100%;
   height: auto;
   box-sizing: border-box;
+  border-bottom: 2px solid var(--ink);
 }
 
 .controls {
@@ -183,7 +176,6 @@ initializeMonthAndYear();
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   border-bottom: 1px solid var(--ink);
-  cursor: pointer;
 }
 
 .day {
@@ -195,8 +187,6 @@ initializeMonthAndYear();
 }
 
 .headers {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   border-bottom: none;
   border-top: 1px solid var(--ink);
 }
@@ -212,6 +202,7 @@ initializeMonthAndYear();
   align-items: center;
   justify-content: center;
   padding: 4px 8px;
+  cursor: pointer;
 }
 
 .selected {
@@ -220,5 +211,9 @@ initializeMonthAndYear();
 
 .in-month {
   font-weight: 700;
+}
+
+.day:hover {
+  background-color: var(--green300);
 }
 </style>

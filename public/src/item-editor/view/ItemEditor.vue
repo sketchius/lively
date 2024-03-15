@@ -32,8 +32,7 @@
 import StepHeader from "../components/StepHeader.vue";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-// import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
-import GoalEditor from "@/item-editor/steps/GoalEditor.vue";
+import GoalEditor from "@/item-editor/components/GoalEditor.vue";
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
