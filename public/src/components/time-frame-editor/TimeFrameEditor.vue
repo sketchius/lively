@@ -114,10 +114,10 @@ const handleIntervalTabClick = (tab) => {
 const updateTypeDisplay = () => {
   switch (timeFrame.type) {
     case "Flexible":
-      timeFrame.typeDisplay = "Sometime around";
+      timeFrame.typeDisplay = "Around";
       break;
     case "Deadline":
-      timeFrame.typeDisplay = "By the end of";
+      timeFrame.typeDisplay = "By";
       break;
     case "Scheduled":
       switch (timeFrame.interval) {

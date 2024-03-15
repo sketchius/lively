@@ -12,7 +12,7 @@
     <div class="content">
       <div class="top-flex"></div>
       <div class="socket">
-        <StepHeader :header="title" @back="handleBack" @cancel="handleCancel" />
+        <StepHeader :header="`|| ${title}`" @back="handleBack" @cancel="handleCancel" />
 
         <component
           :is="currentComponent"
@@ -32,7 +32,8 @@
 import StepHeader from "../components/StepHeader.vue";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
+// import SummaryStep from "@/item-editor/steps/SummaryStep.vue";
+import GoalEditor from "@/item-editor/steps/GoalEditor.vue";
 import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
@@ -51,7 +52,7 @@ const title = ref("");
 const cancelModalVisible = ref(false);
 
 const currentComponent = computed(() => {
-  return SummaryStep;
+  return GoalEditor;
 });
 
 const handleSetTitle = (data) => {

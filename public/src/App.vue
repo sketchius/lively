@@ -8,19 +8,21 @@
       >
       or <RouterLink to="login">log in</RouterLink> for secure access.
     </div>
-    <div id="layout">
+    <div class="horizontal-layout">
       <div class="margin-spacer"></div>
       <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
       <ChatView v-if="!route.meta.interfaceHidden" />
       <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
       <div class="inner-padding-spacer border-left"></div>
-      <div class="app-content">
+      <div class="vertical-layout">
         <MenuBar v-if="!route.meta.interfaceHidden" />
-        <div class="vertical-spacer"></div>
-        <main>
-          <router-view></router-view>
-        </main>
-        <div class="vertical-spacer-bottom"></div>
+        <div class="viewport">
+          <div class="vertical-spacer"></div>
+          <main>
+            <router-view></router-view>
+          </main>
+          <div class="vertical-spacer-bottom"></div>
+        </div>
       </div>
       <div class="inner-padding-spacer border-right"></div>
       <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
@@ -130,6 +132,7 @@ body {
   color: var(--ink);
   font-family: "Roboto", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: var(--paper);
 }
 
 .frame {
@@ -147,7 +150,7 @@ body {
   padding: 2px 0;
 }
 
-#layout {
+.horizontal-layout {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -155,14 +158,19 @@ body {
   align-items: center;
   min-height: 100vh;
   display: flex;
-  background-color: var(--paper);
   align-items: stretch;
 }
 
-.app-content {
+.vertical-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.viewport {
   flex-basis: 70vw;
   min-width: 90ch;
-  min-height: 100%;
+  max-height: calc(100vh - 55px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   border-top: none;
@@ -433,6 +441,7 @@ label.horizontal {
   width: fit-content;
 }
 
+.styled-input,
 textarea {
   position: relative;
   font-family: "Inter", sans-serif;
@@ -448,20 +457,20 @@ textarea {
   box-sizing: border-box;
 }
 
-.textarea-container {
-  display: flex;
-}
-
 input:focus,
 textarea:focus {
   outline: none !important;
   border: 3px solid var(--blue700);
 }
 
+.styled-input-container,
 .textarea-container {
   width: 100%;
+  display: flex;
   position: relative;
 }
+
+.styled-input-container::before,
 .textarea-container::before {
   content: "";
   position: absolute;
@@ -472,5 +481,28 @@ textarea:focus {
   bottom: 8px;
   background: var(--white);
   pointer-events: none;
+}
+
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--ink); 
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--ink);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink300) transparent;
 }
 </style>

@@ -19,6 +19,8 @@ export default {
   justify-content: space-around; /* or space-between, depending on the desired spacing */
   align-items: center;
   gap: var(--size3);
+  padding: var(--size0) 0;
+  background-color: var(--paper700);
 }
 
 .menu-item {

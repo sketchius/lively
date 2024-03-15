@@ -24,20 +24,18 @@ export default {
       if (this.newMessage.trim()) {
         this.$emit("sendMessage", this.newMessage);
         this.newMessage = "";
-        this.$nextTick(() => this.adjustHeight()); // Adjust height after clearing
+        this.$nextTick(() => this.adjustHeight());
       }
     },
     adjustHeight() {
       const textarea = this.$refs.textarea;
-      textarea.style.height = "1rem"; // Temporarily collapse the textarea to reset scrollHeight
-      textarea.style.height = textarea.scrollHeight + 5 + "px"; // Set height based on content
+      textarea.style.height = "1rem";
+      textarea.style.height = textarea.scrollHeight + 5 + "px";
 
-      // Scroll the textarea to the top as it grows
       textarea.scrollTop = 0;
     },
   },
   mounted() {
-    // Call adjustHeight() when the component is mounted (loaded)
     this.adjustHeight();
   },
 };
