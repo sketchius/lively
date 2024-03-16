@@ -98,10 +98,11 @@ const password = ref("");
 const handleLogIn = async () => {
   try {
     await logIn(email.value, password.value);
+    console.log("Logged in. Attempting to reroute.");
     store.commit("setAssistantEventData", {
       type: "log-in",
     });
-    router.push("/");
+    router.push({ name: "Home" });
   } catch (error) {
     console.log("Error: ");
     console.log(error);

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Home from "../views/HomeView.vue";
+// import Home from "../views/HomeView.vue";
 import Tasks from "../task-list/view/TaskList.vue";
 import Notes from "../note-list/view/NoteList.vue";
 import Goals from "../goal-list/view/GoalList.vue";
@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: Goals,
   },
   {
     path: "/notes",
@@ -44,7 +44,7 @@ const routes = [
   {
     path: "/item-editor/goal",
     component: ItemEditor,
-    name: "item-editor-goal",
+    name: "Goal Editor",
     meta: {itemType: 'Goal'}
   },
   {

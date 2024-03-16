@@ -109,8 +109,81 @@ export default {
 
             const rawTaskData = result.data;
 
+            if (!rawTaskData.valid) {
+              updateUI({
+                role: "assistant",
+                data: {
+                  contentType: "text",
+                },
+                message: `Ok, let's create a new Task! Please describe what you need to do. Include any relevant details like when you'd like to accomplish it, how long you think it will take, and how important it is.`,
+                break: true,
+              });
+            } else {
+              let typeDisplay = "";
+              switch (rawTaskData.timeframe_type) {
+                case "Flexible":
+                  typeDisplay = "Around";
+                  break;
+                case "Deadline":
+                  typeDisplay = "By";
+                  break;
+                case "Scheduled":
+                  switch (rawTaskData.timeframe_inteval) {
+                    default:
+                    case "Day":
+                      typeDisplay = "On";
+                      break;
+                    case "Week":
+                    case "Month":
+                    case "Year":
+                      typeDisplay = "During";
+                      break;
+                  }
+                  break;
+              }
+
+              const taskData = {
+                type: "Task",
+                title: rawTaskData.title,
+                category: rawTaskData.category,
+                duration: rawTaskData.duration,
+                timeFrame: {
+                  interval: rawTaskData.timeframe_interval,
+                  type: rawTaskData.timeframe_type,
+                  date: rawTaskData.timeframe_date,
+                  display: `${typeDisplay} ${rawTaskData.timeframe_date}`,
+                },
+                importanceModifier: rawTaskData.importance_modifier,
+              };
+
+              store.dispatch("createTask", taskData);
+
+              updateUI({
+                role: "assistant",
+                data: {
+                  contentType: "text",
+                  isAction: true,
+                },
+                message: `Created 1 new Task.`,
+                break: true,
+              });
+
+              router.push({ name: "Tasks" });
+            }
+          }
+          break;
+        case "newGoal":
+          {
+            const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+
+            const resultPromise = chatService.parseGoal(element.content);
+
+            const [result] = await Promise.all([resultPromise, minWait]);
+
+            const rawGoalData = result.data;
+
             let typeDisplay = "";
-            switch (rawTaskData.timeframe_type) {
+            switch (rawGoalData.timeframe_type) {
               case "Flexible":
                 typeDisplay = "Around";
                 break;
@@ -118,7 +191,7 @@ export default {
                 typeDisplay = "By";
                 break;
               case "Scheduled":
-                switch (rawTaskData.timeframe_inteval) {
+                switch (rawGoalData.timeframe_inteval) {
                   default:
                   case "Day":
                     typeDisplay = "On";
@@ -132,45 +205,34 @@ export default {
                 break;
             }
 
-            const taskData = {
-              type: "Task",
-              title: rawTaskData.title,
-              category: rawTaskData.category,
-              duration: rawTaskData.duration,
+            const goalData = {
+              type: "Goal",
+              title: rawGoalData.title,
+              category: rawGoalData.category,
+              duration: rawGoalData.duration,
               timeFrame: {
-                interval: rawTaskData.timeframe_interval,
-                type: rawTaskData.timeframe_type,
-                date: rawTaskData.timeframe_date,
-                display: `${typeDisplay} ${rawTaskData.timeframe_date}`,
+                interval: rawGoalData.timeframe_interval,
+                type: rawGoalData.timeframe_type,
+                date: rawGoalData.timeframe_date,
+                display: `${typeDisplay} ${rawGoalData.timeframe_date}`,
               },
-              importanceModifier: rawTaskData.importance_modifier,
+              steps: rawGoalData.steps,
+              importanceModifier: rawGoalData.importance_modifier,
             };
 
-            store.dispatch("createTask", taskData);
+            store.commit("setFormData", goalData);
 
             updateUI({
               role: "assistant",
               data: {
                 contentType: "text",
-                isAction: true,
               },
-              message: `Created 1 new Task.`,
+              message: `I've started a Goal called ${goalData.title}. Are there any details you want me to change?`,
               break: true,
             });
 
-            router.push({ name: "Tasks" });
-
+            router.push({ name: "Goal Editor" });
           }
-          break;
-        case "newGoal":
-          updateUI({
-            role: "assistant",
-            data: {
-              contentType: "text",
-            },
-            message: "Sorry, I am not able to create Goals yet.",
-            break: true,
-          });
           break;
         case "help":
           break;
@@ -179,7 +241,14 @@ export default {
 
           const message = stripQuotes(response.data);
 
-          updateUI({ role: "assistant", message });
+          updateUI({
+            role: "assistant",
+            data: {
+              contentType: "text",
+            },
+            message,
+            break: true,
+          });
           break;
         }
       }

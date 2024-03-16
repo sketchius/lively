@@ -17,7 +17,7 @@ export default {
         YOU may rearrange phrases if needed but don't add content. Compound sentences that contain multiple unique needs can be extracted into multiple tags.
                 
                 # ENUM XML CLASSIFICATION TAGS
-               [ <Chat>: "The user is simply chatting.",
+               [ <chat>: "The user is simply chatting.",
                  <showTodo> : "The user needs to see their to-do list/agenda for today",
                   <newNote> : "The user asked to take note or remind them of something.", 
                    <newTask> : "The user mentioned a task that they need to do",

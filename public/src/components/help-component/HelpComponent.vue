@@ -71,7 +71,6 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
 <style>
 .help-container {
   display: inline-block;
-  position: relative;
   color: var(--ink);
   margin-left: 4px;
 }
@@ -96,7 +95,7 @@ console.log("ID = " + props.helpId + ", data = ", helpData);
 
 .help-container .tooltip {
   width: 400px;
-  z-index: 999;
+  z-index: 1000;
   position: absolute;
   display: flex;
   flex-direction: column;

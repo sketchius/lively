@@ -7,17 +7,17 @@ import cors from "cors";
 import classification from "./classification.js";
 import chatHandler from "./chatHandler.js";
 import notes from "./notes.js";
+import goals from "./goals.js";
 import tasks from './tasks.js';
 chatApp.use(cors({ origin: true }));
 
 chatApp.post("/chat/message", async (req, res) => {
-  const response = await chatHandler.generateChatResponse(req.body);
-  response.set('Access-Control-Allow-Origin', '*');
+  const response = await chatHandler.generateChatResponse(req.body.message);
   res.json(response);
 });
 
 chatApp.post("/chat/conversation", async (req, res) => {
-  const response = await chatHandler.generateConversationResponse(req.body);
+  const response = await chatHandler.generateConversationResponse(req.body.message);
   res.json(response);
 });
 
@@ -28,6 +28,11 @@ chatApp.post("/chat/identify-notes", async (req, res) => {
 
 chatApp.post("/chat/parse-task", async (req, res) => {
   const response = await tasks.parseTask(req.body.message);
+  res.json(response);
+});
+
+chatApp.post("/chat/parse-goal", async (req, res) => {
+  const response = await goals.parseGoal(req.body.message);
   res.json(response);
 });
 

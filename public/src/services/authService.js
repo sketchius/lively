@@ -1,7 +1,7 @@
 import {
   getAuth,
   signInAnonymously,
-  onAuthStateChanged,
+  // onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
@@ -22,21 +22,24 @@ export const register = async (email, password) => {
 };
 
 export const logIn = async (email, password) => {
+  console.log("Starting login...");
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
     password
   );
+
+  console.log("Finished login...");
   return userCredential.user.uid;
 };
 
-export const observeAuthState = (onUserChanged) => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const isDemoUser = user.isAnonymous;
-      onUserChanged({ user, isDemoUser });
-    } else {
-      onUserChanged(null);
-    }
-  });
-};
+// export const observeAuthState = (onUserChanged) => {
+//   onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       const isDemoUser = user.isAnonymous;
+//       onUserChanged({ user, isDemoUser });
+//     } else {
+//       onUserChanged(null);
+//     }
+//   });
+// };

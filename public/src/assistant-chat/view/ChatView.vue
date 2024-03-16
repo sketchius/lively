@@ -2,7 +2,7 @@
   <div class="chat-view">
     <div class="spacer"></div>
     <img :src="assistantAvatar" />
-    <h1 class="display-text">AI Assistant</h1>
+    <h1 class="display-text">Lively</h1>
     <MessageArea :messages="messages" :animationCounter="animationCounter"/>
     <ChatInput @sendMessage="handleInput" />
 

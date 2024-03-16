@@ -41,6 +41,9 @@ const store = createStore({
       state.noteListNeedsRefresh = value;
     },
 
+    setFormData(state, data) {
+      state.formData = data;
+    },
     setFormDataField(state, data) {
       state.formData[data.field] = data.payload;
       if (data.field != "type") {

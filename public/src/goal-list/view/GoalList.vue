@@ -132,6 +132,7 @@ h3 {
   padding-top: 5px;
   padding-bottom: 15px;
   min-height: 150px;
+  box-sizing: border-box;
 }
 
 .row {

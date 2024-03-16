@@ -26,17 +26,13 @@
         <section>
           <div class="label-group">
             <label for="title" class="picker-label">DETAILS</label
-            ><HelpComponent
-              :title="'Details'"
-              :text="`A space for additional context or information to assist in completing the Action. Examples include phone numbers, addresses, strategies, and research findings.`"
-            />
+            ><HelpComponent :helpId="'details'" />
           </div>
           <div class="textarea-container">
             <textarea
               v-model="details"
               ref="detailsTextarea"
               @input="resizeDetailsTextarea"
-              :placeholder="`Additional information about the Goal.`"
               :name="'details'"
               :id="'details'"
               :rows="3"
@@ -46,10 +42,7 @@
         <section>
           <div class="label-group">
             <label for="category" class="picker-label">CATEGORY</label
-            ><HelpComponent
-              :title="'Category'"
-              :text="`The category designates what area of your life the Action belongs to. Categories are assigned a general importance value, and they help to organize and prioritize your Actions.`"
-            />
+            ><HelpComponent :helpId="'category'" />
           </div>
           <div class="categories">
             <div
@@ -67,10 +60,7 @@
         <section v-if="itemType == 'Task'">
           <div class="label-group">
             <label for="duration" class="picker-label">DURATION</label
-            ><HelpComponent
-              :title="'Duration'"
-              :text="`(Simple Actions Only) An estimated amount of time needed to complete the Action. The Duration field helps assign tasks in relation to how much time is available.`"
-            />
+            ><HelpComponent :helpId="'duration'" />
           </div>
           <div class="duration-container">
             <input
@@ -88,10 +78,7 @@
         <section>
           <div class="label-group">
             <label for="picker" class="picker-label">IMPORTANCE</label
-            ><HelpComponent
-              :title="'Importance'"
-              :text="`How much the action aligns with your values and long-term goals. Urgency should not be factored into Importance. If you had all the time in the world, how important would this be? Categories are assigned an importance, and Actions automatically inherit the same Importance value as its category. You can use the modifier slider to make the Action more or less important than the general category.`"
-            />
+            ><HelpComponent :helpId="'relativeImportance'" />
           </div>
           <div class="importance-container">
             <div class="value">
@@ -130,10 +117,7 @@
         <section class="time-frame-slot">
           <div class="label-group">
             <label for="picker" class="picker-label">TIME FRAME</label
-            ><HelpComponent
-              :title="'Time Frame'"
-              :text="`How much the action aligns with your values and long-term goals. Urgency should not be factored into Importance. If you had all the time in the world, how important would this be? Categories are assigned an importance, and Actions automatically inherit the same Importance value as its category. You can use the modifier slider to make the Action more or less important than the general category.`"
-            />
+            ><HelpComponent :helpId="'timeFrame'" />
           </div>
           <div class="time-frame-container">
             <output class="time-frame-display">{{ timeFrame.display }}</output
@@ -147,11 +131,8 @@
         </section>
         <section v-if="itemType == 'Goal'">
           <div class="label-group">
-            <label for="sub-actions" class="picker-label">TASKS</label
-            ><HelpComponent
-              :title="'Tasks'"
-              :text="`(Complex Actions Only) The set of Sub-Actions required to complete the main Action. When all of the Sub-Actions are completed, the main Action should also be considered complete.`"
-            />
+            <label for="sub-actions" class="picker-label">STEPS</label
+            ><HelpComponent :helpId="'steps'" />
           </div>
           <div class="children-list">
             <draggable
@@ -164,7 +145,7 @@
             >
               <template #item="{ element, index }">
                 <div class="child list-item">
-                  {{ index + 1 + ") " + element.title }}
+                  {{ index + 1 + ") " + element }}
                 </div>
               </template>
             </draggable>
@@ -201,7 +182,6 @@ import { defineEmits, ref, onMounted, computed } from "vue";
 import dataService from "@/services/dataService.js";
 import { createUID } from "@/util/uuid";
 import draggable from "vuedraggable";
-import assistantService from "@/services/assistantService";
 import { format } from "date-fns";
 import TimeFrameEditor from "./TimeFrameEditor.vue";
 
@@ -216,20 +196,20 @@ const store = useStore();
 
 const drag = ref("false");
 const addingChild = ref(false);
-const children = ref(store.state.formData.children || []);
+const children = ref(store.state.formData.steps || []);
 
 const itemType = computed(() => store.state.formData.type);
 
 const title = ref(store.state.formData.title || "");
 const duration = ref(store.state.formData.duration || "");
 const category = ref(store.state.formData.category || "work");
-const auto = ref(store.state.formData.auto || false);
 const categories = [
-  { name: "work", importance: 8 },
-  { name: "household", importance: 6 },
-  { name: "errand", importance: 6 },
-  { name: "life management", importance: 7 },
-  { name: "fun", importance: 3 },
+  { name: "Work", importance: 8 },
+  { name: "Household", importance: 6 },
+  { name: "Errand", importance: 6 },
+  { name: "Life management", importance: 7 },
+  { name: "Personal", importance: 3 },
+  { name: "Health", importance: 7 },
 ];
 const modifier = ref("0");
 const currentDate = format(new Date(), "MMMM do, yyyy");
@@ -265,22 +245,7 @@ onMounted(async () => {
   resizeDetailsTextarea();
 
   modifier.value = store.state.formData.importanceModifier || "0";
-  if (auto.value) {
-    const response = await assistantService.getAutoStepsForGoal(
-      store.state.formData.description
-    );
-    const steps = response.data.steps.map((step) => {
-      const child = {};
-      child.title = step;
-      return child;
-    });
-    console.log(`response = `, response);
-    store.commit("setFormDataField", {
-      field: "children",
-      payload: steps,
-    });
-    children.value = steps;
-  }
+
   itemType.value = store.state.formData.type;
 });
 
@@ -368,7 +333,7 @@ const selectCategory = (categoryData) => {
 
 .layout {
   max-height: 80vh;
-  overflow-y: auto;
+  overflow-y: visible;
   padding: var(--size3) var(--size4);
   border: 5px solid var(--ink);
   border-radius: 6px;
@@ -400,6 +365,13 @@ const selectCategory = (categoryData) => {
 .duration-container {
   display: flex;
   grid-gap: 5px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  border-top-left-radius: 0;
+  padding: 15px 15px;
+}
+
+.children-list {
   border: 2px solid var(--ink);
   border-radius: 4px;
   border-top-left-radius: 0;
@@ -610,12 +582,9 @@ form {
 
 .styled-input,
 textarea {
+  font-weight: 600;
   border-width: 2px;
   border-top-left-radius: 0;
-}
-
-.textarea-container {
-  min-height: 50px;
 }
 
 textarea {

@@ -34,50 +34,50 @@
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
-import { signInAsDemoUser, observeAuthState } from "@/services/authService";
+// import {  observeAuthState } from "@/services/authService";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
-import { useRouter, useRoute } from "vue-router";
-import userService from "./services/userService";
+import { useRoute } from "vue-router";
+// import userService from "./services/userService";
 
 const route = useRoute();
-const router = useRouter();
+// const router = useRouter();
 
 const store = useStore();
 
 const currentUser = ref(store.state.user);
 
-if (!currentUser.value.uid) {
-  if (userService.getDemoUID()) {
-    signInAsDemoUser();
-  } else {
-    router.push("/login");
-  }
-}
+// if (!currentUser.value.uid) {
+//   if (userService.getDemoUID()) {
+//     signInAsDemoUser();
+//   } else {
+//     router.push("/login");
+//   }
+// }
 
 onMounted(() => {
-  observeAuthState(async (authState) => {
-    console.log("auth state changed");
-    console.log(authState.user);
-    if (authState) {
-      let demoUID;
-      if (authState.isDemoUser) {
-        demoUID = await userService.getDemoUID();
-      }
-      store.commit("setUser", {
-        ...authState.user,
-        isDemoUser: authState.isDemoUser,
-        demoUID,
-      });
-      currentUser.value = {
-        ...authState.user,
-        isDemoUser: authState.isDemoUser,
-        demoUID,
-      };
-    } else {
-      store.commit({});
-    }
-  });
+  // observeAuthState(async (authState) => {
+  //   console.log("auth state changed");
+  //   console.log(authState.user);
+  //   if (authState) {
+  //     let demoUID;
+  //     if (authState.isDemoUser) {
+  //       demoUID = await userService.getDemoUID();
+  //     }
+  //     store.commit("setUser", {
+  //       ...authState.user,
+  //       isDemoUser: authState.isDemoUser,
+  //       demoUID,
+  //     });
+  //     currentUser.value = {
+  //       ...authState.user,
+  //       isDemoUser: authState.isDemoUser,
+  //       demoUID,
+  //     };
+  //   } else {
+  //     store.commit({});
+  //   }
+  // });
 });
 </script>
 
@@ -87,6 +87,7 @@ onMounted(() => {
 
 #app,
 body {
+  position: relative;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -169,8 +170,10 @@ body {
 .viewport {
   flex-basis: 70vw;
   min-width: 90ch;
+  flex-grow: 1;
   max-height: calc(100vh - 55px);
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   border-top: none;
@@ -232,11 +235,13 @@ ul {
 
 .vertical-spacer {
   flex-shrink: 1;
+  flex-grow: .1;
   flex-basis: 10vh;
 }
 
 .vertical-spacer-bottom {
   flex-shrink: 1;
+  flex-grow: .2;
   flex-basis: 13vh;
 }
 
@@ -483,7 +488,6 @@ textarea:focus {
   pointer-events: none;
 }
 
-
 *::-webkit-scrollbar {
   width: 10px;
 }
@@ -493,7 +497,7 @@ textarea:focus {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: var(--ink); 
+  background: var(--ink);
   border-radius: 10px;
 }
 
