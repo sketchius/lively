@@ -129,7 +129,7 @@
             </button>
           </div>
         </section>
-        <section v-if="itemType == 'Goal'">
+        <section v-if="itemType == 'Task'">
           <div class="label-group">
             <label for="sub-actions" class="picker-label">STEPS</label
             ><HelpComponent :helpId="'steps'" />
@@ -241,7 +241,7 @@ categories.forEach((categoryItem) => {
 });
 
 onMounted(async () => {
-  emit("setTitle", `New Goal`);
+  emit("setTitle", `New Task`);
   resizeDetailsTextarea();
 
   modifier.value = store.state.formData.importanceModifier || "0";
@@ -276,7 +276,7 @@ const handleSave = async () => {
     payload: categoryImportance.value + parseInt(modifier.value),
   });
 
-  await dataService.createGoal({
+  await dataService.createTask({
     id: createUID(),
     ...store.state.formData,
   });
