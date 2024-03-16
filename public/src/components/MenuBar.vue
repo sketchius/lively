@@ -1,9 +1,9 @@
 <template>
   <nav class="menu">
-    <router-link class="menu-item display-text" to="/">Home</router-link>
+    <!-- <router-link class="menu-item display-text" to="/">Home</router-link> -->
     <router-link class="menu-item display-text" to="/notes">Notes</router-link>
     <router-link class="menu-item display-text" to="/tasks">Tasks</router-link>
-    <router-link class="menu-item display-text" to="/goals">Goals</router-link>
+    <!-- <router-link class="menu-item display-text" to="/goals">Goals</router-link> -->
   </nav>
 </template>
 

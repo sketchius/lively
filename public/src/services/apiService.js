@@ -13,6 +13,8 @@ const apiClient = axios.create({
 const getAuthHeaders = async () => {
   const uid = store.state.user.demoUID;
   const token = store.state.user.accessToken;
+  console.log("getAuthHeaders... user = ");
+  console.log(store.state.user);
   if (uid) {
     console.log("returning UID");
     return { "x-demo-uid": uid, Authorization: `BEARER ${token}` };

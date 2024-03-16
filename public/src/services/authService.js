@@ -1,7 +1,7 @@
 import {
   getAuth,
   signInAnonymously,
-  // onAuthStateChanged,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
@@ -33,13 +33,13 @@ export const logIn = async (email, password) => {
   return userCredential.user.uid;
 };
 
-// export const observeAuthState = (onUserChanged) => {
-//   onAuthStateChanged(auth, (user) => {
-//     if (user) {
-//       const isDemoUser = user.isAnonymous;
-//       onUserChanged({ user, isDemoUser });
-//     } else {
-//       onUserChanged(null);
-//     }
-//   });
-// };
+export const observeAuthState = (onUserChanged) => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const isDemoUser = user.isAnonymous;
+      onUserChanged({ user, isDemoUser });
+    } else {
+      onUserChanged(null);
+    }
+  });
+};

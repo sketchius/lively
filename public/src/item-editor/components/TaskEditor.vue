@@ -207,9 +207,9 @@ const categories = [
   { name: "Work", importance: 8 },
   { name: "Household", importance: 6 },
   { name: "Errand", importance: 6 },
-  { name: "Life management", importance: 7 },
+  { name: "Life Management", importance: 7 },
   { name: "Personal", importance: 3 },
-  { name: "Health", importance: 7 },
+  { name: "Wellness", importance: 7 },
 ];
 const modifier = ref("0");
 const currentDate = format(new Date(), "MMMM do, yyyy");

@@ -12,7 +12,7 @@ export default {
             "valid" (boolean): "true if there is some information about the task (even a name), false if the message only requests a task.",
             "title" (string): "a clear and concise name for the task. should start with a verb. (max 20 characters)",
             "details" (string, optional): "Details from INPUT about the task not present in title. Write in short hand. Should be short and concise. Do not add details or sentiments. If none are present, it must be an empty string",
-            "category" (enum): ["work" (relating to professional duties),"household" (chores, maintanence),"errand" (minor things that require going to specific places),"life management" (handling adult responsiblities),"personal" (fun, hobbies, interests)],
+            "category" (enum): ["Work" (relating to professional duties),"Household" (chores, maintanence),"Errand" (minor things that require going to specific places),"Wellness" (mental + physical health, diet, exercise, medical),"Life Management" (handling adult responsiblities),"Personal" (fun, hobbies, interests)],
             "duration" (integer): "estimated number of minutes the task will take",
             "timeframe_interval" (enum [Day,Week,Month,Year]): "the temporal range to set the timeframe",
             "timeframe_type" (enum [Flexible,Deadline,Scheduled]): "flexible - around time frame (for task that are not strictly bound to a certain time), deadline - before or on time frame (for tasks that have a hard due date), scheduled - Must be done exactly within time frame (for tasks that can only be done within a certain time window); the type should fit the nature of the task",

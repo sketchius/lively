@@ -34,50 +34,50 @@
 <script setup>
 import MenuBar from "./components/MenuBar.vue";
 import ChatView from "./assistant-chat/view/ChatView.vue";
-// import {  observeAuthState } from "@/services/authService";
+import {  observeAuthState, signInAsDemoUser } from "@/services/authService";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
-// import userService from "./services/userService";
+import { useRoute, useRouter } from "vue-router";
+import userService from "./services/userService";
 
 const route = useRoute();
-// const router = useRouter();
+const router = useRouter();
 
 const store = useStore();
 
 const currentUser = ref(store.state.user);
 
-// if (!currentUser.value.uid) {
-//   if (userService.getDemoUID()) {
-//     signInAsDemoUser();
-//   } else {
-//     router.push("/login");
-//   }
-// }
+if (!currentUser.value.uid) {
+  if (userService.getDemoUID()) {
+    signInAsDemoUser();
+  } else {
+    router.push("/login");
+  }
+}
 
 onMounted(() => {
-  // observeAuthState(async (authState) => {
-  //   console.log("auth state changed");
-  //   console.log(authState.user);
-  //   if (authState) {
-  //     let demoUID;
-  //     if (authState.isDemoUser) {
-  //       demoUID = await userService.getDemoUID();
-  //     }
-  //     store.commit("setUser", {
-  //       ...authState.user,
-  //       isDemoUser: authState.isDemoUser,
-  //       demoUID,
-  //     });
-  //     currentUser.value = {
-  //       ...authState.user,
-  //       isDemoUser: authState.isDemoUser,
-  //       demoUID,
-  //     };
-  //   } else {
-  //     store.commit({});
-  //   }
-  // });
+  observeAuthState(async (authState) => {
+    console.log("auth state changed");
+    console.log(authState.user);
+    if (authState) {
+      let demoUID;
+      if (authState.isDemoUser) {
+        demoUID = await userService.getDemoUID();
+      }
+      store.commit("setUser", {
+        ...authState.user,
+        isDemoUser: authState.isDemoUser,
+        demoUID,
+      });
+      currentUser.value = {
+        ...authState.user,
+        isDemoUser: authState.isDemoUser,
+        demoUID,
+      };
+    } else {
+      store.commit({});
+    }
+  });
 });
 </script>
 

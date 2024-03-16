@@ -39,12 +39,12 @@ export default {
             role: "assistant",
             data: {
               contentType: "text",
-              isAction: true,
+              // isAction: true,
             },
-            message: "Switching View to Goal List.",
+            message: "Sorry, Goals are not implemented yet.",
             break: true,
           });
-          router.push({ name: "Goals" });
+          // router.push({ name: "Goals" });
           break;
         case "showNotes":
           updateUI({
@@ -100,140 +100,148 @@ export default {
           }
           break;
         case "newTask":
-          {
-            const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+          await newTask(element.content, { store, router, updateUI });
+          // {
+          //   const minWait = new Promise((resolve) => setTimeout(resolve, 500));
 
-            const resultPromise = chatService.parseTask(element.content);
+          //   const resultPromise = chatService.parseTask(element.content);
 
-            const [result] = await Promise.all([resultPromise, minWait]);
+          //   const [result] = await Promise.all([resultPromise, minWait]);
 
-            const rawTaskData = result.data;
+          //   const rawTaskData = result.data;
 
-            if (!rawTaskData.valid) {
-              updateUI({
-                role: "assistant",
-                data: {
-                  contentType: "text",
-                },
-                message: `Ok, let's create a new Task! Please describe what you need to do. Include any relevant details like when you'd like to accomplish it, how long you think it will take, and how important it is.`,
-                break: true,
-              });
-            } else {
-              let typeDisplay = "";
-              switch (rawTaskData.timeframe_type) {
-                case "Flexible":
-                  typeDisplay = "Around";
-                  break;
-                case "Deadline":
-                  typeDisplay = "By";
-                  break;
-                case "Scheduled":
-                  switch (rawTaskData.timeframe_inteval) {
-                    default:
-                    case "Day":
-                      typeDisplay = "On";
-                      break;
-                    case "Week":
-                    case "Month":
-                    case "Year":
-                      typeDisplay = "During";
-                      break;
-                  }
-                  break;
-              }
+          //   if (!rawTaskData.valid) {
+          //     updateUI({
+          //       role: "assistant",
+          //       data: {
+          //         contentType: "text",
+          //       },
+          //       message: `Ok, let's create a new Task! Please describe what you need to do. Include any relevant details like when you'd like to accomplish it, how long you think it will take, and how important it is.`,
+          //       break: true,
+          //     });
+          //   } else {
+          //     let typeDisplay = "";
+          //     switch (rawTaskData.timeframe_type) {
+          //       case "Flexible":
+          //         typeDisplay = "Around";
+          //         break;
+          //       case "Deadline":
+          //         typeDisplay = "By";
+          //         break;
+          //       case "Scheduled":
+          //         switch (rawTaskData.timeframe_inteval) {
+          //           default:
+          //           case "Day":
+          //             typeDisplay = "On";
+          //             break;
+          //           case "Week":
+          //           case "Month":
+          //           case "Year":
+          //             typeDisplay = "During";
+          //             break;
+          //         }
+          //         break;
+          //     }
 
-              const taskData = {
-                type: "Task",
-                title: rawTaskData.title,
-                category: rawTaskData.category,
-                duration: rawTaskData.duration,
-                timeFrame: {
-                  interval: rawTaskData.timeframe_interval,
-                  type: rawTaskData.timeframe_type,
-                  date: rawTaskData.timeframe_date,
-                  display: `${typeDisplay} ${rawTaskData.timeframe_date}`,
-                },
-                importanceModifier: rawTaskData.importance_modifier,
-              };
+          //     const taskData = {
+          //       type: "Task",
+          //       title: rawTaskData.title,
+          //       category: rawTaskData.category,
+          //       duration: rawTaskData.duration,
+          //       timeFrame: {
+          //         interval: rawTaskData.timeframe_interval,
+          //         type: rawTaskData.timeframe_type,
+          //         date: rawTaskData.timeframe_date,
+          //         display: `${typeDisplay} ${rawTaskData.timeframe_date}`,
+          //       },
+          //       importanceModifier: rawTaskData.importance_modifier,
+          //     };
 
-              store.dispatch("createTask", taskData);
+          //     store.dispatch("createTask", taskData);
 
-              updateUI({
-                role: "assistant",
-                data: {
-                  contentType: "text",
-                  isAction: true,
-                },
-                message: `Created 1 new Task.`,
-                break: true,
-              });
+          //     updateUI({
+          //       role: "assistant",
+          //       data: {
+          //         contentType: "text",
+          //         isAction: true,
+          //       },
+          //       message: `Created 1 new Task.`,
+          //       break: true,
+          //     });
 
-              router.push({ name: "Tasks" });
-            }
-          }
+          //     router.push({ name: "Tasks" });
+          //   }
+          // }
           break;
         case "newGoal":
-          {
-            const minWait = new Promise((resolve) => setTimeout(resolve, 500));
-
-            const resultPromise = chatService.parseGoal(element.content);
-
-            const [result] = await Promise.all([resultPromise, minWait]);
-
-            const rawGoalData = result.data;
-
-            let typeDisplay = "";
-            switch (rawGoalData.timeframe_type) {
-              case "Flexible":
-                typeDisplay = "Around";
-                break;
-              case "Deadline":
-                typeDisplay = "By";
-                break;
-              case "Scheduled":
-                switch (rawGoalData.timeframe_inteval) {
-                  default:
-                  case "Day":
-                    typeDisplay = "On";
-                    break;
-                  case "Week":
-                  case "Month":
-                  case "Year":
-                    typeDisplay = "During";
-                    break;
-                }
-                break;
-            }
-
-            const goalData = {
-              type: "Goal",
-              title: rawGoalData.title,
-              category: rawGoalData.category,
-              duration: rawGoalData.duration,
-              timeFrame: {
-                interval: rawGoalData.timeframe_interval,
-                type: rawGoalData.timeframe_type,
-                date: rawGoalData.timeframe_date,
-                display: `${typeDisplay} ${rawGoalData.timeframe_date}`,
-              },
-              steps: rawGoalData.steps,
-              importanceModifier: rawGoalData.importance_modifier,
-            };
-
-            store.commit("setFormData", goalData);
-
-            updateUI({
-              role: "assistant",
-              data: {
-                contentType: "text",
-              },
-              message: `I've started a Goal called ${goalData.title}. Are there any details you want me to change?`,
-              break: true,
-            });
-
-            router.push({ name: "Goal Editor" });
-          }
+          updateUI({
+            role: "assistant",
+            data: {
+              contentType: "text",
+            },
+            message:"Sorry, I can't create Goals yet.",
+          });
           break;
+          // {
+          //   const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+
+          //   const resultPromise = chatService.parseGoal(element.content);
+
+          //   const [result] = await Promise.all([resultPromise, minWait]);
+
+          //   const rawGoalData = result.data;
+
+          //   let typeDisplay = "";
+          //   switch (rawGoalData.timeframe_type) {
+          //     case "Flexible":
+          //       typeDisplay = "Around";
+          //       break;
+          //     case "Deadline":
+          //       typeDisplay = "By";
+          //       break;
+          //     case "Scheduled":
+          //       switch (rawGoalData.timeframe_inteval) {
+          //         default:
+          //         case "Day":
+          //           typeDisplay = "On";
+          //           break;
+          //         case "Week":
+          //         case "Month":
+          //         case "Year":
+          //           typeDisplay = "During";
+          //           break;
+          //       }
+          //       break;
+          //   }
+
+          //   const goalData = {
+          //     type: "Goal",
+          //     title: rawGoalData.title,
+          //     category: rawGoalData.category,
+          //     duration: rawGoalData.duration,
+          //     timeFrame: {
+          //       interval: rawGoalData.timeframe_interval,
+          //       type: rawGoalData.timeframe_type,
+          //       date: rawGoalData.timeframe_date,
+          //       display: `${typeDisplay} ${rawGoalData.timeframe_date}`,
+          //     },
+          //     steps: rawGoalData.steps,
+          //     importanceModifier: rawGoalData.importance_modifier,
+          //   };
+
+          //   store.commit("setFormData", goalData);
+
+          //   updateUI({
+          //     role: "assistant",
+          //     data: {
+          //       contentType: "text",
+          //     },
+          //     message: `I've started a Goal called ${goalData.title}. Are there any details you want me to change?`,
+          //     break: true,
+          //   });
+
+          //   router.push({ name: "Goal Editor" });
+          // }
         case "help":
           break;
         case "chat": {
@@ -323,6 +331,66 @@ export default {
 
 function stripQuotes(str) {
   return str.replace(/^"|"$/g, "");
+}
+
+async function newTask(message, context) {
+  const minWait = new Promise((resolve) => setTimeout(resolve, 500));
+
+  const resultPromise = chatService.parseTask(message);
+
+  const [result] = await Promise.all([resultPromise, minWait]);
+
+  const rawTaskData = result.data;
+
+  let typeDisplay = "";
+  switch (rawTaskData.timeframe_type) {
+    case "Flexible":
+      typeDisplay = "Around";
+      break;
+    case "Deadline":
+      typeDisplay = "By";
+      break;
+    case "Scheduled":
+      switch (rawTaskData.timeframe_inteval) {
+        default:
+        case "Day":
+          typeDisplay = "On";
+          break;
+        case "Week":
+        case "Month":
+        case "Year":
+          typeDisplay = "During";
+          break;
+      }
+      break;
+  }
+
+  const taskData = {
+    type: "Goal",
+    title: rawTaskData.title,
+    category: rawTaskData.category,
+    duration: rawTaskData.duration,
+    timeFrame: {
+      interval: rawTaskData.timeframe_interval,
+      type: rawTaskData.timeframe_type,
+      date: rawTaskData.timeframe_date,
+      display: `${typeDisplay} ${rawTaskData.timeframe_date}`,
+    },
+    importanceModifier: rawTaskData.importance_modifier,
+  };
+
+  context.store.commit("setFormData", taskData);
+
+  context.updateUI({
+    role: "assistant",
+    data: {
+      contentType: "text",
+    },
+    message: `I've started a Task called ${taskData.title}. Are there any details you want me to change?`,
+    break: true,
+  });
+
+  context.router.push({ name: "Task Editor" });
 }
 
 // function shapeMessagesForAPI(messages) {

@@ -30,15 +30,9 @@ const routes = [
     component: Goals,
   },
   {
-    path: "/item-editor",
-    component: ItemEditor,
-    name: "item-editor-task",
-    meta: {itemType: 'Task'}
-  },
-  {
     path: "/item-editor/task",
     component: ItemEditor,
-    name: "item-editor-task",
+    name: "Task Editor",
     meta: {itemType: 'Task'}
   },
   {
