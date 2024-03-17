@@ -121,6 +121,25 @@ body {
   --blue400: #b1effc;
   --blue500: #8ae3f5;
   --blue700: #4b90be;
+
+  --orange100: #fffaee;
+  --orange300: #fff2de;
+  --orange400: #ffe9cc;
+  --orange500: #ffe0b7;
+  --orange700: #b78b63;
+
+  --teal100: #f2fefa;
+  --teal300: #ddfcf5;
+  --teal400: #bef7ed;
+  --teal500: #9df1e0;
+  --teal700: #50aa9d;
+
+  --purple100: #f7f5ff;
+  --purple300: #eee3ff;
+  --purple400: #e1d1fc;
+  --purple500: #ccc1f7;
+  --purple700: #8c84b4;
+
   --size00: 3px;
   --size0: 5px;
   --size1: 9px;

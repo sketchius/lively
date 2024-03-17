@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Tasks from "../task-list/view/TaskList.vue";
 import Notes from "../note-list/view/NoteList.vue";
 import Goals from "../goal-list/view/GoalList.vue";
+import ToDoList from "../to-do-list/view/ToDoList.vue";
 import ItemEditor from "../item-editor/view/ItemEditor.vue";
 import LoginPage from '@/login/view/LoginPage.vue';
 import UserGuide from '@/user-guide/view/UserGuide.vue';
@@ -28,6 +29,11 @@ const routes = [
     path: "/goals",
     name: "Goals",
     component: Goals,
+  },
+  {
+    path: "/to-do-list",
+    name: "To Do List",
+    component: ToDoList,
   },
   {
     path: "/item-editor/task",

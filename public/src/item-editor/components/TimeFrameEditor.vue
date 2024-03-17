@@ -87,7 +87,7 @@
 
 <script setup>
 import { reactive, computed, watch } from "vue";
-import { format, startOfWeek, endOfWeek } from "date-fns";
+import { format, startOfWeek } from "date-fns";
 import DayPicker from "./DayPicker.vue";
 import WeekPicker from "./WeekPicker.vue";
 import MonthPicker from "./MonthPicker.vue";
@@ -145,12 +145,8 @@ const handlePickerUpdate = (updateData) => {
     case "Week": {
       const dateData = updateData.date;
       const firstDayOfWeek = startOfWeek(dateData, { weekStartsOn: 0 });
-      const lastDayOfWeek = endOfWeek(dateData, { weekStartsOn: 0 });
-
       const formatDate = (dataData) => format(dataData, "MMM do");
-      timeFrame.date = `Week of ${formatDate(firstDayOfWeek)} - ${formatDate(
-        lastDayOfWeek
-      )}`;
+      timeFrame.date = formatDate(firstDayOfWeek);
       break;
     }
     case "Month": {
