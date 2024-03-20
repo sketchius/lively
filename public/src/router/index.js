@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 // import Home from "../views/HomeView.vue";
-import Tasks from "../task-list/view/TaskList.vue";
-import Notes from "../note-list/view/NoteList.vue";
-import Goals from "../goal-list/view/GoalList.vue";
-import ToDoList from "../to-do-list/view/ToDoList.vue";
-import ItemEditor from "../item-editor/view/ItemEditor.vue";
-import LoginPage from '@/login/view/LoginPage.vue';
-import UserGuide from '@/user-guide/view/UserGuide.vue';
+import Tasks from "@/views/task-list/TaskList.vue";
+import Notes from "@/views/note-list/NoteList.vue";
+import Goals from "@/views/goal-list/GoalList.vue";
+import ToDoList from "@/views//to-do-list/ToDoList.vue";
+import ItemEditor from "@/views/item-editor/ItemEditor.vue";
+import LoginPage from '@/views/login/LoginPage.vue';
+import UserGuide from '@/views/user-guide/UserGuide.vue';
 
 const routes = [
   {
