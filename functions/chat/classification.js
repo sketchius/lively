@@ -1,7 +1,7 @@
 import { getOpenAIChatResponse } from "../external_apis/openai.js";
 
 export default {
-  async classifyInput(input) {
+  async classifyInput(input, operation) {
     const messages = [
       {
         role: "system",
@@ -14,6 +14,8 @@ export default {
         
         <newTask>I need to vacuum.</newTask><chat>How are you?</chat><help>How to I log out?</help>
         
+        ${operation ? `# CONTEXT The user is currenting doing this operation: ${operation}`:''}
+
         YOU may rearrange phrases if needed but don't add content. Compound sentences that contain multiple unique needs can be extracted into multiple tags.
                 
                 # ENUM XML CLASSIFICATION TAGS
@@ -25,7 +27,8 @@ export default {
                    <help>: "The user needs help with an application feature",
                   <showTasks> : "The user wants to see all of their tasks",
                  <showGoals> : "The user wants to change the view to the goal list",
-                 <showNotes>: "The user wants to see all of their notes"]
+                 <showNotes>: "The user wants to see all of their notes"],
+                 ${getOperationCommands(operation)}
         
         # NOTE VS TASK VS GOAL
         How to distinguish user's intent.
@@ -39,8 +42,17 @@ export default {
       },
     ];
 
-    return await getOpenAIChatResponse(messages, 'xml', "gpt-3.5-turbo");
+    return await getOpenAIChatResponse(messages, "xml", "gpt-3.5-turbo");
   },
+};
+
+const getOperationCommands = (operation) => {
+  switch (operation) {
+    case "Edit Task":
+      return `<modifyTask> : "The user mentioned making changes to something. The context is Edit Task, therefore they want to modify a task currently being edited.",`;
+    default:
+      return "";
+  }
 };
 
 // # ROLE
