@@ -13,6 +13,7 @@ const store = createStore({
       formData: {},
       user: {},
       assistantEvent: null,
+      operation: ""
     };
   },
   getters: {
@@ -39,6 +40,13 @@ const store = createStore({
     },
     setNoteListNeedsRefresh(state, value) {
       state.noteListNeedsRefresh = value;
+    },
+
+    setOperation(state, operation) {
+      state.operation = operation;
+    },
+    clearOperation(state) {
+      state.operation = "";
     },
 
     setFormData(state, data) {
