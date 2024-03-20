@@ -22,8 +22,11 @@ export default {
   justify-content: space-around; /* or space-between, depending on the desired spacing */
   align-items: center;
   gap: var(--size3);
-  padding: var(--size0) 0;
   background-color: var(--paper700);
+  min-height: 4vh;
+  flex-basis: 4vh;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .menu-item {

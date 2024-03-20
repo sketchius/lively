@@ -1,40 +1,24 @@
 <template>
-  <div class="frame">
-    <div class="banner" v-if="currentUser && currentUser.isDemoUser">
-      Warning: You are using demo access. Please avoid entering any private or
-      sensitive information. You can
-      <RouterLink :to="{ path: '/create-account' }"
-        >create an account</RouterLink
-      >
-      or <RouterLink to="login">log in</RouterLink> for secure access.
-    </div>
     <div class="horizontal-layout">
       <div class="margin-spacer"></div>
-      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
-      <ChatView v-if="!route.meta.interfaceHidden" />
-      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
       <div class="inner-padding-spacer border-left"></div>
       <div class="vertical-layout">
         <MenuBar v-if="!route.meta.interfaceHidden" />
-        <div class="viewport">
-          <div class="vertical-spacer"></div>
-          <main>
+        <div v-if="!route.meta.interfaceHidden" class="vertical-spacer"></div>
+        <main class="viewport">
             <router-view></router-view>
-          </main>
-          <div class="vertical-spacer-bottom"></div>
-        </div>
+        </main>
+        <MessageInterface v-if="!route.meta.interfaceHidden" />
       </div>
       <div class="inner-padding-spacer border-right"></div>
-      <div class="padding-spacer" v-if="!route.meta.interfaceHidden"></div>
       <div class="margin-spacer"></div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import MenuBar from "./components/MenuBar.vue";
-import ChatView from "./assistant-chat/view/ChatView.vue";
-import {  observeAuthState, signInAsDemoUser } from "@/services/authService";
+import MenuBar from "@/components/MenuBar.vue";
+import MessageInterface from "@/components/message-interface/MessageInterface.vue";
+import { observeAuthState, signInAsDemoUser } from "@/services/authService";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
@@ -84,6 +68,10 @@ onMounted(() => {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Saira:wght@100;200;400;500;600;700;800&display=swap");
+
+* {
+  box-sizing: border-box;
+}
 
 #app,
 body {
@@ -152,22 +140,7 @@ body {
   color: var(--ink);
   font-family: "Roboto", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  background-color: var(--paper);
-}
-
-.frame {
-  display: flex;
-  flex-direction: column;
-}
-
-.frame .banner {
-  text-align: center;
-  background-color: var(--yellow100);
-  border-bottom: 2px solid var(--ink);
-  font-size: 12px;
-  font-style: italic;
-  color: var(--yellow700);
-  padding: 2px 0;
+  background-color: var(--paper700);
 }
 
 .horizontal-layout {
@@ -179,18 +152,19 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: stretch;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
 }
 
 .vertical-layout {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .viewport {
-  flex-basis: 70vw;
   min-width: 90ch;
-  flex-grow: 1;
-  max-height: calc(100vh - 55px);
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -199,14 +173,11 @@ body {
   border-bottom: none;
   padding: 0;
   background: var(--paper700);
-}
-
-main {
-  flex-grow: 1;
-  display: flex;
   justify-self: center;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-basis: auto;
+  max-height: 65vh;
 }
 
 .margin-spacer {
@@ -215,7 +186,7 @@ main {
   background: linear-gradient(
     to bottom,
     var(--ink300) 10%,
-    var(--paper) 10.0000001%
+    var(--paper700) 10.0000001%
   );
   background-position: 0px 4px;
   background-size: 100% 8px;
@@ -233,6 +204,7 @@ ul {
 
 .inner-padding-spacer {
   min-width: var(--size5);
+  flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 9.2vw;
   background: var(--paper700);
@@ -254,15 +226,9 @@ ul {
 
 .vertical-spacer {
   flex-shrink: 1;
-  flex-grow: .1;
   flex-basis: 10vh;
 }
 
-.vertical-spacer-bottom {
-  flex-shrink: 1;
-  flex-grow: .2;
-  flex-basis: 13vh;
-}
 
 button,
 h1,
@@ -279,6 +245,7 @@ textarea::placeholder {
 
 h1 {
   font-size: 36px;
+  margin: 0;
 }
 
 h2 {
